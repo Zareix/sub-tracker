@@ -1,0 +1,1 @@
+ALTER TABLE `subscription` ADD `image` text(256);

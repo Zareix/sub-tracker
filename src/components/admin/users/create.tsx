@@ -28,7 +28,7 @@ export const CreateUserDialog = () => {
   const createUserMutation = api.user.create.useMutation({
     onSuccess: () => {
       toast.success("User created!");
-      apiUtils.subscription.getAll.invalidate().catch(console.error);
+      apiUtils.user.getAll.invalidate().catch(console.error);
       setIsOpen(false);
     },
     onError: (error) => {

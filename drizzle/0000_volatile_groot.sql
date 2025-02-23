@@ -28,8 +28,9 @@ CREATE TABLE `session` (
 --> statement-breakpoint
 CREATE TABLE `subscription` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`name` text(256),
-	`price` integer NOT NULL,
+	`name` text(256) NOT NULL,
+	`description` text(256) DEFAULT '' NOT NULL,
+	`price` integer DEFAULT 0 NOT NULL,
 	`payment_method` text(255) NOT NULL,
 	`schedule` text(255) NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
@@ -39,7 +40,7 @@ CREATE TABLE `subscription` (
 --> statement-breakpoint
 CREATE TABLE `user` (
 	`id` text(255) PRIMARY KEY NOT NULL,
-	`name` text(255),
+	`name` text(255) NOT NULL,
 	`email` text(255) NOT NULL,
 	`email_verified` integer DEFAULT (unixepoch()),
 	`image` text(255)

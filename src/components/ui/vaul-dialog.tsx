@@ -1,10 +1,5 @@
 import { Drawer } from "vaul";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { useWindowSize } from "~/lib/hook";
 
 export const WrapperDialogVaul = ({

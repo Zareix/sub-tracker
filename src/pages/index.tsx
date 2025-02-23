@@ -2,6 +2,7 @@ import { api } from "~/utils/api";
 import { FiltersButton } from "~/components/subscriptions/filters";
 import { SubscriptionList } from "~/components/subscriptions/list";
 import { SortButton } from "~/components/subscriptions/sort";
+import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
 
 export default function Home() {
   const subscriptionsQuery = api.subscription.getAll.useQuery();
@@ -18,11 +19,16 @@ export default function Home() {
     <div>
       <header className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Subscriptions</h1>
-        <FiltersButton />
-        <SortButton />
+        <div className="flex items-center gap-2">
+          <FiltersButton />
+          <SortButton />
+        </div>
       </header>
       <div className="grid">
         <SubscriptionList subscriptions={subscriptionsQuery.data} />
+      </div>
+      <div className="fixed bottom-6 left-auto right-2 flex items-center justify-center gap-4 p-4">
+        <CreateSubscriptionDialog />
       </div>
     </div>
   );

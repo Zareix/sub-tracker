@@ -44,3 +44,9 @@ yarn-error.log*
 
 # idea files
 .idea
+
+temp
+
+db.sqlite-shm
+
+db.sqlite-wal

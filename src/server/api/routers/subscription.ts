@@ -1,11 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { filtersSchema } from "~/server/api/routers/schema";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import {
-  PaymentMethod,
+  type PaymentMethod,
   paymentMethods,
   type Subscription,
   subscriptions,
@@ -15,7 +14,7 @@ import {
 } from "~/server/db/schema";
 
 export const subscriptionRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx, input }) => {
+  getAll: publicProcedure.query(({ ctx }) => {
     const rows = ctx.db
       .select()
       .from(subscriptions)
@@ -63,37 +62,99 @@ export const subscriptionRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
+        description: z.string(),
+        image: z.string().optional(),
         price: z.number(),
-        paymentMethod: z.string(),
+        paymentMethod: z.number(),
         schedule: z.string(),
         payedBy: z.array(z.string()),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const subscriptionsReturned = await ctx.db
-        .insert(subscriptions)
-        .values({
-          name: input.name,
-          price: input.price,
-          paymentMethod: input.paymentMethod,
-          schedule: input.schedule,
-        })
-        .returning({
-          id: subscriptions.id,
-        });
-      const subscription = subscriptionsReturned[0];
-      if (!subscription) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error creating subscription",
-        });
-      }
-      for (const payedBy of input.payedBy) {
-        await ctx.db.insert(usersToSubscriptions).values({
-          userId: payedBy,
-          subscriptionId: subscription.id,
-        });
-      }
+      const subscription = await ctx.db.transaction(async () => {
+        const subscriptionsReturned = await ctx.db
+          .insert(subscriptions)
+          .values({
+            name: input.name,
+            description: input.description,
+            image: input.image,
+            price: input.price,
+            paymentMethod: input.paymentMethod,
+            schedule: input.schedule,
+          })
+          .returning({
+            id: subscriptions.id,
+          });
+        const subscription = subscriptionsReturned[0];
+        if (!subscription) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Error creating subscription",
+          });
+        }
+        for (const payedBy of input.payedBy) {
+          await ctx.db.insert(usersToSubscriptions).values({
+            userId: payedBy,
+            subscriptionId: subscription.id,
+          });
+        }
+        return subscription;
+      });
+
+      return {
+        id: subscription.id,
+      };
+    }),
+  edit: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string(),
+        description: z.string(),
+        image: z.string().optional(),
+        price: z.number(),
+        paymentMethod: z.number(),
+        schedule: z.string(),
+        payedBy: z.array(z.string()),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const subscription = await ctx.db.transaction(async () => {
+        const subscriptionsReturned = await ctx.db
+          .update(subscriptions)
+          .set({
+            name: input.name,
+            description: input.description,
+            image: input.image,
+            price: input.price,
+            paymentMethod: input.paymentMethod,
+            schedule: input.schedule,
+          })
+          .where(eq(subscriptions.id, input.id))
+          .returning({
+            id: subscriptions.id,
+          });
+
+        const subscription = subscriptionsReturned[0];
+        if (!subscription) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Error creating subscription",
+          });
+        }
+
+        await ctx.db
+          .delete(usersToSubscriptions)
+          .where(eq(usersToSubscriptions.subscriptionId, input.id));
+        for (const payedBy of input.payedBy) {
+          await ctx.db.insert(usersToSubscriptions).values({
+            userId: payedBy,
+            subscriptionId: subscription.id,
+          });
+        }
+        return subscription;
+      });
+
       return {
         id: subscription.id,
       };

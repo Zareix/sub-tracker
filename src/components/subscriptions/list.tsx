@@ -1,5 +1,5 @@
-import { parseAsJson, useQueryState } from "nuqs";
-import { filtersSchema } from "~/server/api/routers/schema";
+import { parseAsJson, parseAsStringEnum, useQueryState } from "nuqs";
+import { filtersSchema } from "~/lib/constant";
 import { api, type RouterOutputs } from "~/utils/api";
 import { Button } from "~/components/ui/button";
 import {
@@ -9,23 +9,30 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import {
+  EditIcon,
   EllipsisVertical,
   RefreshCcwIcon,
+  TextIcon,
   TrashIcon,
   UserIcon,
 } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogTitle,
-  DialogTrigger,
 } from "~/components/ui/dialog";
 import { useState } from "react";
 import { toast } from "sonner";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import { Card, CardContent } from "~/components/ui/card";
+import { SORTS } from "~/lib/constant";
+import {
+  cn,
+  getFilteredSubscriptions,
+  getSortedSubscriptions,
+} from "~/lib/utils";
+import Image from "next/image";
+import { EditSubscriptionDialog } from "~/components/subscriptions/edit";
 
 type Props = {
   subscriptions: RouterOutputs["subscription"]["getAll"];
@@ -40,27 +47,19 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
       users: null,
     },
   });
+  const [sort] = useQueryState(
+    "sort",
+    parseAsStringEnum(SORTS.map((s) => s.key)),
+  );
 
-  let filteredSubscriptions = subscriptions;
-  if (filters.schedule) {
-    filteredSubscriptions = filteredSubscriptions.filter(
-      (s) => s.schedule === filters.schedule,
-    );
-  }
-  if (filters.paymentMethodId) {
-    filteredSubscriptions = filteredSubscriptions.filter(
-      (s) => s.paymentMethod.id === filters.paymentMethodId,
-    );
-  }
-  if (filters.users) {
-    filteredSubscriptions = filteredSubscriptions.filter((s) =>
-      s.users.some((u) => u.id === filters.users),
-    );
-  }
+  const subs = getFilteredSubscriptions(
+    getSortedSubscriptions(subscriptions, sort),
+    filters,
+  );
 
   return (
     <>
-      {filteredSubscriptions.map((subscription) => (
+      {subs.map((subscription) => (
         <SubscriptionListItem
           key={subscription.id}
           subscription={subscription}
@@ -76,38 +75,94 @@ const SubscriptionListItem = ({
   subscription: RouterOutputs["subscription"]["getAll"][number];
 }) => {
   const [isOpen, setIsOpen] = useState({
+    details: false,
     delete: false,
+    edit: false,
   });
   return (
     <Card key={subscription.id} className="mt-3">
-      <CardContent className="flex items-center gap-2">
-        <h2 className="flex-grow text-xl font-semibold">{subscription.name}</h2>
-        <p className="text-muted-foreground flex items-center gap-1">
-          <RefreshCcwIcon size={16} />
-          {subscription.schedule}
-        </p>
-        <p className="text-lg">{subscription.price}€</p>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="icon" variant="ghost">
-              <EllipsisVertical size={24} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuItem
-              className="text-destructive"
-              onClick={() => setIsOpen({ delete: true })}
-            >
-              <TrashIcon />
-              <span>Delete</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DeleteDialog
-          subscription={subscription}
-          isOpen={isOpen.delete}
-          setIsOpen={() => setIsOpen({ delete: false })}
-        />
+      <CardContent
+        onClick={() =>
+          setIsOpen((v) => ({
+            ...v,
+            details: !v.details,
+          }))
+        }
+      >
+        <div className="flex items-center gap-2">
+          <div>
+            {subscription.image && (
+              <Image
+                src={subscription.image}
+                alt={subscription.name}
+                width={64}
+                height={40}
+                className="max-h-[40px] object-contain"
+              />
+            )}
+          </div>
+          <h2 className="flex-grow text-xl font-semibold">
+            {subscription.name}
+          </h2>
+          <p className="hidden items-center gap-1 text-muted-foreground md:flex">
+            <RefreshCcwIcon size={16} />
+            {subscription.schedule}
+          </p>
+          <p className="text-lg">{subscription.price}€</p>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon" variant="ghost">
+                <EllipsisVertical size={24} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() =>
+                  setIsOpen({
+                    ...isOpen,
+                    delete: true,
+                  })
+                }
+              >
+                <TrashIcon />
+                <span>Delete</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setIsOpen({ ...isOpen, edit: true })}
+              >
+                <EditIcon />
+                <span>Edit</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DeleteDialog
+            subscription={subscription}
+            isOpen={isOpen.delete}
+            setIsOpen={() => setIsOpen({ ...isOpen, delete: false })}
+          />
+          <EditSubscriptionDialog
+            subscription={subscription}
+            isOpen={isOpen.edit}
+            setIsOpen={() => setIsOpen({ ...isOpen, edit: false })}
+          />
+        </div>
+        {isOpen.details && (
+          <div className="grid grid-cols-2 gap-1 text-base">
+            <div className="flex items-center gap-2">
+              <UserIcon size={18} />
+              <span>{subscription.users.map((u) => u.name).join(", ")}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <RefreshCcwIcon size={16} />
+              {subscription.schedule}
+            </div>
+            <div className="flex items-center gap-2">
+              <TextIcon size={20} />
+              <span>{subscription.description}</span>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

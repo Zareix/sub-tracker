@@ -1,11 +1,13 @@
 import { api } from "~/utils/api";
-import { parseAsJson, useQueryState } from "nuqs";
-import { filtersSchema } from "~/server/api/routers/schema";
-import { Filters } from "~/components/subscriptions/filters";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { FiltersButton } from "~/components/subscriptions/filters";
+import { getFilteredSubscriptions, rounded } from "~/lib/utils";
+import { parseAsJson, useQueryState } from "nuqs";
+import { filtersSchema } from "~/lib/constant";
+import { Skeleton } from "~/components/ui/skeleton";
 
 export default function Stats() {
-  const [filters, setFilters] = useQueryState("filters", {
+  const [filters] = useQueryState("filters", {
     ...parseAsJson(filtersSchema.parse),
     defaultValue: {
       schedule: null,
@@ -15,28 +17,38 @@ export default function Stats() {
   });
   const subscriptionsQuery = api.subscription.getAll.useQuery();
 
-  if (subscriptionsQuery.isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (subscriptionsQuery.isError || !subscriptionsQuery.data) {
+  if (subscriptionsQuery.isError) {
     return <div>Error: {subscriptionsQuery.error?.message}</div>;
   }
 
-  const totalMonthlySub = subscriptionsQuery.data
-    .filter((subscription) => subscription.schedule === "Monthly")
-    .reduce((acc, subscription) => {
-      return acc + subscription.price;
-    }, 0);
+  const subscriptions = getFilteredSubscriptions(
+    subscriptionsQuery.data ?? [],
+    filters,
+  );
 
-  const totalYearlySub = subscriptionsQuery.data
-    .filter((subscription) => subscription.schedule === "Yearly")
-    .reduce((acc, subscription) => {
-      return acc + subscription.price;
-    }, 0);
+  const totalMonthlySub = rounded(
+    subscriptions
+      .filter((subscription) => subscription.schedule === "Monthly")
+      .reduce((acc, subscription) => {
+        if (filters.users) {
+          return acc + subscription.price / subscription.users.length;
+        }
+        return acc + subscription.price;
+      }, 0),
+  );
 
-  const totalPerMonth =
-    totalMonthlySub + Math.round((totalYearlySub / 12) * 100) / 100;
+  const totalYearlySub = rounded(
+    subscriptions
+      .filter((subscription) => subscription.schedule === "Yearly")
+      .reduce((acc, subscription) => {
+        if (filters.users) {
+          return acc + subscription.price / subscription.users.length;
+        }
+        return acc + subscription.price;
+      }, 0),
+  );
+
+  const totalPerMonth = totalMonthlySub + rounded(totalYearlySub / 12);
 
   const totalPerYear = totalMonthlySub * 12 + totalYearlySub;
 
@@ -44,19 +56,43 @@ export default function Stats() {
     <div>
       <header className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Stats</h1>
-        <Filters currentFilters={filters} setFilters={setFilters} />
+        <FiltersButton filtersDisplayed={["users", "paymentMethodId"]} />
       </header>
-      <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-3">
-        <StatsCard title="Total monthly sub" value={totalMonthlySub} />
-        <StatsCard title="Total yearly sub" value={totalYearlySub} />
-        <StatsCard title="Total per month" value={totalPerMonth} />
-        <StatsCard title="Total per year" value={totalPerYear} />
+      <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-4">
+        <StatsCard
+          title="Total monthly sub"
+          value={totalMonthlySub}
+          isLoading={subscriptionsQuery.isLoading}
+        />
+        <StatsCard
+          title="Total yearly sub"
+          value={totalYearlySub}
+          isLoading={subscriptionsQuery.isLoading}
+        />
+        <StatsCard
+          title="Total per month"
+          value={totalPerMonth}
+          isLoading={subscriptionsQuery.isLoading}
+        />
+        <StatsCard
+          title="Total per year"
+          value={totalPerYear}
+          isLoading={subscriptionsQuery.isLoading}
+        />
       </div>
     </div>
   );
 }
 
-const StatsCard = ({ title, value }: { title: string; value: number }) => {
+const StatsCard = ({
+  title,
+  value,
+  isLoading,
+}: {
+  title: string;
+  value: number;
+  isLoading: boolean;
+}) => {
   return (
     <Card className="py-5">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
@@ -64,7 +100,9 @@ const StatsCard = ({ title, value }: { title: string; value: number }) => {
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="mt-2 text-2xl font-bold">{value}€</CardContent>
+      <CardContent className="mt-2 flex items-center text-2xl font-bold">
+        {isLoading ? <Skeleton className="mr-1 h-6 w-1/4" /> : value}€
+      </CardContent>
     </Card>
   );
 };
