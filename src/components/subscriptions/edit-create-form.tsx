@@ -24,7 +24,7 @@ import {
 import { MultiSelect } from "~/components/ui/multi-select";
 import { type Schedule, SCHEDULES } from "~/lib/constant";
 import { preprocessStringToNumber } from "~/lib/utils";
-import { ImageFileUploader } from "~/components/subscriptions/image-uploader";
+import { ImageFileUploader } from "~/components/image-uploader";
 
 const subscriptionCreateSchema = z.object({
   name: z.string(),

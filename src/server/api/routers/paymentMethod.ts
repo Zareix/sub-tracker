@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { asc } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -6,7 +7,9 @@ import { paymentMethods } from "~/server/db/schema";
 
 export const paymentMethodRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
-    return ctx.db.query.paymentMethods.findMany();
+    return ctx.db.query.paymentMethods.findMany({
+      orderBy: [asc(paymentMethods.name)],
+    });
   }),
   create: publicProcedure
     .input(z.object({ name: z.string() }))

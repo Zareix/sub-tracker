@@ -30,6 +30,9 @@ export const CreateUserDialog = () => {
       toast.success("User created!");
       apiUtils.user.getAll.invalidate().catch(console.error);
       setIsOpen(false);
+      setTimeout(() => {
+        form.reset();
+      }, 300);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -65,9 +68,6 @@ export const CreateUserDialog = () => {
                   <FormControl>
                     <Input placeholder="Raphael" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    This is the public display name.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -81,9 +81,7 @@ export const CreateUserDialog = () => {
                   <FormControl>
                     <Input placeholder="raphael@example.com" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    This is the public email address.
-                  </FormDescription>
+
                   <FormMessage />
                 </FormItem>
               )}

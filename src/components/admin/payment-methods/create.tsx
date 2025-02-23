@@ -62,7 +62,7 @@ export const CreatePaymentMethodDialog = () => {
       <DialogContent>
         <DialogTitle>Create Payment Method</DialogTitle>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8">
             <FormField
               control={form.control}
               name="name"
@@ -72,14 +72,13 @@ export const CreatePaymentMethodDialog = () => {
                   <FormControl>
                     <Input placeholder="PayPal" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    This is the payment method name.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button type="submit" className="ml-auto">
+              Submit
+            </Button>
           </form>
         </Form>
       </DialogContent>

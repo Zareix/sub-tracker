@@ -149,7 +149,7 @@ const SubscriptionListItem = ({
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="mt-2 grid grid-cols-2 gap-1 text-base">
+            <div className="grid grid-cols-2 gap-1 text-base">
               <div className="flex items-center gap-2 md:hidden">
                 <UserIcon size={18} />
                 <span>{subscription.users.map((u) => u.name).join(", ")}</span>
@@ -158,10 +158,12 @@ const SubscriptionListItem = ({
                 <RefreshCcwIcon size={16} />
                 {subscription.schedule}
               </div>
-              <div className="flex items-center gap-2">
-                <TextIcon size={20} />
-                <span>{subscription.description}</span>
-              </div>
+              {subscription.description.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <TextIcon size={20} />
+                  <span>{subscription.description}</span>
+                </div>
+              )}
             </div>
           </AccordionContent>
         </AccordionItem>

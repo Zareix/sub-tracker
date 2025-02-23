@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { asc } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -12,6 +13,7 @@ export const userRouter = createTRPCRouter({
         name: true,
         email: true,
       },
+      orderBy: [asc(users.name)],
     });
   }),
   create: publicProcedure
