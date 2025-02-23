@@ -104,6 +104,10 @@ const SubscriptionListItem = ({
           <h2 className="flex-grow text-xl font-semibold">
             {subscription.name}
           </h2>
+          <div className="hidden items-center gap-1 text-muted-foreground md:flex">
+            <UserIcon size={18} />
+            <span>{subscription.users.map((u) => u.name).join(", ")}</span>
+          </div>
           <p className="hidden items-center gap-1 text-muted-foreground md:flex">
             <RefreshCcwIcon size={16} />
             {subscription.schedule}
@@ -149,11 +153,11 @@ const SubscriptionListItem = ({
         </div>
         {isOpen.details && (
           <div className="grid grid-cols-2 gap-1 text-base">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 md:hidden">
               <UserIcon size={18} />
               <span>{subscription.users.map((u) => u.name).join(", ")}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 md:hidden">
               <RefreshCcwIcon size={16} />
               {subscription.schedule}
             </div>
