@@ -1,9 +1,12 @@
 import { TRPCError } from "@trpc/server";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
+import { BASE_CURRENCY, CURRENCIES, type Currency } from "~/lib/constant";
+import { rounded } from "~/lib/utils";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import {
+  type ExchangeRate,
   type PaymentMethod,
   paymentMethods,
   type Subscription,
@@ -13,8 +16,30 @@ import {
   usersToSubscriptions,
 } from "~/server/db/schema";
 
+const convertToDefaultCurrency = (
+  exchangeRates: Array<ExchangeRate>,
+  price: number,
+  baseCurrency: string,
+  targetCurrency: Currency,
+) => {
+  if (baseCurrency === targetCurrency) {
+    return price;
+  }
+
+  const exchangeRate = exchangeRates.find(
+    (r) =>
+      r.baseCurrency === baseCurrency && r.targetCurrency === targetCurrency,
+  )?.rate;
+
+  if (!exchangeRate) {
+    return price;
+  }
+
+  return price * exchangeRate;
+};
+
 export const subscriptionRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
+  getAll: publicProcedure.query(async ({ ctx }) => {
     const rows = ctx.db
       .select()
       .from(subscriptions)
@@ -30,34 +55,49 @@ export const subscriptionRouter = createTRPCRouter({
       .orderBy(asc(subscriptions.name))
       .all();
 
-    return rows.reduce<
-      Array<
-        Omit<Subscription, "paymentMethod"> & {
-          paymentMethod: PaymentMethod;
-          users: Array<User>;
+    const exchangeRates = await ctx.db.query.exchangeRates.findMany();
+
+    return rows
+      .reduce<
+        Array<
+          Omit<Subscription, "paymentMethod"> & {
+            paymentMethod: PaymentMethod;
+            users: Array<User>;
+          }
+        >
+      >((acc, row) => {
+        const user = row.user;
+        const subscription = row.subscription;
+        const paymentMethod = row.payment_method;
+
+        const existingSubscription = acc.find((s) => s.id === subscription.id);
+
+        if (existingSubscription) {
+          existingSubscription.users.push(user);
+          return acc;
         }
-      >
-    >((acc, row) => {
-      const user = row.user;
-      const subscription = row.subscription;
-      const paymentMethod = row.payment_method;
 
-      const existingSubscription = acc.find((s) => s.id === subscription.id);
-
-      if (existingSubscription) {
-        existingSubscription.users.push(user);
-        return acc;
-      }
-
-      return [
-        ...acc,
-        {
-          ...subscription,
-          users: [user],
-          paymentMethod,
-        },
-      ];
-    }, []);
+        return [
+          ...acc,
+          {
+            ...subscription,
+            users: [user],
+            paymentMethod,
+          },
+        ];
+      }, [])
+      .map((subscription) => ({
+        ...subscription,
+        originalPrice: subscription.price,
+        price: rounded(
+          convertToDefaultCurrency(
+            exchangeRates,
+            subscription.price,
+            subscription.currency,
+            BASE_CURRENCY,
+          ),
+        ),
+      }));
   }),
   create: publicProcedure
     .input(
@@ -66,20 +106,22 @@ export const subscriptionRouter = createTRPCRouter({
         description: z.string(),
         image: z.string().optional(),
         price: z.number(),
+        currency: z.enum(CURRENCIES),
         paymentMethod: z.number(),
         schedule: z.string(),
         payedBy: z.array(z.string()),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const subscription = await ctx.db.transaction(async () => {
-        const subscriptionsReturned = await ctx.db
+      const subscription = await ctx.db.transaction(async (trx) => {
+        const subscriptionsReturned = await trx
           .insert(subscriptions)
           .values({
             name: input.name,
             description: input.description,
             image: input.image,
             price: input.price,
+            currency: input.currency,
             paymentMethod: input.paymentMethod,
             schedule: input.schedule,
           })
@@ -94,7 +136,7 @@ export const subscriptionRouter = createTRPCRouter({
           });
         }
         for (const payedBy of input.payedBy) {
-          await ctx.db.insert(usersToSubscriptions).values({
+          await trx.insert(usersToSubscriptions).values({
             userId: payedBy,
             subscriptionId: subscription.id,
           });
@@ -114,20 +156,22 @@ export const subscriptionRouter = createTRPCRouter({
         description: z.string(),
         image: z.string().optional(),
         price: z.number(),
+        currency: z.enum(CURRENCIES),
         paymentMethod: z.number(),
         schedule: z.string(),
         payedBy: z.array(z.string()),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const subscription = await ctx.db.transaction(async () => {
-        const subscriptionsReturned = await ctx.db
+      const subscription = await ctx.db.transaction(async (trx) => {
+        const subscriptionsReturned = await trx
           .update(subscriptions)
           .set({
             name: input.name,
             description: input.description,
             image: input.image,
             price: input.price,
+            currency: input.currency,
             paymentMethod: input.paymentMethod,
             schedule: input.schedule,
           })
@@ -144,11 +188,11 @@ export const subscriptionRouter = createTRPCRouter({
           });
         }
 
-        await ctx.db
+        await trx
           .delete(usersToSubscriptions)
           .where(eq(usersToSubscriptions.subscriptionId, input.id));
         for (const payedBy of input.payedBy) {
-          await ctx.db.insert(usersToSubscriptions).values({
+          await trx.insert(usersToSubscriptions).values({
             userId: payedBy,
             subscriptionId: subscription.id,
           });

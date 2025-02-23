@@ -15,6 +15,14 @@ CREATE TABLE `account` (
 );
 --> statement-breakpoint
 CREATE INDEX `account_user_id_idx` ON `account` (`user_id`);--> statement-breakpoint
+CREATE TABLE `exchange_rate` (
+	`base_currency` text(255) NOT NULL,
+	`target_currency` text(255) NOT NULL,
+	`rate` real NOT NULL,
+	PRIMARY KEY(`base_currency`, `target_currency`)
+);
+--> statement-breakpoint
+CREATE INDEX `exchange_rate_idx` ON `exchange_rate` (`base_currency`,`target_currency`);--> statement-breakpoint
 CREATE TABLE `payment_method` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text(256) NOT NULL,
@@ -35,7 +43,7 @@ CREATE TABLE `subscription` (
 	`name` text(256) NOT NULL,
 	`image` text(256),
 	`description` text(256) DEFAULT '' NOT NULL,
-	`price` integer DEFAULT 0 NOT NULL,
+	`price` real DEFAULT 0 NOT NULL,
 	`payment_method` integer NOT NULL,
 	`schedule` text(255) NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,

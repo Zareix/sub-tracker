@@ -13,7 +13,7 @@ import { type Session } from "next-auth";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { auth } from "~/server/auth";
+// import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 
 /**
@@ -56,10 +56,10 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   // Get the session from the server using the getServerSession wrapper function
   // @ts-expect-error Type is wrong, known bug in next-auth
-  const session = await auth({ req, res });
+  // const session = await auth({ req, res });
 
   return createInnerTRPCContext({
-    session,
+    // session,
   });
 };
 

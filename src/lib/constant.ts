@@ -27,3 +27,7 @@ export const filtersSchema = z
     users: null,
   });
 export type Filters = z.infer<typeof filtersSchema>;
+
+export const CURRENCIES = ["USD", "EUR", "GBP"] as const;
+export type Currency = (typeof CURRENCIES)[number];
+export const BASE_CURRENCY = "EUR";

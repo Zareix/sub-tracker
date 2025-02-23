@@ -1,5 +1,5 @@
 import { parseAsJson, parseAsStringEnum, useQueryState } from "nuqs";
-import { filtersSchema } from "~/lib/constant";
+import { BASE_CURRENCY, filtersSchema } from "~/lib/constant";
 import { api, type RouterOutputs } from "~/utils/api";
 import { Button } from "~/components/ui/button";
 import {
@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import {
+  CurrencyIcon,
   EditIcon,
   EllipsisVertical,
   RefreshCcwIcon,
@@ -26,7 +27,11 @@ import { toast } from "sonner";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import { Card, CardContent } from "~/components/ui/card";
 import { SORTS } from "~/lib/constant";
-import { getFilteredSubscriptions, getSortedSubscriptions } from "~/lib/utils";
+import {
+  currencyToSymbol,
+  getFilteredSubscriptions,
+  getSortedSubscriptions,
+} from "~/lib/utils";
 import Image from "next/image";
 import { EditSubscriptionDialog } from "~/components/subscriptions/edit";
 import {
@@ -100,14 +105,14 @@ const SubscriptionListItem = ({
               <h2 className="flex-grow text-xl font-semibold">
                 {subscription.name}
               </h2>
-              <div className="hidden items-center gap-1 text-muted-foreground md:flex">
+              {/* <div className="hidden items-center gap-1 text-muted-foreground md:flex">
                 <UserIcon size={18} />
                 <span>{subscription.users.map((u) => u.name).join(", ")}</span>
               </div>
               <p className="hidden items-center gap-1 text-muted-foreground md:flex">
                 <RefreshCcwIcon size={16} />
                 {subscription.schedule}
-              </p>
+              </p> */}
               <p className="text-lg">{subscription.price}€</p>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -149,18 +154,26 @@ const SubscriptionListItem = ({
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="grid grid-cols-2 gap-1 text-base">
-              <div className="flex items-center gap-2 md:hidden">
-                <UserIcon size={18} />
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-base text-foreground/80">
+              <div className="flex items-center gap-1">
+                <UserIcon size={18} className="text-primary" />
                 <span>{subscription.users.map((u) => u.name).join(", ")}</span>
               </div>
-              <div className="flex items-center gap-2 md:hidden">
-                <RefreshCcwIcon size={16} />
+              <div className="flex items-center gap-1">
+                <RefreshCcwIcon size={16} className="text-primary" />
                 {subscription.schedule}
               </div>
+              {subscription.currency !== BASE_CURRENCY && (
+                <div className="flex items-center gap-0.5">
+                  <span className="text-primary">
+                    {currencyToSymbol(subscription.currency)}
+                  </span>
+                  {subscription.originalPrice}
+                </div>
+              )}
               {subscription.description.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <TextIcon size={20} />
+                <div className="flex items-center gap-1">
+                  <TextIcon size={20} className="text-primary" />
                   <span>{subscription.description}</span>
                 </div>
               )}

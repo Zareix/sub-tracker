@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { Filters, Sort } from "~/lib/constant";
+import type { Currency, Filters, Sort } from "~/lib/constant";
 import type { PaymentMethod, Subscription, User } from "~/server/db/schema";
 
 export function cn(...inputs: ClassValue[]) {
@@ -70,4 +70,17 @@ export const getFilteredSubscriptions = <
 
 export const rounded = (val: number, precision = 2) => {
   return Math.round(val * Math.pow(10, precision)) / Math.pow(10, precision);
+};
+
+export const currencyToSymbol = (currency: string) => {
+  switch (currency) {
+    case "EUR":
+      return "€";
+    case "GBP":
+      return "£";
+    case "USD":
+      return "$";
+    default:
+      return "€";
+  }
 };

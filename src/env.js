@@ -16,6 +16,7 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     UPLOADS_FOLDER: z.string(),
+    FIXER_API_KEY: z.string(),
   },
 
   /**
@@ -36,6 +37,7 @@ export const env = createEnv({
     DATABASE_PATH: process.env.DATABASE_PATH,
     NODE_ENV: process.env.NODE_ENV,
     UPLOADS_FOLDER: process.env.UPLOADS_FOLDER,
+    FIXER_API_KEY: process.env.FIXER_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

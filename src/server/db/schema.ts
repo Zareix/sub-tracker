@@ -3,10 +3,26 @@ import {
   index,
   int,
   primaryKey,
+  real,
   sqliteTable,
   text,
 } from "drizzle-orm/sqlite-core";
 import type { AdapterAccount } from "next-auth/adapters";
+
+export const exchangeRates = sqliteTable(
+  "exchange_rate",
+  {
+    baseCurrency: text("base_currency", { length: 255 }).notNull(),
+    targetCurrency: text("target_currency", { length: 255 }).notNull(),
+    rate: real("rate").notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.baseCurrency, table.targetCurrency] }),
+    index("exchange_rate_idx").on(table.baseCurrency, table.targetCurrency),
+  ],
+);
+
+export type ExchangeRate = typeof exchangeRates.$inferSelect;
 
 export const paymentMethods = sqliteTable(
   "payment_method",
@@ -34,7 +50,8 @@ export const subscriptions = sqliteTable(
     name: text("name", { length: 256 }).notNull(),
     image: text("image", { length: 256 }),
     description: text("description", { length: 256 }).notNull().default(""),
-    price: int("price", { mode: "number" }).notNull().default(0),
+    price: real("price").notNull().default(0),
+    currency: text("currency", { length: 255 }).notNull().default("EUR"),
     paymentMethod: int("payment_method", { mode: "number" })
       .notNull()
       .references(() => paymentMethods.id),

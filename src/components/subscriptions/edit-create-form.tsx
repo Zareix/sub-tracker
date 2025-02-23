@@ -22,7 +22,12 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { MultiSelect } from "~/components/ui/multi-select";
-import { type Schedule, SCHEDULES } from "~/lib/constant";
+import {
+  CURRENCIES,
+  type Currency,
+  type Schedule,
+  SCHEDULES,
+} from "~/lib/constant";
 import { preprocessStringToNumber } from "~/lib/utils";
 import { ImageFileUploader } from "~/components/image-uploader";
 
@@ -31,6 +36,7 @@ const subscriptionCreateSchema = z.object({
   description: z.string(),
   image: z.string().optional(),
   price: z.preprocess(preprocessStringToNumber, z.number().min(0)),
+  currency: z.enum(CURRENCIES),
   paymentMethod: z.preprocess(preprocessStringToNumber, z.number()),
   schedule: z.enum(SCHEDULES),
   payedBy: z.array(z.string()),
@@ -79,6 +85,7 @@ export const EditCreateForm = ({
       name: subscription?.name ?? "",
       description: subscription?.description ?? "",
       price: subscription?.price ?? 0,
+      currency: (subscription?.currency as Currency) ?? "EUR",
       paymentMethod: subscription?.paymentMethod.id,
       schedule: (subscription?.schedule as Schedule) ?? "Monthly",
       payedBy: subscription?.users.map((u) => u.id) ?? [],
@@ -143,19 +150,50 @@ export const EditCreateForm = ({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price</FormLabel>
-                  <FormControl>
-                    <Input placeholder="10" type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex items-center gap-2">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem className="flex-grow">
+                    <FormLabel>Price</FormLabel>
+                    <FormControl>
+                      <Input placeholder="10" type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="currency"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Currency</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {CURRENCIES.map((s) => (
+                            <SelectItem value={s} key={s}>
+                              {s}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="payedBy"
@@ -179,64 +217,66 @@ export const EditCreateForm = ({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="paymentMethod"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Payment Method</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value?.toString()}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a payment method" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {paymentMethodsQuery.data?.map((p) => (
-                          <SelectItem value={p.id.toString()} key={p.id}>
-                            {p.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="schedule"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Schedule</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a schedule" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {SCHEDULES.map((s) => (
-                          <SelectItem value={s} key={s}>
-                            {s}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-2">
+              <FormField
+                control={form.control}
+                name="paymentMethod"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Payment Method</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value?.toString()}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a payment method" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {paymentMethodsQuery.data?.map((p) => (
+                            <SelectItem value={p.id.toString()} key={p.id}>
+                              {p.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="schedule"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Schedule</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a schedule" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {SCHEDULES.map((s) => (
+                            <SelectItem value={s} key={s}>
+                              {s}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <DialogFooter>
               <Button type="submit">Submit</Button>
             </DialogFooter>

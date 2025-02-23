@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "6f0718f0-46f7-4557-8cdc-d34c618d36b7",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "487c7241-21b2-444c-8141-ff8e37e46490",
+  "prevId": "6f0718f0-46f7-4557-8cdc-d34c618d36b7",
   "tables": {
     "account": {
       "name": "account",
@@ -277,6 +277,14 @@
           "notNull": true,
           "autoincrement": false,
           "default": 0
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'EUR'"
         },
         "payment_method": {
           "name": "payment_method",
