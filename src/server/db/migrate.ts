@@ -6,8 +6,8 @@ import { drizzle } from "drizzle-orm/bun-sqlite";
 import { env } from "~/env";
 
 if (!(await Bun.file(env.DATABASE_PATH).exists())) {
-	console.log("Database file created");
-	await writeFile(env.DATABASE_PATH, "");
+  console.log("Database file created");
+  await writeFile(env.DATABASE_PATH, "");
 }
 
 console.log("Migrating database...");

@@ -26,13 +26,15 @@ import { toast } from "sonner";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import { Card, CardContent } from "~/components/ui/card";
 import { SORTS } from "~/lib/constant";
-import {
-  cn,
-  getFilteredSubscriptions,
-  getSortedSubscriptions,
-} from "~/lib/utils";
+import { getFilteredSubscriptions, getSortedSubscriptions } from "~/lib/utils";
 import Image from "next/image";
 import { EditSubscriptionDialog } from "~/components/subscriptions/edit";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "~/components/ui/accordion";
 
 type Props = {
   subscriptions: RouterOutputs["subscription"]["getAll"];
@@ -59,12 +61,14 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 
   return (
     <>
-      {subs.map((subscription) => (
-        <SubscriptionListItem
-          key={subscription.id}
-          subscription={subscription}
-        />
-      ))}
+      <Accordion type="single" collapsible>
+        {subs.map((subscription) => (
+          <SubscriptionListItem
+            key={subscription.id}
+            subscription={subscription}
+          />
+        ))}
+      </Accordion>
     </>
   );
 };
@@ -75,98 +79,92 @@ const SubscriptionListItem = ({
   subscription: RouterOutputs["subscription"]["getAll"][number];
 }) => {
   const [isOpen, setIsOpen] = useState({
-    details: false,
     delete: false,
     edit: false,
   });
   return (
     <Card key={subscription.id} className="mt-3">
-      <CardContent
-        onClick={() =>
-          setIsOpen((v) => ({
-            ...v,
-            details: !v.details,
-          }))
-        }
-      >
-        <div className="flex items-center gap-2">
-          <div>
-            {subscription.image && (
-              <Image
-                src={subscription.image}
-                alt={subscription.name}
-                width={64}
-                height={40}
-                className="max-h-[40px] object-contain"
-              />
-            )}
-          </div>
-          <h2 className="flex-grow text-xl font-semibold">
-            {subscription.name}
-          </h2>
-          <div className="hidden items-center gap-1 text-muted-foreground md:flex">
-            <UserIcon size={18} />
-            <span>{subscription.users.map((u) => u.name).join(", ")}</span>
-          </div>
-          <p className="hidden items-center gap-1 text-muted-foreground md:flex">
-            <RefreshCcwIcon size={16} />
-            {subscription.schedule}
-          </p>
-          <p className="text-lg">{subscription.price}€</p>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="ghost">
-                <EllipsisVertical size={24} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuItem
-                className="text-destructive"
-                onClick={() =>
-                  setIsOpen({
-                    ...isOpen,
-                    delete: true,
-                  })
-                }
-              >
-                <TrashIcon />
-                <span>Delete</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setIsOpen({ ...isOpen, edit: true })}
-              >
-                <EditIcon />
-                <span>Edit</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DeleteDialog
-            subscription={subscription}
-            isOpen={isOpen.delete}
-            setIsOpen={() => setIsOpen({ ...isOpen, delete: false })}
-          />
-          <EditSubscriptionDialog
-            subscription={subscription}
-            isOpen={isOpen.edit}
-            setIsOpen={() => setIsOpen({ ...isOpen, edit: false })}
-          />
-        </div>
-        {isOpen.details && (
-          <div className="grid grid-cols-2 gap-1 text-base">
-            <div className="flex items-center gap-2 md:hidden">
-              <UserIcon size={18} />
-              <span>{subscription.users.map((u) => u.name).join(", ")}</span>
-            </div>
-            <div className="flex items-center gap-2 md:hidden">
-              <RefreshCcwIcon size={16} />
-              {subscription.schedule}
-            </div>
+      <CardContent>
+        <AccordionItem value={subscription.id.toString()}>
+          <AccordionTrigger asChild>
             <div className="flex items-center gap-2">
-              <TextIcon size={20} />
-              <span>{subscription.description}</span>
+              {subscription.image && (
+                <Image
+                  src={subscription.image}
+                  alt={subscription.name}
+                  width={64}
+                  height={40}
+                  className="max-h-[40px] object-contain"
+                />
+              )}
+              <h2 className="flex-grow text-xl font-semibold">
+                {subscription.name}
+              </h2>
+              <div className="hidden items-center gap-1 text-muted-foreground md:flex">
+                <UserIcon size={18} />
+                <span>{subscription.users.map((u) => u.name).join(", ")}</span>
+              </div>
+              <p className="hidden items-center gap-1 text-muted-foreground md:flex">
+                <RefreshCcwIcon size={16} />
+                {subscription.schedule}
+              </p>
+              <p className="text-lg">{subscription.price}€</p>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" variant="ghost">
+                    <EllipsisVertical size={24} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={() =>
+                      setIsOpen({
+                        ...isOpen,
+                        delete: true,
+                      })
+                    }
+                  >
+                    <TrashIcon />
+                    <span>Delete</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setIsOpen({ ...isOpen, edit: true })}
+                  >
+                    <EditIcon />
+                    <span>Edit</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <DeleteDialog
+                subscription={subscription}
+                isOpen={isOpen.delete}
+                setIsOpen={() => setIsOpen({ ...isOpen, delete: false })}
+              />
+              <EditSubscriptionDialog
+                subscription={subscription}
+                isOpen={isOpen.edit}
+                setIsOpen={() => setIsOpen({ ...isOpen, edit: false })}
+              />
             </div>
-          </div>
-        )}
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="mt-2 grid grid-cols-2 gap-1 text-base">
+              <div className="flex items-center gap-2 md:hidden">
+                <UserIcon size={18} />
+                <span>{subscription.users.map((u) => u.name).join(", ")}</span>
+              </div>
+              <div className="flex items-center gap-2 md:hidden">
+                <RefreshCcwIcon size={16} />
+                {subscription.schedule}
+              </div>
+              <div className="flex items-center gap-2">
+                <TextIcon size={20} />
+                <span>{subscription.description}</span>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
       </CardContent>
     </Card>
   );

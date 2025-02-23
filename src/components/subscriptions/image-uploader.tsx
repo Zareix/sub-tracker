@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { Input } from "~/components/ui/input";
 import imageCompression, { type Options } from "browser-image-compression";
-import { ImageIcon, LoaderCircleIcon, UploadIcon } from "lucide-react";
+import { ImageIcon, LoaderCircleIcon } from "lucide-react";
 import Image from "next/image";
 
 const options: Options = {

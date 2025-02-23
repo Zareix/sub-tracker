@@ -7,7 +7,6 @@ import {
   text,
 } from "drizzle-orm/sqlite-core";
 import type { AdapterAccount } from "next-auth/adapters";
-import { SCHEDULES } from "~/lib/constant";
 
 export const paymentMethods = sqliteTable(
   "payment_method",

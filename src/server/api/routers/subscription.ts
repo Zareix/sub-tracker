@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -27,6 +27,7 @@ export const subscriptionRouter = createTRPCRouter({
         paymentMethods,
         eq(subscriptions.paymentMethod, paymentMethods.id),
       )
+      .orderBy(asc(subscriptions.name))
       .all();
 
     return rows.reduce<

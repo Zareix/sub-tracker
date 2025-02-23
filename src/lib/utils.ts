@@ -25,12 +25,6 @@ export const getSortedSubscriptions = <
   subscriptions: T,
   sort: Sort | null,
 ): NoInfer<T> => {
-  if (sort === "NAME_ASC") {
-    return subscriptions.sort((a, b) => a.name.localeCompare(b.name));
-  }
-  if (sort === "NAME_DESC") {
-    return subscriptions.sort((a, b) => b.name.localeCompare(a.name));
-  }
   if (sort === "PRICE_DESC") {
     return subscriptions.sort((a, b) => b.price - a.price);
   }

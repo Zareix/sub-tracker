@@ -12,14 +12,6 @@ export const SORTS = [
     label: "Price: High to Low",
     key: "PRICE_DESC",
   },
-  {
-    label: "Name: A to Z",
-    key: "NAME_ASC",
-  },
-  {
-    label: "Name: Z to A",
-    key: "NAME_DESC",
-  },
 ] as const;
 export type Sort = (typeof SORTS)[number]["key"];
 

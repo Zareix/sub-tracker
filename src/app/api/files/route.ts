@@ -24,8 +24,7 @@ export async function POST(req: Request) {
       { url: `/api/files?filename=${newFileName}` },
       { status: 200 },
     );
-  } catch (error) {
-    console.error(error);
+  } catch {
     return NextResponse.json(
       { error: "Error uploading file" },
       { status: 500 },
@@ -64,7 +63,7 @@ export async function GET(request: NextRequest) {
         "Content-Disposition": `attachment; filename="${filename}"`,
       },
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "File not found" }, { status: 404 });
   }
 }
