@@ -12,11 +12,10 @@ export const paymentMethods = sqliteTable(
   "payment_method",
   {
     id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    name: text("name", { length: 256 }),
+    name: text("name", { length: 256 }).notNull(),
+    image: text("image", { length: 256 }),
   },
-  (example) => ({
-    nameIndex: index("payement_method_name_idx").on(example.name),
-  }),
+  (table) => [index("payement_method_name_idx").on(table.name)],
 );
 
 export const paymentMethodsRelations = relations(
@@ -47,9 +46,7 @@ export const subscriptions = sqliteTable(
       () => new Date(),
     ),
   },
-  (example) => ({
-    nameIndex: index("subscription_name_idx").on(example.name),
-  }),
+  (table) => [index("subscription_name_idx").on(table.name)],
 );
 
 export const subscriptionsRelations = relations(
@@ -65,20 +62,14 @@ export const subscriptionsRelations = relations(
 
 export type Subscription = typeof subscriptions.$inferSelect;
 
-export const usersToSubscriptions = sqliteTable(
-  "users_to_subscriptions",
-  {
-    userId: text("user_id")
-      .notNull()
-      .references(() => users.id),
-    subscriptionId: int("subscription_id")
-      .notNull()
-      .references(() => subscriptions.id),
-  },
-  (t) => ({
-    primaryKey: primaryKey({ columns: [t.userId, t.subscriptionId] }),
-  }),
-);
+export const usersToSubscriptions = sqliteTable("users_to_subscriptions", {
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  subscriptionId: int("subscription_id")
+    .notNull()
+    .references(() => subscriptions.id),
+});
 
 export const usersToSubscriptionsRelations = relations(
   usersToSubscriptions,
@@ -94,18 +85,22 @@ export const usersToSubscriptionsRelations = relations(
   }),
 );
 
-export const users = sqliteTable("user", {
-  id: text("id", { length: 255 })
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  name: text("name", { length: 255 }).notNull(),
-  email: text("email", { length: 255 }).notNull(),
-  emailVerified: int("email_verified", {
-    mode: "timestamp",
-  }).default(sql`(unixepoch())`),
-  image: text("image", { length: 255 }),
-});
+export const users = sqliteTable(
+  "user",
+  {
+    id: text("id", { length: 255 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: text("name", { length: 255 }).notNull(),
+    email: text("email", { length: 255 }).notNull(),
+    emailVerified: int("email_verified", {
+      mode: "timestamp",
+    }).default(sql`(unixepoch())`),
+    image: text("image", { length: 255 }),
+  },
+  (table) => [index("user_name_idx").on(table.name)],
+);
 
 export type User = typeof users.$inferSelect;
 
@@ -135,12 +130,12 @@ export const accounts = sqliteTable(
     id_token: text("id_token"),
     session_state: text("session_state", { length: 255 }),
   },
-  (account) => ({
-    compoundKey: primaryKey({
+  (account) => [
+    primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-    userIdIdx: index("account_user_id_idx").on(account.userId),
-  }),
+    index("account_user_id_idx").on(account.userId),
+  ],
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -156,9 +151,7 @@ export const sessions = sqliteTable(
       .references(() => users.id),
     expires: int("expires", { mode: "timestamp" }).notNull(),
   },
-  (session) => ({
-    userIdIdx: index("session_userId_idx").on(session.userId),
-  }),
+  (session) => [index("session_userId_idx").on(session.userId)],
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -172,7 +165,5 @@ export const verificationTokens = sqliteTable(
     token: text("token", { length: 255 }).notNull(),
     expires: int("expires", { mode: "timestamp" }).notNull(),
   },
-  (vt) => ({
-    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  }),
+  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
 );

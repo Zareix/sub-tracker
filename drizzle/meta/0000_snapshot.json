@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "1a800f46-9d7d-40f9-be1f-e2140a239c78",
+  "id": "465377b6-1d7f-4f5d-8969-9b8291c0d041",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -109,7 +109,8 @@
           "name": "account_provider_provider_account_id_pk"
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "payment_method": {
       "name": "payment_method",
@@ -125,6 +126,13 @@
           "name": "name",
           "type": "text(256)",
           "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text(256)",
+          "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         }
@@ -138,7 +146,8 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "session": {
       "name": "session",
@@ -184,7 +193,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "subscription": {
       "name": "subscription",
@@ -201,6 +211,13 @@
           "type": "text(256)",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "description": {
@@ -221,7 +238,7 @@
         },
         "payment_method": {
           "name": "payment_method",
-          "type": "text(255)",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -268,7 +285,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "user": {
       "name": "user",
@@ -310,10 +328,17 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "user_name_idx": {
+          "name": "user_name_idx",
+          "columns": ["name"],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "users_to_subscriptions": {
       "name": "users_to_subscriptions",
@@ -354,13 +379,9 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "users_to_subscriptions_user_id_subscription_id_pk": {
-          "columns": ["user_id", "subscription_id"],
-          "name": "users_to_subscriptions_user_id_subscription_id_pk"
-        }
-      },
-      "uniqueConstraints": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "verification_token": {
       "name": "verification_token",
@@ -395,9 +416,11 @@
           "name": "verification_token_identifier_token_pk"
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
+  "views": {},
   "enums": {},
   "_meta": {
     "schemas": {},
