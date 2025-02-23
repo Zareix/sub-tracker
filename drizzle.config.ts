@@ -6,7 +6,6 @@ export default {
   schema: "./src/server/db/schema.ts",
   dialect: "sqlite",
   dbCredentials: {
-    url: env.DATABASE_URL,
+    url: "file:" + env.DATABASE_PATH,
   },
-  tablesFilter: ["sub-tracker_*"],
 } satisfies Config;

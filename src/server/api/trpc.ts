@@ -55,10 +55,10 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
   // Get the session from the server using the getServerSession wrapper function
-  const session = await auth(req, res);
+  // const session = await auth(req, res);
 
   return createInnerTRPCContext({
-    session,
+    // session,
   });
 };
 
