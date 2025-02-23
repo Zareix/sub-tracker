@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { Currency, Filters, Sort } from "~/lib/constant";
+import type { Filters, Sort } from "~/lib/constant";
 import type { PaymentMethod, Subscription, User } from "~/server/db/schema";
 
 export function cn(...inputs: ClassValue[]) {

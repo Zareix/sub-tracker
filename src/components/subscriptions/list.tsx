@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import {
-  CurrencyIcon,
   EditIcon,
   EllipsisVertical,
   RefreshCcwIcon,
@@ -105,14 +104,6 @@ const SubscriptionListItem = ({
               <h2 className="flex-grow text-xl font-semibold">
                 {subscription.name}
               </h2>
-              {/* <div className="hidden items-center gap-1 text-muted-foreground md:flex">
-                <UserIcon size={18} />
-                <span>{subscription.users.map((u) => u.name).join(", ")}</span>
-              </div>
-              <p className="hidden items-center gap-1 text-muted-foreground md:flex">
-                <RefreshCcwIcon size={16} />
-                {subscription.schedule}
-              </p> */}
               <p className="text-lg">{subscription.price}€</p>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
