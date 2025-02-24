@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "6f0718f0-46f7-4557-8cdc-d34c618d36b7",
+  "id": "430fc245-e9aa-4557-a504-eec80c7217d6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -88,7 +88,9 @@
       "indexes": {
         "account_user_id_idx": {
           "name": "account_user_id_idx",
-          "columns": ["user_id"],
+          "columns": [
+            "user_id"
+          ],
           "isUnique": false
         }
       },
@@ -97,15 +99,22 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "account_provider_provider_account_id_pk": {
-          "columns": ["provider", "provider_account_id"],
+          "columns": [
+            "provider",
+            "provider_account_id"
+          ],
           "name": "account_provider_provider_account_id_pk"
         }
       },
@@ -140,14 +149,20 @@
       "indexes": {
         "exchange_rate_idx": {
           "name": "exchange_rate_idx",
-          "columns": ["base_currency", "target_currency"],
+          "columns": [
+            "base_currency",
+            "target_currency"
+          ],
           "isUnique": false
         }
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "exchange_rate_base_currency_target_currency_pk": {
-          "columns": ["base_currency", "target_currency"],
+          "columns": [
+            "base_currency",
+            "target_currency"
+          ],
           "name": "exchange_rate_base_currency_target_currency_pk"
         }
       },
@@ -182,7 +197,9 @@
       "indexes": {
         "payement_method_name_idx": {
           "name": "payement_method_name_idx",
-          "columns": ["name"],
+          "columns": [
+            "name"
+          ],
           "isUnique": false
         }
       },
@@ -219,7 +236,9 @@
       "indexes": {
         "session_userId_idx": {
           "name": "session_userId_idx",
-          "columns": ["userId"],
+          "columns": [
+            "userId"
+          ],
           "isUnique": false
         }
       },
@@ -228,8 +247,12 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -278,6 +301,14 @@
           "autoincrement": false,
           "default": 0
         },
+        "currency": {
+          "name": "currency",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'EUR'"
+        },
         "payment_method": {
           "name": "payment_method",
           "type": "integer",
@@ -291,6 +322,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "first_payment_date": {
+          "name": "first_payment_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         },
         "created_at": {
           "name": "created_at",
@@ -311,7 +350,9 @@
       "indexes": {
         "subscription_name_idx": {
           "name": "subscription_name_idx",
-          "columns": ["name"],
+          "columns": [
+            "name"
+          ],
           "isUnique": false
         }
       },
@@ -320,8 +361,12 @@
           "name": "subscription_payment_method_payment_method_id_fk",
           "tableFrom": "subscription",
           "tableTo": "payment_method",
-          "columnsFrom": ["payment_method"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "payment_method"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -373,7 +418,9 @@
       "indexes": {
         "user_name_idx": {
           "name": "user_name_idx",
-          "columns": ["name"],
+          "columns": [
+            "name"
+          ],
           "isUnique": false
         }
       },
@@ -406,8 +453,12 @@
           "name": "users_to_subscriptions_user_id_user_id_fk",
           "tableFrom": "users_to_subscriptions",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -415,8 +466,12 @@
           "name": "users_to_subscriptions_subscription_id_subscription_id_fk",
           "tableFrom": "users_to_subscriptions",
           "tableTo": "subscription",
-          "columnsFrom": ["subscription_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "subscription_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -454,7 +509,10 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "verification_token_identifier_token_pk": {
-          "columns": ["identifier", "token"],
+          "columns": [
+            "identifier",
+            "token"
+          ],
           "name": "verification_token_identifier_token_pk"
         }
       },

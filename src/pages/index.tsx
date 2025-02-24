@@ -3,6 +3,16 @@ import { FiltersButton } from "~/components/subscriptions/filters";
 import { SubscriptionList } from "~/components/subscriptions/list";
 import { SortButton } from "~/components/subscriptions/sort";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
+import { Button } from "~/components/ui/button";
+import { cn } from "~/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { Calendar } from "~/components/ui/calendar";
 
 export default function Home() {
   const subscriptionsQuery = api.subscription.getAll.useQuery();

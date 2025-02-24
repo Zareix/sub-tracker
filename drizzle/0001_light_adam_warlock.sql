@@ -1,1 +1,0 @@
-ALTER TABLE `subscription` ADD `currency` text(255) DEFAULT 'EUR' NOT NULL;

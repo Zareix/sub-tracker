@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { addMonths, addYears } from "date-fns";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { BASE_CURRENCY, CURRENCIES, type Currency } from "~/lib/constant";
@@ -36,6 +37,54 @@ const convertToDefaultCurrency = (
   }
 
   return price * exchangeRate;
+};
+
+const calculateNextPaymentDate = (
+  schedule: Subscription["schedule"],
+  firstPaymentDate: Subscription["firstPaymentDate"],
+) => {
+  const firstPaymentDateDetails = {
+    base: firstPaymentDate,
+    year: firstPaymentDate.getFullYear(),
+    month: firstPaymentDate.getMonth(),
+    day: firstPaymentDate.getDate(),
+  };
+  const currentDateInfo = {
+    base: new Date(),
+    year: new Date().getFullYear(),
+    month: new Date().getMonth(),
+    day: new Date().getDate(),
+  };
+
+  if (firstPaymentDateDetails.base > currentDateInfo.base) {
+    return firstPaymentDate;
+  }
+
+  if (schedule === "Monthly") {
+    const res = new Date(
+      currentDateInfo.year,
+      currentDateInfo.month,
+      firstPaymentDateDetails.day,
+    );
+    if (res > currentDateInfo.base) {
+      return res;
+    }
+    return addMonths(firstPaymentDate, 1);
+  }
+
+  if (schedule === "Yearly") {
+    const res = new Date(
+      currentDateInfo.year,
+      firstPaymentDateDetails.month,
+      firstPaymentDateDetails.day,
+    );
+    if (res > currentDateInfo.base) {
+      return res;
+    }
+    return addYears(res, 1);
+  }
+
+  return new Date();
 };
 
 export const subscriptionRouter = createTRPCRouter({
@@ -97,6 +146,10 @@ export const subscriptionRouter = createTRPCRouter({
             BASE_CURRENCY,
           ),
         ),
+        nextPaymentDate: calculateNextPaymentDate(
+          subscription.schedule,
+          subscription.firstPaymentDate,
+        ),
       }));
   }),
   create: publicProcedure
@@ -108,6 +161,7 @@ export const subscriptionRouter = createTRPCRouter({
         price: z.number(),
         currency: z.enum(CURRENCIES),
         paymentMethod: z.number(),
+        firstPaymentDate: z.date(),
         schedule: z.string(),
         payedBy: z.array(z.string()),
       }),
@@ -123,6 +177,7 @@ export const subscriptionRouter = createTRPCRouter({
             price: input.price,
             currency: input.currency,
             paymentMethod: input.paymentMethod,
+            firstPaymentDate: input.firstPaymentDate,
             schedule: input.schedule,
           })
           .returning({
@@ -158,6 +213,7 @@ export const subscriptionRouter = createTRPCRouter({
         price: z.number(),
         currency: z.enum(CURRENCIES),
         paymentMethod: z.number(),
+        firstPaymentDate: z.date(),
         schedule: z.string(),
         payedBy: z.array(z.string()),
       }),
@@ -173,6 +229,7 @@ export const subscriptionRouter = createTRPCRouter({
             price: input.price,
             currency: input.currency,
             paymentMethod: input.paymentMethod,
+            firstPaymentDate: input.firstPaymentDate,
             schedule: input.schedule,
           })
           .where(eq(subscriptions.id, input.id))

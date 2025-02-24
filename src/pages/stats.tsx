@@ -5,6 +5,7 @@ import { getFilteredSubscriptions, rounded } from "~/lib/utils";
 import { parseAsJson, useQueryState } from "nuqs";
 import { filtersSchema } from "~/lib/constant";
 import { Skeleton } from "~/components/ui/skeleton";
+import Head from "next/head";
 
 export default function Stats() {
   const [filters] = useQueryState("filters", {
@@ -53,34 +54,39 @@ export default function Stats() {
   const totalPerYear = totalMonthlySub * 12 + totalYearlySub;
 
   return (
-    <div>
-      <header className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Stats</h1>
-        <FiltersButton filtersDisplayed={["users", "paymentMethodId"]} />
-      </header>
-      <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-4">
-        <StatsCard
-          title="Total monthly sub"
-          value={totalMonthlySub}
-          isLoading={subscriptionsQuery.isLoading}
-        />
-        <StatsCard
-          title="Total yearly sub"
-          value={totalYearlySub}
-          isLoading={subscriptionsQuery.isLoading}
-        />
-        <StatsCard
-          title="Total per month"
-          value={totalPerMonth}
-          isLoading={subscriptionsQuery.isLoading}
-        />
-        <StatsCard
-          title="Total per year"
-          value={totalPerYear}
-          isLoading={subscriptionsQuery.isLoading}
-        />
+    <>
+      <Head>
+        <title>Sub Tracker - Stats</title>
+      </Head>
+      <div>
+        <header className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold">Stats</h1>
+          <FiltersButton filtersDisplayed={["users", "paymentMethodId"]} />
+        </header>
+        <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-4">
+          <StatsCard
+            title="Total monthly sub"
+            value={totalMonthlySub}
+            isLoading={subscriptionsQuery.isLoading}
+          />
+          <StatsCard
+            title="Total yearly sub"
+            value={totalYearlySub}
+            isLoading={subscriptionsQuery.isLoading}
+          />
+          <StatsCard
+            title="Total per month"
+            value={totalPerMonth}
+            isLoading={subscriptionsQuery.isLoading}
+          />
+          <StatsCard
+            title="Total per year"
+            value={totalPerYear}
+            isLoading={subscriptionsQuery.isLoading}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

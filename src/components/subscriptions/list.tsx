@@ -9,6 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import {
+  Calendar1Icon,
+  CalendarIcon,
   EditIcon,
   EllipsisVertical,
   RefreshCcwIcon,
@@ -39,6 +41,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
+import { format } from "date-fns";
 
 type Props = {
   subscriptions: RouterOutputs["subscription"]["getAll"];
@@ -98,20 +101,33 @@ const SubscriptionListItem = ({
                   alt={subscription.name}
                   width={64}
                   height={40}
-                  className="max-h-[40px] object-contain"
+                  className="max-h-[40px] max-w-[40px] object-contain md:max-w-[64px]"
                 />
               )}
               <h2 className="flex-grow text-xl font-semibold">
                 {subscription.name}
               </h2>
-              <p className="text-lg">{subscription.price}€</p>
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <Calendar1Icon size={16} />
+                {format(
+                  subscription.nextPaymentDate,
+                  subscription.nextPaymentDate.getFullYear() ===
+                    new Date().getFullYear()
+                    ? "dd/MM"
+                    : "dd/MM/yyyy",
+                )}
+              </div>
+              <div className="text-lg">{subscription.price}€</div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="icon" variant="ghost">
+                  <Button size="icon" variant="ghost" className="w-4 md:w-10">
                     <EllipsisVertical size={24} />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
+                <DropdownMenuContent
+                  className="mr-2 w-56"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <DropdownMenuItem
                     className="text-destructive"
                     onClick={() =>

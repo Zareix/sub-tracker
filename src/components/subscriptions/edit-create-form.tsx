@@ -28,8 +28,17 @@ import {
   type Schedule,
   SCHEDULES,
 } from "~/lib/constant";
-import { preprocessStringToNumber } from "~/lib/utils";
+import { cn, preprocessStringToNumber } from "~/lib/utils";
 import { ImageFileUploader } from "~/components/image-uploader";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { Calendar } from "~/components/ui/calendar";
+import { Separator } from "~/components/ui/separator";
 
 const subscriptionCreateSchema = z.object({
   name: z.string(),
@@ -38,6 +47,7 @@ const subscriptionCreateSchema = z.object({
   price: z.preprocess(preprocessStringToNumber, z.number().min(0)),
   currency: z.enum(CURRENCIES),
   paymentMethod: z.preprocess(preprocessStringToNumber, z.number()),
+  firstPaymentDate: z.date(),
   schedule: z.enum(SCHEDULES),
   payedBy: z.array(z.string()),
 });
@@ -88,6 +98,7 @@ export const EditCreateForm = ({
       currency: (subscription?.currency as Currency) ?? "EUR",
       paymentMethod: subscription?.paymentMethod.id,
       schedule: (subscription?.schedule as Schedule) ?? "Monthly",
+      firstPaymentDate: subscription?.firstPaymentDate,
       payedBy: subscription?.users.map((u) => u.id) ?? [],
     },
   });
@@ -150,7 +161,7 @@ export const EditCreateForm = ({
                 </FormItem>
               )}
             />
-            <div className="flex items-center gap-2">
+            <div className="flex gap-2">
               <FormField
                 control={form.control}
                 name="price"
@@ -193,12 +204,42 @@ export const EditCreateForm = ({
                   </FormItem>
                 )}
               />
+              <Separator orientation="vertical" className="my-auto flex h-12" />
+              <FormField
+                control={form.control}
+                name="paymentMethod"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Payment Method</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value?.toString()}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="min-w-[170px]">
+                            <SelectValue placeholder="Select payment method" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {paymentMethodsQuery.data?.map((p) => (
+                            <SelectItem value={p.id.toString()} key={p.id}>
+                              {p.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <FormField
               control={form.control}
               name="payedBy"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex-grow">
                   <FormLabel>Payed By</FormLabel>
                   <FormControl>
                     <MultiSelect
@@ -217,41 +258,12 @@ export const EditCreateForm = ({
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-2 gap-2">
-              <FormField
-                control={form.control}
-                name="paymentMethod"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Payment Method</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value?.toString()}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a payment method" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {paymentMethodsQuery.data?.map((p) => (
-                            <SelectItem value={p.id.toString()} key={p.id}>
-                              {p.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="flex gap-2">
               <FormField
                 control={form.control}
                 name="schedule"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="min-w-40">
                     <FormLabel>Schedule</FormLabel>
                     <FormControl>
                       <Select
@@ -271,6 +283,44 @@ export const EditCreateForm = ({
                           ))}
                         </SelectContent>
                       </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="firstPaymentDate"
+                render={({ field }) => (
+                  <FormItem className="flex-grow">
+                    <FormLabel>First Payment Date</FormLabel>
+                    <FormControl>
+                      <Popover modal>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground",
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="pointer-events-auto w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

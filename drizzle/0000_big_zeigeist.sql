@@ -44,8 +44,10 @@ CREATE TABLE `subscription` (
 	`image` text(256),
 	`description` text(256) DEFAULT '' NOT NULL,
 	`price` real DEFAULT 0 NOT NULL,
+	`currency` text(255) DEFAULT 'EUR' NOT NULL,
 	`payment_method` integer NOT NULL,
 	`schedule` text(255) NOT NULL,
+	`first_payment_date` integer DEFAULT (unixepoch()) NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updatedAt` integer,
 	FOREIGN KEY (`payment_method`) REFERENCES `payment_method`(`id`) ON UPDATE no action ON DELETE no action

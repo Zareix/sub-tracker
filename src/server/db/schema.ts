@@ -56,6 +56,9 @@ export const subscriptions = sqliteTable(
       .notNull()
       .references(() => paymentMethods.id),
     schedule: text("schedule", { length: 255 }).notNull(),
+    firstPaymentDate: int("first_payment_date", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
     createdAt: int("created_at", { mode: "timestamp" })
       .default(sql`(unixepoch())`)
       .notNull(),
