@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { AppSidebar } from "~/components/ui/app-sidebar";
+import { AppSidebar, Navbar } from "~/components/nav";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -11,10 +11,14 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       </Head>
       <SidebarProvider>
         <AppSidebar />
-        <main className="container mx-auto min-h-screen px-4 pt-8 xl:max-w-5xl">
-          <SidebarTrigger />
+        <main
+          className="container mx-auto min-h-screen bg-background px-4 pt-8 xl:max-w-5xl"
+          data-vaul-drawer-wrapper
+        >
+          <SidebarTrigger className="hidden md:block" />
           {children}
         </main>
+        <Navbar />
       </SidebarProvider>
     </>
   );

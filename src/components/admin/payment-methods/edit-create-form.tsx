@@ -1,11 +1,6 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
+import { DialogFooter } from "~/components/ui/dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -83,7 +78,7 @@ export const EditCreateForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8">
-        <div className="grid grid-cols-12">
+        <div className="grid grid-cols-12 gap-2">
           <ImageFileUploader
             setFileUrl={(v) => form.setValue("image", v)}
             fileUrl={form.watch("image")}
@@ -102,9 +97,9 @@ export const EditCreateForm = ({
             )}
           />
         </div>
-        <Button type="submit" className="ml-auto">
-          Submit
-        </Button>
+        <DialogFooter>
+          <Button type="submit">Submit</Button>
+        </DialogFooter>
       </form>
     </Form>
   );

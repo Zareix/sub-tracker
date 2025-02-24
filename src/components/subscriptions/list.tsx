@@ -10,7 +10,6 @@ import {
 } from "~/components/ui/dropdown-menu";
 import {
   Calendar1Icon,
-  CalendarIcon,
   EditIcon,
   EllipsisVertical,
   RefreshCcwIcon,

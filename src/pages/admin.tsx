@@ -54,7 +54,7 @@ export default function Home() {
       <Head>
         <title>Sub Tracker - Admin</title>
       </Head>
-      <div className="grid items-start gap-1">
+      <div className="grid items-start gap-4">
         <section>
           <header className="flex items-center justify-between">
             <h1 className="text-3xl font-bold">Users</h1>

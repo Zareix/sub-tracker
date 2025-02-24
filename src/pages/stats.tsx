@@ -27,29 +27,25 @@ export default function Stats() {
     filters,
   );
 
-  const totalMonthlySub = rounded(
-    subscriptions
-      .filter((subscription) => subscription.schedule === "Monthly")
-      .reduce((acc, subscription) => {
-        if (filters.users) {
-          return acc + subscription.price / subscription.users.length;
-        }
-        return acc + subscription.price;
-      }, 0),
-  );
+  const totalMonthlySub = subscriptions
+    .filter((subscription) => subscription.schedule === "Monthly")
+    .reduce((acc, subscription) => {
+      if (filters.users) {
+        return acc + subscription.price / subscription.users.length;
+      }
+      return acc + subscription.price;
+    }, 0);
 
-  const totalYearlySub = rounded(
-    subscriptions
-      .filter((subscription) => subscription.schedule === "Yearly")
-      .reduce((acc, subscription) => {
-        if (filters.users) {
-          return acc + subscription.price / subscription.users.length;
-        }
-        return acc + subscription.price;
-      }, 0),
-  );
+  const totalYearlySub = subscriptions
+    .filter((subscription) => subscription.schedule === "Yearly")
+    .reduce((acc, subscription) => {
+      if (filters.users) {
+        return acc + subscription.price / subscription.users.length;
+      }
+      return acc + subscription.price;
+    }, 0);
 
-  const totalPerMonth = totalMonthlySub + rounded(totalYearlySub / 12);
+  const totalPerMonth = totalMonthlySub + totalYearlySub / 12;
 
   const totalPerYear = totalMonthlySub * 12 + totalYearlySub;
 
@@ -107,7 +103,7 @@ const StatsCard = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="mt-2 flex items-center text-2xl font-bold">
-        {isLoading ? <Skeleton className="mr-1 h-6 w-1/4" /> : value}€
+        {isLoading ? <Skeleton className="mr-1 h-6 w-1/4" /> : rounded(value)}€
       </CardContent>
     </Card>
   );

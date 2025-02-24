@@ -4,10 +4,6 @@ import { SortButton } from "~/components/subscriptions/sort";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
 import { Calendar1Icon, EllipsisVerticalIcon } from "lucide-react";
 import { Card, CardContent } from "~/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 import { SubscriptionList } from "~/components/subscriptions/list";
@@ -21,9 +17,10 @@ export default function Home() {
 
   return (
     <div>
-      <header className="flex items-center justify-between">
+      <header className="flex flex-wrap items-center justify-between gap-y-1">
         <h1 className="text-3xl font-bold">Subscriptions</h1>
         <div className="flex items-center gap-2">
+          <CreateSubscriptionDialog />
           <FiltersButton />
           <SortButton />
         </div>
@@ -58,9 +55,6 @@ export default function Home() {
         ) : (
           <SubscriptionList subscriptions={subscriptionsQuery.data ?? []} />
         )}
-      </div>
-      <div className="fixed bottom-6 left-auto right-2 flex items-center justify-center gap-4 p-4">
-        <CreateSubscriptionDialog />
       </div>
     </div>
   );
