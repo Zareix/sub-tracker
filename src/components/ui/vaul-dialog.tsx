@@ -42,9 +42,7 @@ export const WrapperDialogVaul = ({
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-        <DialogContent onClick={(e) => e.stopPropagation()}>
-          {children}
-        </DialogContent>
+        <DialogContent>{children}</DialogContent>
       </Dialog>
     </>
   );

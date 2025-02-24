@@ -30,6 +30,7 @@ import { Card, CardContent } from "~/components/ui/card";
 import { SORTS } from "~/lib/constant";
 import {
   currencyToSymbol,
+  formatNextPaymentDate,
   getFilteredSubscriptions,
   getSortedSubscriptions,
 } from "~/lib/utils";
@@ -41,7 +42,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import { format } from "date-fns";
 
 type Props = {
   subscriptions: RouterOutputs["subscription"]["getAll"];
@@ -109,13 +109,7 @@ const SubscriptionListItem = ({
               </h2>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Calendar1Icon size={16} />
-                {format(
-                  subscription.nextPaymentDate,
-                  subscription.nextPaymentDate.getFullYear() ===
-                    new Date().getFullYear()
-                    ? "dd/MM"
-                    : "dd/MM/yyyy",
-                )}
+                {formatNextPaymentDate(subscription.nextPaymentDate)}
               </div>
               <div className="text-lg">{subscription.price}€</div>
               <DropdownMenu>
@@ -148,16 +142,6 @@ const SubscriptionListItem = ({
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <DeleteDialog
-                subscription={subscription}
-                isOpen={isOpen.delete}
-                setIsOpen={() => setIsOpen({ ...isOpen, delete: false })}
-              />
-              <EditSubscriptionDialog
-                subscription={subscription}
-                isOpen={isOpen.edit}
-                setIsOpen={() => setIsOpen({ ...isOpen, edit: false })}
-              />
             </div>
           </AccordionTrigger>
           <AccordionContent>
@@ -187,6 +171,16 @@ const SubscriptionListItem = ({
             </div>
           </AccordionContent>
         </AccordionItem>
+        <DeleteDialog
+          subscription={subscription}
+          isOpen={isOpen.delete}
+          setIsOpen={() => setIsOpen({ ...isOpen, delete: false })}
+        />
+        <EditSubscriptionDialog
+          subscription={subscription}
+          isOpen={isOpen.edit}
+          setIsOpen={() => setIsOpen({ ...isOpen, edit: false })}
+        />
       </CardContent>
     </Card>
   );

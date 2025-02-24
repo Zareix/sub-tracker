@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { compareAsc, differenceInDays, format, formatRelative } from "date-fns";
 import { twMerge } from "tailwind-merge";
 import type { Filters, Sort } from "~/lib/constant";
 import type { PaymentMethod, Subscription, User } from "~/server/db/schema";
@@ -20,7 +21,11 @@ export function preprocessStringToNumber(val: unknown) {
 }
 
 export const getSortedSubscriptions = <
-  T extends Array<Pick<Subscription, "name" | "price">>,
+  T extends Array<
+    Pick<Subscription, "name" | "price"> & {
+      nextPaymentDate: Date;
+    }
+  >,
 >(
   subscriptions: T,
   sort: Sort | null,
@@ -31,7 +36,11 @@ export const getSortedSubscriptions = <
   if (sort === "PRICE_ASC") {
     return subscriptions.sort((a, b) => a.price - b.price);
   }
-
+  if (sort === "NEXT_PAYMENT_DATE") {
+    return subscriptions.sort((a, b) =>
+      compareAsc(a.nextPaymentDate, b.nextPaymentDate),
+    );
+  }
   return subscriptions;
 };
 
@@ -83,4 +92,16 @@ export const currencyToSymbol = (currency: string) => {
     default:
       return "€";
   }
+};
+
+export const formatNextPaymentDate = (date: Date) => {
+  // if (differenceInDays(date, new Date()) <= 6) {
+  //   return formatRelative(date, new Date(), {
+
+  //   });
+  // }
+  if (new Date().getFullYear() === date.getFullYear()) {
+    return format(date, "dd/MM");
+  }
+  return format(date, "dd/MM/yyyy");
 };
