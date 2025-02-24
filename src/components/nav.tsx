@@ -110,7 +110,7 @@ export const Navbar = () => {
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-10 flex h-14 items-center justify-between
-        border-t border-border bg-background/80 px-4 backdrop-blur md:px-8"
+        border-t border-border bg-background/80 px-4 backdrop-blur md:hidden md:px-8"
     >
       <div className="grid h-full w-full grid-cols-4 items-center justify-around gap-2">
         {NAV_ITEMS.filter((_, i) => i < 2).map((item) => (
