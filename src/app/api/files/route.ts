@@ -12,13 +12,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-
     await fs.mkdir(env.UPLOADS_FOLDER, { recursive: true });
 
-    const newFileName = crypto.randomUUID() + ".png";
-    await fs.writeFile(`${env.UPLOADS_FOLDER}/${newFileName}`, buffer);
+    const newFileName = Bun.randomUUIDv7() + ".png";
+    await Bun.write(`${env.UPLOADS_FOLDER}/${newFileName}`, file);
 
     return NextResponse.json(
       { url: `/api/files?filename=${newFileName}` },
@@ -41,6 +38,7 @@ export async function GET(request: NextRequest) {
         { status: 400 },
       );
     }
+
     const fileName = filename.split("/").pop();
     if (!fileName) {
       return NextResponse.json(
@@ -48,18 +46,12 @@ export async function GET(request: NextRequest) {
         { status: 400 },
       );
     }
-    const filePath = path.join(env.UPLOADS_FOLDER, fileName);
 
-    const file = await fs.readFile(filePath);
-
-    const contentType =
-      path.extname(filename) === ".json"
-        ? "application/json"
-        : "application/octet-stream";
+    const file = Bun.file(path.join(env.UPLOADS_FOLDER, fileName));
 
     return new NextResponse(file, {
       headers: {
-        "Content-Type": contentType,
+        "Content-Type": file.type,
         "Content-Disposition": `attachment; filename="${filename}"`,
       },
     });

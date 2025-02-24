@@ -46,27 +46,22 @@ export const FiltersButton = ({
   const usersQuery = api.user.getAll.useQuery();
   const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
 
-  if (usersQuery.isLoading || paymentMethodsQuery.isLoading) {
+  if (usersQuery.isError || paymentMethodsQuery.isError) {
     return <></>;
   }
 
-  if (
-    usersQuery.isError ||
-    paymentMethodsQuery.isError ||
-    !paymentMethodsQuery.data ||
-    !usersQuery.data
-  ) {
-    return <></>;
-  }
-
-  const paymentMethods = paymentMethodsQuery.data;
-  const users = usersQuery.data;
+  const paymentMethods = paymentMethodsQuery.data ?? [];
+  const users = usersQuery.data ?? [];
 
   return (
     <div className="flex items-center gap-4">
       <Popover>
         <PopoverTrigger asChild>
-          <Button size="icon" variant="ghost">
+          <Button
+            size="icon"
+            variant="ghost"
+            disabled={usersQuery.isLoading || paymentMethodsQuery.isLoading}
+          >
             <FilterIcon
               size={24}
               className={cn(

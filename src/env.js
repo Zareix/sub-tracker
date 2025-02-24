@@ -16,7 +16,7 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     UPLOADS_FOLDER: z.string(),
-    FIXER_API_KEY: z.string(),
+    FIXER_API_KEY: z.string().optional(),
   },
 
   /**

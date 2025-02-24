@@ -39,6 +39,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "~/components/ui/calendar";
 import { Separator } from "~/components/ui/separator";
+import Image from "next/image";
 
 const subscriptionCreateSchema = z.object({
   name: z.string(),
@@ -224,7 +225,18 @@ export const EditCreateForm = ({
                         <SelectContent>
                           {paymentMethodsQuery.data?.map((p) => (
                             <SelectItem value={p.id.toString()} key={p.id}>
-                              {p.name}
+                              <div className="flex items-center gap-1">
+                                {p.image && (
+                                  <Image
+                                    src={p.image}
+                                    alt={p.name}
+                                    width={64}
+                                    height={40}
+                                    className="max-h-[20px] max-w-[20px] object-contain"
+                                  />
+                                )}
+                                {p.name}
+                              </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -249,6 +261,7 @@ export const EditCreateForm = ({
                           value: user.id.toString(),
                         })) ?? []
                       }
+                      search={false}
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       placeholder="Select users"
@@ -306,7 +319,7 @@ export const EditCreateForm = ({
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {field.value ? (
-                              format(field.value, "PPP")
+                              format(field.value, "dd/MM/yyyy")
                             ) : (
                               <span>Pick a date</span>
                             )}

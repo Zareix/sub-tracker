@@ -20,9 +20,11 @@ import { Input } from "~/components/ui/input";
 import { api } from "~/utils/api";
 import { toast } from "sonner";
 import { useState } from "react";
+import { ImageFileUploader } from "~/components/image-uploader";
 
 const paymentMethodCreateSchema = z.object({
   name: z.string(),
+  image: z.string().optional(),
 });
 
 export const CreatePaymentMethodDialog = () => {
@@ -56,25 +58,31 @@ export const CreatePaymentMethodDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Create Payment Method</Button>
+        <Button>Add new</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Create Payment Method</DialogTitle>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="PayPal" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-12">
+              <ImageFileUploader
+                setFileUrl={(v) => form.setValue("image", v)}
+                fileUrl={form.watch("image")}
+              />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="col-span-10">
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="PayPal" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <Button type="submit" className="ml-auto">
               Submit
             </Button>

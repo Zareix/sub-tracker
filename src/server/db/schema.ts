@@ -111,7 +111,7 @@ export const users = sqliteTable(
     id: text("id", { length: 255 })
       .notNull()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => Bun.randomUUIDv7()),
     name: text("name", { length: 255 }).notNull(),
     email: text("email", { length: 255 }).notNull(),
     emailVerified: int("email_verified", {

@@ -17,6 +17,7 @@ import {
   TextIcon,
   TrashIcon,
   UserIcon,
+  WalletCardsIcon,
 } from "lucide-react";
 import {
   DialogDescription,
@@ -145,10 +146,24 @@ const SubscriptionListItem = ({
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-base text-foreground/80">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-base text-foreground/80 md:gap-x-6">
               <div className="flex items-center gap-1">
                 <UserIcon size={18} className="text-primary" />
                 <span>{subscription.users.map((u) => u.name).join(", ")}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                {subscription.paymentMethod.image ? (
+                  <Image
+                    src={subscription.paymentMethod.image}
+                    alt={subscription.paymentMethod.name}
+                    width={20}
+                    height={20}
+                    className="max-h-[20px] max-w-[20px] object-contain"
+                  />
+                ) : (
+                  <WalletCardsIcon size={18} className="text-primary" />
+                )}
+                <span>{subscription.paymentMethod.name}</span>
               </div>
               <div className="flex items-center gap-1">
                 <RefreshCcwIcon size={16} className="text-primary" />
