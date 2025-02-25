@@ -20,7 +20,7 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
-import { CheckIcon, ChevronsUpDownIcon, InfoIcon } from "lucide-react";
+import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -32,12 +32,6 @@ import {
 import { iconNames } from "lucide-react/dynamic";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { DialogFooter } from "~/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
 
 const categoryCreateSchema = z.object({
   name: z.string(),

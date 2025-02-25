@@ -1,4 +1,3 @@
-import { exchangeRates } from "./../../db/schema";
 import { TRPCError } from "@trpc/server";
 import { addMonths, addYears } from "date-fns";
 import { asc, eq } from "drizzle-orm";
