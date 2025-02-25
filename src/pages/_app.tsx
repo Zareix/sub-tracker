@@ -9,6 +9,7 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { Layout } from "~/components/layout";
 import { Toaster } from "~/components/ui/sonner";
+import { TooltipProvider } from "~/components/ui/tooltip";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -26,12 +27,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
       `}</style>
       <SessionProvider session={session}>
         <NuqsAdapter>
-          <div className={GeistSans.className}>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </div>
-          <Toaster mobileOffset={64} />
+          <TooltipProvider>
+            <div className={GeistSans.className}>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </div>
+            <Toaster mobileOffset={64} />
+          </TooltipProvider>
         </NuqsAdapter>
       </SessionProvider>
     </>

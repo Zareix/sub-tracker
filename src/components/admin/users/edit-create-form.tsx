@@ -13,6 +13,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { api, type RouterOutputs } from "~/utils/api";
 import { toast } from "sonner";
+import { DialogFooter } from "~/components/ui/dialog";
 
 const userCreateSchema = z.object({
   name: z.string(),
@@ -103,9 +104,9 @@ export const EditCreateForm = ({
             </FormItem>
           )}
         />
-        <Button type="submit" className="ml-auto">
-          Submit
-        </Button>
+        <DialogFooter>
+          <Button type="submit">Submit</Button>
+        </DialogFooter>
       </form>
     </Form>
   );

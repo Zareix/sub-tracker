@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,7 +20,7 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
-import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
+import { CheckIcon, ChevronsUpDownIcon, InfoIcon } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -30,6 +31,13 @@ import {
 } from "~/components/ui/command";
 import { iconNames } from "lucide-react/dynamic";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
+import { DialogFooter } from "~/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 
 const categoryCreateSchema = z.object({
   name: z.string(),
@@ -113,6 +121,7 @@ export const EditCreateForm = ({
             <FormItem className="flex flex-col">
               <FormLabel>Icon</FormLabel>
               <div className="flex items-center gap-2">
+                {field.value && <CategoryIcon icon={field.value} />}
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -120,7 +129,7 @@ export const EditCreateForm = ({
                         variant="outline"
                         role="combobox"
                         className={cn(
-                          "min-w-[200px] justify-between",
+                          "flex-grow justify-between",
                           !field.value && "text-muted-foreground",
                         )}
                       >
@@ -161,15 +170,25 @@ export const EditCreateForm = ({
                     </Command>
                   </PopoverContent>
                 </Popover>
-                {field.value && <CategoryIcon icon={field.value} />}
               </div>
+              <FormDescription>
+                Find icon on{" "}
+                <a
+                  href="https://lucide.dev/icons/?focus"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-500 underline"
+                >
+                  lucide.dev
+                </a>
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className="ml-auto">
-          Submit
-        </Button>
+        <DialogFooter>
+          <Button type="submit">Submit</Button>
+        </DialogFooter>
       </form>
     </Form>
   );
