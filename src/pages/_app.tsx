@@ -43,7 +43,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
                 <Component {...pageProps} />
               </Layout>
             </div>
-            <Toaster mobileOffset={64} />
+            <Toaster />
             {env.NEXT_PUBLIC_ENV === "development" && <ReactQueryDevtools />}
           </TooltipProvider>
         </NuqsAdapter>
