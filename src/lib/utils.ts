@@ -46,7 +46,7 @@ export const getSortedSubscriptions = <
       compareAsc(a.nextPaymentDate, b.nextPaymentDate),
     );
   }
-  return subscriptions;
+  return subscriptions.sort((a, b) => a.name.localeCompare(b.name));
 };
 
 export const getFilteredSubscriptions = <

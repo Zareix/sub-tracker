@@ -12,7 +12,7 @@ import {
 } from "~/components/ui/form";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { api, type RouterOutputs } from "~/utils/api";
+import { api, type RouterInputs, type RouterOutputs } from "~/utils/api";
 import { toast } from "sonner";
 import {
   Select,
@@ -35,12 +35,34 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { CalendarIcon, LoaderIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "~/components/ui/calendar";
 import { Separator } from "~/components/ui/separator";
 import Image from "next/image";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
+
+const createTempSub = (subscription: RouterInputs["subscription"]["create"]) =>
+  ({
+    ...subscription,
+    id: -1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    originalPrice: subscription.price,
+    nextPaymentDate: new Date(),
+    image: null,
+    users: [],
+    paymentMethod: {
+      id: -1,
+      name: "temp",
+      image: null,
+    },
+    category: {
+      id: -1,
+      name: "temp",
+      icon: "temp",
+    },
+  }) satisfies RouterOutputs["subscription"]["getAll"][number];
 
 const subscriptionCreateSchema = z.object({
   name: z.string(),
@@ -52,7 +74,7 @@ const subscriptionCreateSchema = z.object({
   paymentMethod: z.preprocess(preprocessStringToNumber, z.number()),
   firstPaymentDate: z.date(),
   schedule: z.enum(SCHEDULES),
-  payedBy: z.array(z.string()),
+  payedBy: z.array(z.string()).min(1),
 });
 
 export const EditCreateForm = ({
@@ -66,27 +88,81 @@ export const EditCreateForm = ({
   const createSubscriptionMutation = api.subscription.create.useMutation({
     onSuccess: () => {
       toast.success("Subscription created!");
-      apiUtils.subscription.getAll.invalidate().catch(console.error);
       onFinished?.();
       setTimeout(() => {
         form.reset();
       }, 300);
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onMutate: async (newSubscription) => {
+      await apiUtils.subscription.getAll.cancel();
+
+      const previousSubs = apiUtils.subscription.getAll.getData();
+
+      apiUtils.subscription.getAll.setData(undefined, (old) =>
+        !old
+          ? []
+          : [...old, createTempSub(newSubscription)].sort((a, b) =>
+              a.name.localeCompare(b.name),
+            ),
+      );
+
+      return { previousSubs };
+    },
+    onError: (err, _, context) => {
+      toast.error(err.message);
+      apiUtils.subscription.getAll.setData(undefined, context?.previousSubs);
+    },
+    onSettled: () => {
+      apiUtils.subscription.getAll.invalidate().catch(console.error);
     },
   });
   const editSubscriptionMutation = api.subscription.edit.useMutation({
     onSuccess: () => {
       toast.success("Subscription updated!");
-      apiUtils.subscription.getAll.invalidate().catch(console.error);
       onFinished?.();
       setTimeout(() => {
         form.reset();
       }, 300);
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onMutate: async (newSubscription) => {
+      await apiUtils.subscription.getAll.cancel();
+
+      const previousSubs = apiUtils.subscription.getAll.getData();
+
+      apiUtils.subscription.getAll.setData(undefined, (old) => {
+        if (!old) {
+          return [];
+        }
+        const index = old.findIndex((s) => s.id === newSubscription.id);
+        const oldSub = old[index];
+        if (index === -1 || !oldSub) {
+          return old;
+        }
+        return [
+          ...old.slice(0, index),
+          {
+            ...oldSub,
+            name: newSubscription.name,
+            description: newSubscription.description,
+            price: newSubscription.price,
+            currency: newSubscription.currency,
+            firstPaymentDate: newSubscription.firstPaymentDate,
+            schedule: newSubscription.schedule,
+            image: newSubscription.image ?? null,
+            id: -1,
+          },
+          ...old.slice(index + 1),
+        ];
+      });
+
+      return { previousSubs };
+    },
+    onError: (err, _, context) => {
+      toast.error(err.message);
+      apiUtils.subscription.getAll.setData(undefined, context?.previousSubs);
+    },
+    onSettled: () => {
+      apiUtils.subscription.getAll.invalidate().catch(console.error);
     },
   });
   const usersQuery = api.user.getAll.useQuery();
@@ -387,15 +463,7 @@ export const EditCreateForm = ({
               />
             </div>
             <DialogFooter>
-              <Button
-                type="submit"
-                isLoading={
-                  createSubscriptionMutation.isPending ||
-                  editSubscriptionMutation.isPending
-                }
-              >
-                Submit
-              </Button>
+              <Button type="button">Submit</Button>
             </DialogFooter>
           </form>
         </Form>

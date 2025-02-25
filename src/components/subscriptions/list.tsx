@@ -1,6 +1,6 @@
 import { parseAsJson, parseAsStringEnum, useQueryState } from "nuqs";
 import { BASE_CURRENCY, filtersSchema } from "~/lib/constant";
-import { api, RouterInputs, type RouterOutputs } from "~/utils/api";
+import { type RouterOutputs } from "~/utils/api";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -18,14 +18,7 @@ import {
   UserIcon,
   WalletCardsIcon,
 } from "lucide-react";
-import {
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-} from "~/components/ui/dialog";
 import { useState } from "react";
-import { toast } from "sonner";
-import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import { Card, CardContent } from "~/components/ui/card";
 import { SORTS } from "~/lib/constant";
 import {
@@ -43,8 +36,7 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
-import { useMutationState } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
+import { DeleteDialog } from "~/components/subscriptions/delete";
 
 type Props = {
   subscriptions: RouterOutputs["subscription"]["getAll"];
@@ -94,6 +86,38 @@ const SubscriptionListItem = ({
     delete: false,
     edit: false,
   });
+
+  if (subscription.id === -1) {
+    return (
+      <Card className="mt-3 opacity-50">
+        <CardContent>
+          <div className="flex items-center gap-2">
+            {subscription.image && (
+              <Image
+                src={subscription.image}
+                alt={subscription.name}
+                width={64}
+                height={40}
+                className="max-h-[40px] max-w-[40px] object-contain md:max-w-[64px]"
+              />
+            )}
+            <h2 className="flex-grow text-xl font-semibold">
+              {subscription.name}
+            </h2>
+            <div className="text-lg">{subscription.price}€</div>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="w-4 md:w-10"
+              disabled
+            >
+              <EllipsisVertical size={24} />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="mt-3">
@@ -211,54 +235,5 @@ const SubscriptionListItem = ({
         />
       </CardContent>
     </Card>
-  );
-};
-
-const DeleteDialog = ({
-  subscription,
-  isOpen,
-  setIsOpen,
-}: {
-  subscription: Pick<
-    RouterOutputs["subscription"]["getAll"][number],
-    "id" | "name"
-  >;
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
-  const apiUtils = api.useUtils();
-  const deleteSubscriptionMutation = api.subscription.delete.useMutation({
-    onSuccess: () => {
-      toast.success("Subscription deleted!");
-      apiUtils.subscription.getAll.invalidate().catch(console.error);
-      setIsOpen(false);
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
-  function onDelete() {
-    deleteSubscriptionMutation.mutate(subscription.id);
-  }
-
-  return (
-    <WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
-      <DialogTitle>
-        Delete subscription:{" "}
-        <span className="font-medium italic">{subscription.name}</span>{" "}
-      </DialogTitle>
-      <DialogDescription>
-        Are you sure you want to delete subscription this subscription?
-      </DialogDescription>
-      <DialogFooter>
-        <Button variant="secondary" onClick={() => setIsOpen(false)}>
-          Cancel
-        </Button>
-        <Button variant="destructive" onClick={onDelete}>
-          Delete
-        </Button>
-      </DialogFooter>
-    </WrapperDialogVaul>
   );
 };

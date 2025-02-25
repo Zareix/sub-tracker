@@ -1,3 +1,4 @@
+import { exchangeRates } from "./../../db/schema";
 import { TRPCError } from "@trpc/server";
 import { addMonths, addYears } from "date-fns";
 import { asc, eq } from "drizzle-orm";
@@ -91,23 +92,24 @@ const calculateNextPaymentDate = (
 
 export const subscriptionRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
-    const rows = ctx.db
-      .select()
-      .from(subscriptions)
-      .innerJoin(
-        usersToSubscriptions,
-        eq(subscriptions.id, usersToSubscriptions.subscriptionId),
-      )
-      .innerJoin(users, eq(usersToSubscriptions.userId, users.id))
-      .innerJoin(
-        paymentMethods,
-        eq(subscriptions.paymentMethod, paymentMethods.id),
-      )
-      .innerJoin(categories, eq(subscriptions.category, categories.id))
-      .orderBy(asc(subscriptions.name))
-      .all();
-
-    const exchangeRates = await ctx.db.query.exchangeRates.findMany();
+    const [rows, exchangeRates] = await Promise.all([
+      ctx.db
+        .select()
+        .from(subscriptions)
+        .innerJoin(
+          usersToSubscriptions,
+          eq(subscriptions.id, usersToSubscriptions.subscriptionId),
+        )
+        .innerJoin(users, eq(usersToSubscriptions.userId, users.id))
+        .innerJoin(
+          paymentMethods,
+          eq(subscriptions.paymentMethod, paymentMethods.id),
+        )
+        .innerJoin(categories, eq(subscriptions.category, categories.id))
+        .orderBy(asc(subscriptions.name))
+        .all(),
+      ctx.db.query.exchangeRates.findMany(),
+    ]);
 
     return rows
       .reduce<
@@ -198,12 +200,14 @@ export const subscriptionRouter = createTRPCRouter({
             message: "Error creating subscription",
           });
         }
-        for (const payedBy of input.payedBy) {
-          await trx.insert(usersToSubscriptions).values({
-            userId: payedBy,
-            subscriptionId: subscription.id,
-          });
-        }
+        await Promise.all(
+          input.payedBy.map(async (payedBy) => {
+            await trx.insert(usersToSubscriptions).values({
+              userId: payedBy,
+              subscriptionId: subscription.id,
+            });
+          }),
+        );
         return subscription;
       });
 
@@ -258,12 +262,14 @@ export const subscriptionRouter = createTRPCRouter({
         await trx
           .delete(usersToSubscriptions)
           .where(eq(usersToSubscriptions.subscriptionId, input.id));
-        for (const payedBy of input.payedBy) {
-          await trx.insert(usersToSubscriptions).values({
-            userId: payedBy,
-            subscriptionId: subscription.id,
-          });
-        }
+        await Promise.all(
+          input.payedBy.map((payedBy) =>
+            trx.insert(usersToSubscriptions).values({
+              userId: payedBy,
+              subscriptionId: subscription.id,
+            }),
+          ),
+        );
         return subscription;
       });
 

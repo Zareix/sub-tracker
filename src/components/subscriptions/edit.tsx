@@ -18,7 +18,9 @@ export const EditSubscriptionDialog = ({
     <WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
       <DialogTitle>Edit Subscription</DialogTitle>
       <EditCreateForm
-        onFinished={() => setIsOpen(false)}
+        onFinished={() => {
+          setIsOpen(false);
+        }}
         subscription={subscription}
       />
     </WrapperDialogVaul>
