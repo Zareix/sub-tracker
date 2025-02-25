@@ -42,6 +42,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
+import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 
 type Props = {
   subscriptions: RouterOutputs["subscription"]["getAll"];
@@ -54,6 +55,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
       schedule: null,
       paymentMethodId: null,
       users: null,
+      categoryId: null,
     },
   });
   const [sort] = useQueryState(
@@ -163,6 +165,14 @@ const SubscriptionListItem = ({
                   <WalletCardsIcon size={18} className="text-primary" />
                 )}
                 <span>{subscription.paymentMethod.name}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <CategoryIcon
+                  icon={subscription.category.icon}
+                  size={16}
+                  className="text-primary"
+                />
+                {subscription.category.name}
               </div>
               <div className="flex items-center gap-1">
                 <RefreshCcwIcon size={16} className="text-primary" />

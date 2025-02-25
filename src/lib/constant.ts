@@ -24,6 +24,7 @@ export const filtersSchema = z
     schedule: z.string().nullish(),
     paymentMethodId: z.number().nullish(),
     users: z.string().nullish(),
+    categoryId: z.number().nullish(),
   })
   .default({
     schedule: null,

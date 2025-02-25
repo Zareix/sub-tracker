@@ -40,10 +40,12 @@ import { format } from "date-fns";
 import { Calendar } from "~/components/ui/calendar";
 import { Separator } from "~/components/ui/separator";
 import Image from "next/image";
+import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 
 const subscriptionCreateSchema = z.object({
   name: z.string(),
   description: z.string(),
+  category: z.preprocess(preprocessStringToNumber, z.number()),
   image: z.string().optional(),
   price: z.preprocess(preprocessStringToNumber, z.number().min(0)),
   currency: z.enum(CURRENCIES),
@@ -89,12 +91,14 @@ export const EditCreateForm = ({
   });
   const usersQuery = api.user.getAll.useQuery();
   const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
+  const categoriesQuery = api.category.getAll.useQuery();
 
   const form = useForm<z.infer<typeof subscriptionCreateSchema>>({
     resolver: zodResolver(subscriptionCreateSchema),
     defaultValues: {
       name: subscription?.name ?? "",
       description: subscription?.description ?? "",
+      category: subscription?.category.id ?? 1,
       image: subscription?.image ?? undefined,
       price: subscription?.price ?? 0,
       currency: (subscription?.currency as Currency) ?? "EUR",
@@ -118,9 +122,13 @@ export const EditCreateForm = ({
 
   return (
     <>
-      {usersQuery.isLoading || paymentMethodsQuery.isLoading ? (
+      {usersQuery.isLoading ||
+      paymentMethodsQuery.isLoading ||
+      categoriesQuery.isLoading ? (
         <div>Loading...</div>
-      ) : usersQuery.isError || paymentMethodsQuery.isError ? (
+      ) : usersQuery.isError ||
+        paymentMethodsQuery.isError ||
+        categoriesQuery.isError ? (
         <div>
           Error:{" "}
           {usersQuery.error?.message ?? paymentMethodsQuery.error?.message}
@@ -147,6 +155,43 @@ export const EditCreateForm = ({
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value?.toString()}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="min-w-[170px]">
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categoriesQuery.data?.map((p) => (
+                          <SelectItem value={p.id.toString()} key={p.id}>
+                            <div className="flex items-center gap-1">
+                              {p.icon && (
+                                <CategoryIcon
+                                  icon={p.icon}
+                                  className="max-h-[20px] max-w-[20px] object-contain"
+                                />
+                              )}
+                              {p.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="description"

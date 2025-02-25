@@ -2,7 +2,12 @@ import { clsx, type ClassValue } from "clsx";
 import { compareAsc, format } from "date-fns";
 import { twMerge } from "tailwind-merge";
 import type { Filters, Sort } from "~/lib/constant";
-import type { PaymentMethod, Subscription, User } from "~/server/db/schema";
+import type {
+  Category,
+  PaymentMethod,
+  Subscription,
+  User,
+} from "~/server/db/schema";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -49,6 +54,7 @@ export const getFilteredSubscriptions = <
     Pick<Subscription, "schedule"> & {
       users: Array<Pick<User, "id">>;
       paymentMethod: Pick<PaymentMethod, "id">;
+      category: Pick<Category, "id">;
     }
   >,
 >(
@@ -74,6 +80,13 @@ export const getFilteredSubscriptions = <
       s.users.some((u) => u.id === filters.users),
     );
   }
+  if (filters.categoryId) {
+    // @ts-expect-error Actually it's working, I just want the function to return the right type
+    filteredSubscriptions = filteredSubscriptions.filter(
+      (s) => s.category.id === filters.categoryId,
+    );
+  }
+
   return filteredSubscriptions;
 };
 

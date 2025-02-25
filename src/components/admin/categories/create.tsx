@@ -2,10 +2,10 @@ import { DialogTitle } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
-import { EditCreateForm } from "~/components/admin/users/edit-create-form";
+import { EditCreateForm } from "~/components/admin/categories/edit-create-form";
 import { PlusIcon } from "lucide-react";
 
-export const CreateUserDialog = () => {
+export const CreateCategoryDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -19,7 +19,7 @@ export const CreateUserDialog = () => {
         </Button>
       }
     >
-      <DialogTitle>Create User</DialogTitle>
+      <DialogTitle>Create Category</DialogTitle>
       <EditCreateForm onFinished={() => setIsOpen(false)} />
     </WrapperDialogVaul>
   );

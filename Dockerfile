@@ -29,7 +29,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/next.config.js ./

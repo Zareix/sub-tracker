@@ -27,7 +27,7 @@ type Props = {
 };
 
 export const FiltersButton = ({
-  filtersDisplayed = ["paymentMethodId", "schedule", "users"],
+  filtersDisplayed = ["paymentMethodId", "schedule", "users", "categoryId"],
 }: Props) => {
   const [filters, setFilters] = useQueryState("filters", {
     ...parseAsJson(filtersSchema.parse),
@@ -35,23 +35,31 @@ export const FiltersButton = ({
       schedule: null,
       paymentMethodId: null,
       users: null,
+      categoryId: null,
     },
   });
   const [isOpen, setIsOpen] = useState({
     schedule: false,
     paymentMethod: false,
     users: false,
+    category: false,
   });
 
   const usersQuery = api.user.getAll.useQuery();
   const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
+  const categoriesQuery = api.category.getAll.useQuery();
 
-  if (usersQuery.isError || paymentMethodsQuery.isError) {
+  if (
+    usersQuery.isError ||
+    paymentMethodsQuery.isError ||
+    categoriesQuery.isError
+  ) {
     return <></>;
   }
 
   const paymentMethods = paymentMethodsQuery.data ?? [];
   const users = usersQuery.data ?? [];
+  const categories = categoriesQuery.data ?? [];
 
   return (
     <div className="flex items-center gap-4">
@@ -60,12 +68,19 @@ export const FiltersButton = ({
           <Button
             size="icon"
             variant="ghost"
-            disabled={usersQuery.isLoading || paymentMethodsQuery.isLoading}
+            disabled={
+              usersQuery.isLoading ||
+              paymentMethodsQuery.isLoading ||
+              categoriesQuery.isLoading
+            }
           >
             <FilterIcon
               size={24}
               className={cn(
-                filters.schedule || filters.paymentMethodId || filters.users
+                filters.schedule ||
+                  filters.paymentMethodId ||
+                  filters.users ||
+                  filters.categoryId
                   ? "fill-primary text-primary"
                   : "`text-foreground",
               )}
@@ -290,6 +305,83 @@ export const FiltersButton = ({
                     onClick={() =>
                       setFilters({ ...filters, paymentMethodId: null })
                     }
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
+
+          {filtersDisplayed.includes("categoryId") && (
+            <>
+              <Label className="mt-2">Category</Label>
+              <div className="flex items-center gap-2">
+                <Popover
+                  open={isOpen.category}
+                  onOpenChange={(open) =>
+                    setIsOpen({ ...isOpen, category: open })
+                  }
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "justify-between",
+                        filters.categoryId ? "w-[150px]" : "w-[200px]",
+                      )}
+                    >
+                      {filters.categoryId
+                        ? categories.find(
+                            (category) => category.id === filters.categoryId,
+                          )?.name
+                        : "Select..."}
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command shouldFilter={false}>
+                      <CommandInput placeholder="Search payment method..." />
+                      <CommandList>
+                        <CommandEmpty>No payment method found.</CommandEmpty>
+                        <CommandGroup>
+                          {categories.map((category) => (
+                            <CommandItem
+                              key={category.id}
+                              value={category.id.toString()}
+                              onSelect={(currentValue) => {
+                                console.log(currentValue);
+                                setFilters({
+                                  ...filters,
+                                  categoryId:
+                                    filters.categoryId === category.id
+                                      ? null
+                                      : category.id,
+                                }).catch(console.error);
+                              }}
+                            >
+                              {category.name}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  filters.categoryId === category.id
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                {filters.categoryId && (
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => setFilters({ ...filters, categoryId: null })}
                   >
                     <TrashIcon className="h-5 w-5" />
                   </Button>

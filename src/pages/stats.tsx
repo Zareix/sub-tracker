@@ -14,6 +14,7 @@ export default function Stats() {
       schedule: null,
       paymentMethodId: null,
       users: null,
+      categoryId: null,
     },
   });
   const subscriptionsQuery = api.subscription.getAll.useQuery();
@@ -57,7 +58,9 @@ export default function Stats() {
       <div>
         <header className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Stats</h1>
-          <FiltersButton filtersDisplayed={["users", "paymentMethodId"]} />
+          <FiltersButton
+            filtersDisplayed={["users", "paymentMethodId", "categoryId"]}
+          />
         </header>
         <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-4">
           <StatsCard

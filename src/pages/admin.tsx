@@ -18,10 +18,15 @@ import { EditPaymentMethodDialog } from "~/components/admin/payment-methods/edit
 import { Skeleton } from "~/components/ui/skeleton";
 import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
+import { CreateCategoryDialog } from "~/components/admin/categories/create";
+import { DeleteCategoryDialog } from "~/components/admin/categories/delete";
+import { EditCategoryDialog } from "~/components/admin/categories/edit";
+import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 
 export default function Home() {
   const usersQuery = api.user.getAll.useQuery();
   const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
+  const categoriesQuery = api.category.getAll.useQuery();
   const cleanUpFilesMutation = api.admin.cleanUpFiles.useMutation({
     onSuccess: () => {
       toast.success("Cleaned up unused files");
@@ -41,7 +46,11 @@ export default function Home() {
     },
   );
 
-  if (usersQuery.isError || paymentMethodsQuery.isError) {
+  if (
+    usersQuery.isError ||
+    paymentMethodsQuery.isError ||
+    categoriesQuery.isError
+  ) {
     return (
       <div>
         Error: {usersQuery.error?.message ?? paymentMethodsQuery.error?.message}
@@ -143,6 +152,51 @@ export default function Home() {
                         paymentMethod={paymentMethod}
                       />
                       <EditPaymentMethodDialog paymentMethod={paymentMethod} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </section>
+
+        <section>
+          <header className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold">Categories</h1>
+            <CreateCategoryDialog />
+          </header>
+          <div className="mt-2 max-w-[calc(100vw-2rem)]">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[80px]">Icon</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead className="text-end">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {categoriesQuery.isLoading && (
+                  <TableRow>
+                    <TableCell>
+                      <Skeleton className="h-6 w-6" />
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell className="flex items-center justify-end gap-2"></TableCell>
+                  </TableRow>
+                )}
+                {categoriesQuery.data?.map((category) => (
+                  <TableRow key={category.id}>
+                    <TableCell>
+                      <CategoryIcon icon={category.icon} />
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {category.name}
+                    </TableCell>
+                    <TableCell className="flex items-center justify-end gap-2">
+                      <DeleteCategoryDialog category={category} />
+                      <EditCategoryDialog category={category} />
                     </TableCell>
                   </TableRow>
                 ))}

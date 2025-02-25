@@ -7,6 +7,8 @@ import { rounded } from "~/lib/utils";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import {
+  categories,
+  type Category,
   type ExchangeRate,
   type PaymentMethod,
   paymentMethods,
@@ -101,6 +103,7 @@ export const subscriptionRouter = createTRPCRouter({
         paymentMethods,
         eq(subscriptions.paymentMethod, paymentMethods.id),
       )
+      .innerJoin(categories, eq(subscriptions.category, categories.id))
       .orderBy(asc(subscriptions.name))
       .all();
 
@@ -109,8 +112,9 @@ export const subscriptionRouter = createTRPCRouter({
     return rows
       .reduce<
         Array<
-          Omit<Subscription, "paymentMethod"> & {
+          Omit<Subscription, "paymentMethod" | "category"> & {
             paymentMethod: PaymentMethod;
+            category: Category;
             users: Array<User>;
           }
         >
@@ -118,6 +122,7 @@ export const subscriptionRouter = createTRPCRouter({
         const user = row.user;
         const subscription = row.subscription;
         const paymentMethod = row.payment_method;
+        const category = row.category;
 
         const existingSubscription = acc.find((s) => s.id === subscription.id);
 
@@ -132,6 +137,7 @@ export const subscriptionRouter = createTRPCRouter({
             ...subscription,
             users: [user],
             paymentMethod,
+            category,
           },
         ];
       }, [])
@@ -157,6 +163,7 @@ export const subscriptionRouter = createTRPCRouter({
       z.object({
         name: z.string(),
         description: z.string(),
+        category: z.number(),
         image: z.string().optional(),
         price: z.number(),
         currency: z.enum(CURRENCIES),
@@ -173,6 +180,7 @@ export const subscriptionRouter = createTRPCRouter({
           .values({
             name: input.name,
             description: input.description,
+            category: input.category,
             image: input.image,
             price: input.price,
             currency: input.currency,
@@ -208,6 +216,7 @@ export const subscriptionRouter = createTRPCRouter({
       z.object({
         id: z.number(),
         name: z.string(),
+        category: z.number(),
         description: z.string(),
         image: z.string().optional(),
         price: z.number(),
@@ -224,6 +233,7 @@ export const subscriptionRouter = createTRPCRouter({
           .update(subscriptions)
           .set({
             name: input.name,
+            category: input.category,
             description: input.description,
             image: input.image,
             price: input.price,

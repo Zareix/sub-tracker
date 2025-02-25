@@ -1,4 +1,5 @@
 import { adminRouter } from "~/server/api/routers/admin";
+import { categoryRouter } from "~/server/api/routers/categories";
 import { paymentMethodRouter } from "~/server/api/routers/paymentMethod";
 import { subscriptionRouter } from "~/server/api/routers/subscription";
 import { userRouter } from "~/server/api/routers/user";
@@ -9,6 +10,7 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   paymentMethod: paymentMethodRouter,
   admin: adminRouter,
+  category: categoryRouter,
 });
 
 export type AppRouter = typeof appRouter;

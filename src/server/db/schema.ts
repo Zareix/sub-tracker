@@ -24,6 +24,22 @@ export const exchangeRates = sqliteTable(
 
 export type ExchangeRate = typeof exchangeRates.$inferSelect;
 
+export const categories = sqliteTable(
+  "category",
+  {
+    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    name: text("name", { length: 256 }).notNull(),
+    icon: text("icon", { length: 256 }),
+  },
+  (table) => [index("category_name_idx").on(table.name)],
+);
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  subscriptions: many(subscriptions),
+}));
+
+export type Category = typeof categories.$inferSelect;
+
 export const paymentMethods = sqliteTable(
   "payment_method",
   {
@@ -48,6 +64,7 @@ export const subscriptions = sqliteTable(
   {
     id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
     name: text("name", { length: 256 }).notNull(),
+    category: int("category", { mode: "number" }).notNull().default(1),
     image: text("image", { length: 256 }),
     description: text("description", { length: 256 }).notNull().default(""),
     price: real("price").notNull().default(0),
@@ -76,6 +93,10 @@ export const subscriptionsRelations = relations(
     paymentMethod: one(paymentMethods, {
       fields: [subscriptions.paymentMethod],
       references: [paymentMethods.id],
+    }),
+    category: one(categories, {
+      fields: [subscriptions.category],
+      references: [categories.id],
     }),
   }),
 );

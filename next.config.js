@@ -3,9 +3,11 @@
  * for Docker builds.
  */
 import "./src/env.js";
+import withBundleAnalyzer from "@next/bundle-analyzer";
 
 /** @type {import("next").NextConfig} */
 const config = {
+  ...withBundleAnalyzer(),
   reactStrictMode: true,
 
   /**
@@ -21,4 +23,6 @@ const config = {
   output: "standalone",
 };
 
-export default config;
+export default withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+})(config);
