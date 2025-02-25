@@ -95,6 +95,7 @@ export const EditCreateForm = ({
     defaultValues: {
       name: subscription?.name ?? "",
       description: subscription?.description ?? "",
+      image: subscription?.image ?? undefined,
       price: subscription?.price ?? 0,
       currency: (subscription?.currency as Currency) ?? "EUR",
       paymentMethod: subscription?.paymentMethod.id,

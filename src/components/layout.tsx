@@ -12,7 +12,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       <SidebarProvider>
         <AppSidebar />
         <main
-          className="container mx-auto min-h-screen bg-background px-4 pt-8 xl:max-w-5xl"
+          className="container mx-auto min-h-screen bg-background px-4 pb-20 pt-8 xl:max-w-5xl"
           data-vaul-drawer-wrapper
         >
           <SidebarTrigger className="hidden md:block" />

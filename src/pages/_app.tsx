@@ -31,7 +31,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               <Component {...pageProps} />
             </Layout>
           </div>
-          <Toaster />
+          <Toaster mobileOffset={64} />
         </NuqsAdapter>
       </SessionProvider>
     </>
