@@ -48,13 +48,9 @@ import { getQueryKey } from "@trpc/react-query";
 
 type Props = {
   subscriptions: RouterOutputs["subscription"]["getAll"];
-  isFetching?: boolean;
 };
 
-export const SubscriptionList = ({
-  subscriptions,
-  isFetching = false,
-}: Props) => {
+export const SubscriptionList = ({ subscriptions }: Props) => {
   const [filters] = useQueryState("filters", {
     ...parseAsJson(filtersSchema.parse),
     defaultValue: {
@@ -64,16 +60,6 @@ export const SubscriptionList = ({
       categoryId: null,
     },
   });
-  const createSubMutation = useMutationState<
-    RouterInputs["subscription"]["create"]
-  >({
-    filters: {
-      mutationKey: getQueryKey(api.subscription.create),
-    },
-    select: (mutation) =>
-      mutation.state.variables as RouterInputs["subscription"]["create"],
-  });
-  const lastMutation = createSubMutation.findLast(() => true);
 
   const [sort] = useQueryState(
     "sort",
@@ -94,59 +80,21 @@ export const SubscriptionList = ({
             subscription={subscription}
           />
         ))}
-        {isFetching && lastMutation && (
-          <SubscriptionListItem
-            key={lastMutation.name}
-            subscription={lastMutation}
-            isTemp
-          />
-        )}
       </Accordion>
     </>
   );
 };
 
-type SubscriptionListItemProps =
-  | {
-      isTemp?: false;
-      subscription: RouterOutputs["subscription"]["getAll"][number];
-    }
-  | {
-      isTemp: true;
-      subscription: RouterInputs["subscription"]["create"];
-    };
-
-const SubscriptionListItem = (props: SubscriptionListItemProps) => {
+const SubscriptionListItem = ({
+  subscription,
+}: {
+  subscription: RouterOutputs["subscription"]["getAll"][number];
+}) => {
   const [isOpen, setIsOpen] = useState({
     delete: false,
     edit: false,
   });
 
-  if (props.isTemp) {
-    const { subscription } = props;
-    return (
-      <Card className="mt-3 opacity-50">
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <h2 className="flex-grow text-xl font-semibold">
-              {subscription.name}
-            </h2>
-            <div className="text-lg">{subscription.price}€</div>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="w-4 md:w-10"
-              disabled
-            >
-              <EllipsisVertical size={24} />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const { subscription } = props;
   return (
     <Card className="mt-3">
       <CardContent>

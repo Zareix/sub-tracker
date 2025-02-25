@@ -53,10 +53,7 @@ export default function Home() {
             </CardContent>
           </Card>
         ) : (
-          <SubscriptionList
-            subscriptions={subscriptionsQuery.data ?? []}
-            isFetching={subscriptionsQuery.isFetching}
-          />
+          <SubscriptionList subscriptions={subscriptionsQuery.data ?? []} />
         )}
       </div>
     </div>
