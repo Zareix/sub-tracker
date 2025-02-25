@@ -35,7 +35,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, LoaderIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "~/components/ui/calendar";
 import { Separator } from "~/components/ui/separator";
@@ -387,7 +387,15 @@ export const EditCreateForm = ({
               />
             </div>
             <DialogFooter>
-              <Button type="submit">Submit</Button>
+              <Button
+                type="submit"
+                isLoading={
+                  createSubscriptionMutation.isPending ||
+                  editSubscriptionMutation.isPending
+                }
+              >
+                Submit
+              </Button>
             </DialogFooter>
           </form>
         </Form>

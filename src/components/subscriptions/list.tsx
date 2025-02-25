@@ -1,6 +1,6 @@
 import { parseAsJson, parseAsStringEnum, useQueryState } from "nuqs";
 import { BASE_CURRENCY, filtersSchema } from "~/lib/constant";
-import { api, type RouterOutputs } from "~/utils/api";
+import { api, RouterInputs, type RouterOutputs } from "~/utils/api";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -43,12 +43,18 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
+import { useMutationState } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 
 type Props = {
   subscriptions: RouterOutputs["subscription"]["getAll"];
+  isFetching?: boolean;
 };
 
-export const SubscriptionList = ({ subscriptions }: Props) => {
+export const SubscriptionList = ({
+  subscriptions,
+  isFetching = false,
+}: Props) => {
   const [filters] = useQueryState("filters", {
     ...parseAsJson(filtersSchema.parse),
     defaultValue: {
@@ -58,6 +64,17 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
       categoryId: null,
     },
   });
+  const createSubMutation = useMutationState<
+    RouterInputs["subscription"]["create"]
+  >({
+    filters: {
+      mutationKey: getQueryKey(api.subscription.create),
+    },
+    select: (mutation) =>
+      mutation.state.variables as RouterInputs["subscription"]["create"],
+  });
+  const lastMutation = createSubMutation.findLast(() => true);
+
   const [sort] = useQueryState(
     "sort",
     parseAsStringEnum(SORTS.map((s) => s.key)),
@@ -77,22 +94,61 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
             subscription={subscription}
           />
         ))}
+        {isFetching && lastMutation && (
+          <SubscriptionListItem
+            key={lastMutation.name}
+            subscription={lastMutation}
+            isTemp
+          />
+        )}
       </Accordion>
     </>
   );
 };
 
-const SubscriptionListItem = ({
-  subscription,
-}: {
-  subscription: RouterOutputs["subscription"]["getAll"][number];
-}) => {
+type SubscriptionListItemProps =
+  | {
+      isTemp?: false;
+      subscription: RouterOutputs["subscription"]["getAll"][number];
+    }
+  | {
+      isTemp: true;
+      subscription: RouterInputs["subscription"]["create"];
+    };
+
+const SubscriptionListItem = (props: SubscriptionListItemProps) => {
   const [isOpen, setIsOpen] = useState({
     delete: false,
     edit: false,
   });
+
+  if (props.isTemp) {
+    const { subscription } = props;
+    return (
+      <Card className="mt-3 opacity-50">
+        <CardContent>
+          <div className="flex items-center gap-2">
+            <h2 className="flex-grow text-xl font-semibold">
+              {subscription.name}
+            </h2>
+            <div className="text-lg">{subscription.price}€</div>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="w-4 md:w-10"
+              disabled
+            >
+              <EllipsisVertical size={24} />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const { subscription } = props;
   return (
-    <Card key={subscription.id} className="mt-3">
+    <Card className="mt-3">
       <CardContent>
         <AccordionItem value={subscription.id.toString()}>
           <AccordionTrigger asChild>
@@ -215,7 +271,10 @@ const DeleteDialog = ({
   isOpen,
   setIsOpen,
 }: {
-  subscription: RouterOutputs["subscription"]["getAll"][number];
+  subscription: Pick<
+    RouterOutputs["subscription"]["getAll"][number],
+    "id" | "name"
+  >;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {

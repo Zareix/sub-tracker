@@ -3,18 +3,28 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { NuqsAdapter } from "nuqs/adapters/next/pages";
-
 import { api } from "~/utils/api";
-
-import "~/styles/globals.css";
 import { Layout } from "~/components/layout";
 import { Toaster } from "~/components/ui/sonner";
 import { TooltipProvider } from "~/components/ui/tooltip";
+import { useEffect } from "react";
+import { scan } from "react-scan";
+import { env } from "~/env";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+import "~/styles/globals.css";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  useEffect(() => {
+    if (env.NEXT_PUBLIC_ENV === "development") {
+      scan({
+        enabled: true,
+      });
+    }
+  }, []);
   return (
     <>
       <style jsx global>{`
@@ -34,6 +44,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               </Layout>
             </div>
             <Toaster mobileOffset={64} />
+            {env.NEXT_PUBLIC_ENV === "development" && <ReactQueryDevtools />}
           </TooltipProvider>
         </NuqsAdapter>
       </SessionProvider>
