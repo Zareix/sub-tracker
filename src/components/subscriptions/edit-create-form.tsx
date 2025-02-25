@@ -149,7 +149,6 @@ export const EditCreateForm = ({
             firstPaymentDate: newSubscription.firstPaymentDate,
             schedule: newSubscription.schedule,
             image: newSubscription.image ?? null,
-            id: -1,
           },
           ...old.slice(index + 1),
         ];
@@ -463,7 +462,15 @@ export const EditCreateForm = ({
               />
             </div>
             <DialogFooter>
-              <Button type="button">Submit</Button>
+              <Button
+                type="submit"
+                isLoading={
+                  createSubscriptionMutation.isPending ||
+                  editSubscriptionMutation.isPending
+                }
+              >
+                Submit
+              </Button>
             </DialogFooter>
           </form>
         </Form>
