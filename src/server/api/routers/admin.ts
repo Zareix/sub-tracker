@@ -1,7 +1,17 @@
+import { eq } from "drizzle-orm";
 import { readdir } from "node:fs/promises";
+import { z } from "zod";
 import { env } from "~/env";
+import { preprocessStringToDate } from "~/lib/utils";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  categories,
+  paymentMethods,
+  subscriptions,
+  users,
+  usersToSubscriptions,
+} from "~/server/db/schema";
 import { updateExchangeRates } from "~/server/exchange-rates";
 
 export const adminRouter = createTRPCRouter({
@@ -39,4 +49,82 @@ export const adminRouter = createTRPCRouter({
   updateExchangeRates: publicProcedure.mutation(async () => {
     await updateExchangeRates();
   }),
+  exportData: publicProcedure.mutation(async ({ ctx }) => {
+    const subscriptions = await ctx.db.query.subscriptions.findMany();
+    const paymentMethods = await ctx.db.query.paymentMethods.findMany();
+    const categories = await ctx.db.query.categories.findMany();
+    const users = await ctx.db.query.users.findMany();
+    const userToSubscriptions =
+      await ctx.db.query.usersToSubscriptions.findMany();
+
+    return {
+      subscriptions,
+      paymentMethods,
+      categories,
+      users,
+      userToSubscriptions,
+    };
+  }),
+  importData: publicProcedure
+    .input(
+      z.object({
+        subscriptions: z.array(
+          z.object({
+            id: z.number(),
+            name: z.string(),
+            category: z.number(),
+            image: z.string().nullish(),
+            description: z.string(),
+            price: z.number(),
+            currency: z.string(),
+            paymentMethod: z.number(),
+            schedule: z.string(),
+            firstPaymentDate: z.preprocess(preprocessStringToDate, z.date()),
+            createdAt: z.preprocess(preprocessStringToDate, z.date()),
+            updatedAt: z.preprocess(preprocessStringToDate, z.date()),
+          }),
+        ),
+        paymentMethods: z.array(
+          z.object({
+            id: z.number(),
+            name: z.string(),
+            image: z.string().nullish(),
+          }),
+        ),
+        categories: z.array(
+          z.object({
+            id: z.number(),
+            name: z.string(),
+            icon: z.string(),
+          }),
+        ),
+        users: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+            email: z.string(),
+            emailVerified: z.preprocess(preprocessStringToDate, z.date()),
+            image: z.string().nullish(),
+          }),
+        ),
+        userToSubscriptions: z.array(
+          z.object({
+            userId: z.string(),
+            subscriptionId: z.number(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.transaction(async (trx) => {
+        await trx.insert(users).values(input.users);
+        await trx.insert(paymentMethods).values(input.paymentMethods);
+        await trx.delete(categories).where(eq(categories.id, 1));
+        await trx.insert(categories).values(input.categories);
+        await trx.insert(subscriptions).values(input.subscriptions);
+        await trx
+          .insert(usersToSubscriptions)
+          .values(input.userToSubscriptions);
+      });
+    }),
 });

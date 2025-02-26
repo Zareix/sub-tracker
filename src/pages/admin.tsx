@@ -2,7 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { CreatePaymentMethodDialog } from "~/components/admin/payment-methods/create";
 import { CreateUserDialog } from "~/components/admin/users/create";
-import { api } from "~/utils/api";
+import { api, type RouterInputs } from "~/utils/api";
 import {
   Table,
   TableBody,
@@ -22,8 +22,10 @@ import { CreateCategoryDialog } from "~/components/admin/categories/create";
 import { DeleteCategoryDialog } from "~/components/admin/categories/delete";
 import { EditCategoryDialog } from "~/components/admin/categories/edit";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
+import { Input } from "~/components/ui/input";
 
 export default function Home() {
+  const apiUtils = api.useUtils();
   const usersQuery = api.user.getAll.useQuery();
   const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
   const categoriesQuery = api.category.getAll.useQuery();
@@ -45,6 +47,33 @@ export default function Home() {
       },
     },
   );
+  const exportDataMutation = api.admin.exportData.useMutation({
+    onSuccess: (data) => {
+      const res = new Blob([JSON.stringify(data)], {
+        type: "application/json",
+      });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(res);
+      link.download = "data.json";
+      link.click();
+      toast.success("Successfully exported data");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+  const importDataMutation = api.admin.importData.useMutation({
+    onSuccess: () => {
+      toast.success("Successfully imported data");
+      apiUtils.user.getAll.invalidate().catch(console.error);
+      apiUtils.paymentMethod.getAll.invalidate().catch(console.error);
+      apiUtils.category.getAll.invalidate().catch(console.error);
+      apiUtils.subscription.getAll.invalidate().catch(console.error);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   if (
     usersQuery.isError ||
@@ -226,6 +255,34 @@ export default function Home() {
             >
               Update exchange rates
             </Button>
+            <Button
+              onClick={() => {
+                exportDataMutation.mutate();
+              }}
+              disabled={exportDataMutation.isPending}
+            >
+              Export data
+            </Button>
+            <Input
+              disabled={importDataMutation.isPending}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) {
+                  return;
+                }
+                const text = await file.text();
+                importDataMutation
+                  .mutateAsync(
+                    JSON.parse(text) as RouterInputs["admin"]["importData"],
+                  )
+                  .then(() => {
+                    e.target.files = null;
+                  })
+                  .catch(console.error);
+              }}
+              type="file"
+              accept=".json"
+            />
           </div>
         </section>
       </div>

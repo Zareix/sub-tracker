@@ -25,6 +25,18 @@ export function preprocessStringToNumber(val: unknown) {
   return val;
 }
 
+export function preprocessStringToDate(val: unknown) {
+  if (!val) {
+    return undefined;
+  }
+
+  if (typeof val === "string") {
+    return new Date(val);
+  }
+
+  return val;
+}
+
 export const getSortedSubscriptions = <
   T extends Array<
     Pick<Subscription, "name" | "price"> & {
