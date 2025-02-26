@@ -17,7 +17,8 @@ import { DialogFooter } from "~/components/ui/dialog";
 
 const userCreateSchema = z.object({
   name: z.string(),
-  email: z.string(),
+  username: z.string(),
+  password: z.string().optional(),
 });
 
 export const EditCreateForm = ({
@@ -59,7 +60,7 @@ export const EditCreateForm = ({
     resolver: zodResolver(userCreateSchema),
     defaultValues: {
       name: user?.name ?? "",
-      email: user?.email ?? "",
+      username: user?.username ?? "",
     },
   });
 
@@ -92,12 +93,26 @@ export const EditCreateForm = ({
         />
         <FormField
           control={form.control}
-          name="email"
+          name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="raphael@example.com" {...field} />
+                <Input placeholder="raphael" {...field} />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input placeholder="***" type="password" {...field} />
               </FormControl>
 
               <FormMessage />

@@ -1,4 +1,12 @@
-import { ChartColumnIcon, HomeIcon, PlusIcon, WrenchIcon } from "lucide-react";
+import {
+  CalendarSyncIcon,
+  ChartColumnIcon,
+  GalleryVerticalEndIcon,
+  HomeIcon,
+  PlusIcon,
+  WrenchIcon,
+} from "lucide-react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
@@ -38,7 +46,26 @@ export function AppSidebar() {
   const router = useRouter();
   return (
     <Sidebar side="left">
-      <SidebarHeader />
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <Link href="/">
+                <div
+                  className="flex aspect-square size-8 items-center justify-center rounded-lg
+                    bg-sidebar-primary text-sidebar-primary-foreground"
+                >
+                  <CalendarSyncIcon className="size-4" />
+                </div>
+                <div className="flex flex-col gap-0.5 leading-none">
+                  <span className="font-semibold">Subtracker</span>
+                  {/* <span className="">v1.0.0</span> */}
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Subtracker</SidebarGroupLabel>
@@ -63,6 +90,11 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={() => signOut()}>
+              Sign out
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <CreateSubscriptionDialog
               trigger={

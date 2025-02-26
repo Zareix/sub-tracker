@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "430fc245-e9aa-4557-a504-eec80c7217d6",
+  "id": "f6fbb336-e979-4ba7-bf1f-b2b69aa6327e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -88,7 +88,9 @@
       "indexes": {
         "account_user_id_idx": {
           "name": "account_user_id_idx",
-          "columns": ["user_id"],
+          "columns": [
+            "user_id"
+          ],
           "isUnique": false
         }
       },
@@ -97,18 +99,64 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "account_provider_provider_account_id_pk": {
-          "columns": ["provider", "provider_account_id"],
+          "columns": [
+            "provider",
+            "provider_account_id"
+          ],
           "name": "account_provider_provider_account_id_pk"
         }
       },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "category": {
+      "name": "category",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "icon": {
+          "name": "icon",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "category_name_idx": {
+          "name": "category_name_idx",
+          "columns": [
+            "name"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
@@ -140,14 +188,20 @@
       "indexes": {
         "exchange_rate_idx": {
           "name": "exchange_rate_idx",
-          "columns": ["base_currency", "target_currency"],
+          "columns": [
+            "base_currency",
+            "target_currency"
+          ],
           "isUnique": false
         }
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "exchange_rate_base_currency_target_currency_pk": {
-          "columns": ["base_currency", "target_currency"],
+          "columns": [
+            "base_currency",
+            "target_currency"
+          ],
           "name": "exchange_rate_base_currency_target_currency_pk"
         }
       },
@@ -182,7 +236,9 @@
       "indexes": {
         "payement_method_name_idx": {
           "name": "payement_method_name_idx",
-          "columns": ["name"],
+          "columns": [
+            "name"
+          ],
           "isUnique": false
         }
       },
@@ -219,7 +275,9 @@
       "indexes": {
         "session_userId_idx": {
           "name": "session_userId_idx",
-          "columns": ["userId"],
+          "columns": [
+            "userId"
+          ],
           "isUnique": false
         }
       },
@@ -228,8 +286,12 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -254,6 +316,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
         },
         "image": {
           "name": "image",
@@ -327,7 +397,9 @@
       "indexes": {
         "subscription_name_idx": {
           "name": "subscription_name_idx",
-          "columns": ["name"],
+          "columns": [
+            "name"
+          ],
           "isUnique": false
         }
       },
@@ -336,8 +408,12 @@
           "name": "subscription_payment_method_payment_method_id_fk",
           "tableFrom": "subscription",
           "tableTo": "payment_method",
-          "columnsFrom": ["payment_method"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "payment_method"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -363,8 +439,15 @@
           "notNull": true,
           "autoincrement": false
         },
-        "email": {
-          "name": "email",
+        "username": {
+          "name": "username",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "password_hash": {
+          "name": "password_hash",
           "type": "text(255)",
           "primaryKey": false,
           "notNull": true,
@@ -389,7 +472,9 @@
       "indexes": {
         "user_name_idx": {
           "name": "user_name_idx",
-          "columns": ["name"],
+          "columns": [
+            "name"
+          ],
           "isUnique": false
         }
       },
@@ -422,8 +507,12 @@
           "name": "users_to_subscriptions_user_id_user_id_fk",
           "tableFrom": "users_to_subscriptions",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -431,8 +520,12 @@
           "name": "users_to_subscriptions_subscription_id_subscription_id_fk",
           "tableFrom": "users_to_subscriptions",
           "tableTo": "subscription",
-          "columnsFrom": ["subscription_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "subscription_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -470,7 +563,10 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "verification_token_identifier_token_pk": {
-          "columns": ["identifier", "token"],
+          "columns": [
+            "identifier",
+            "token"
+          ],
           "name": "verification_token_identifier_token_pk"
         }
       },

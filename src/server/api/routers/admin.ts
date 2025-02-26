@@ -102,7 +102,8 @@ export const adminRouter = createTRPCRouter({
           z.object({
             id: z.string(),
             name: z.string(),
-            email: z.string(),
+            username: z.string(),
+            passwordHash: z.string(),
             emailVerified: z.preprocess(preprocessStringToDate, z.date()),
             image: z.string().nullish(),
           }),
@@ -119,7 +120,6 @@ export const adminRouter = createTRPCRouter({
       await ctx.db.transaction(async (trx) => {
         await trx.insert(users).values(input.users);
         await trx.insert(paymentMethods).values(input.paymentMethods);
-        await trx.delete(categories).where(eq(categories.id, 1));
         await trx.insert(categories).values(input.categories);
         await trx.insert(subscriptions).values(input.subscriptions);
         await trx

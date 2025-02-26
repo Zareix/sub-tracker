@@ -15,6 +15,13 @@ CREATE TABLE `account` (
 );
 --> statement-breakpoint
 CREATE INDEX `account_user_id_idx` ON `account` (`user_id`);--> statement-breakpoint
+CREATE TABLE `category` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`name` text(256) NOT NULL,
+	`icon` text(256)
+);
+--> statement-breakpoint
+CREATE INDEX `category_name_idx` ON `category` (`name`);--> statement-breakpoint
 CREATE TABLE `exchange_rate` (
 	`base_currency` text(255) NOT NULL,
 	`target_currency` text(255) NOT NULL,
@@ -41,6 +48,7 @@ CREATE INDEX `session_userId_idx` ON `session` (`userId`);--> statement-breakpoi
 CREATE TABLE `subscription` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text(256) NOT NULL,
+	`category` integer DEFAULT 1 NOT NULL,
 	`image` text(256),
 	`description` text(256) DEFAULT '' NOT NULL,
 	`price` real DEFAULT 0 NOT NULL,
@@ -57,7 +65,8 @@ CREATE INDEX `subscription_name_idx` ON `subscription` (`name`);--> statement-br
 CREATE TABLE `user` (
 	`id` text(255) PRIMARY KEY NOT NULL,
 	`name` text(255) NOT NULL,
-	`email` text(255) NOT NULL,
+	`username` text(255) NOT NULL,
+	`password_hash` text(255) NOT NULL,
 	`email_verified` integer DEFAULT (unixepoch()),
 	`image` text(255)
 );

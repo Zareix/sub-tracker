@@ -83,5 +83,8 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.38.1"
+  },
+  "patchedDependencies": {
+    "next-auth@5.0.0-beta.25": "patches/next-auth@5.0.0-beta.25.patch"
   }
 }

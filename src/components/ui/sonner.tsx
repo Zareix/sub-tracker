@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2Icon, CheckIcon, XCircleIcon } from "lucide-react";
+import { CheckCircle2Icon, XCircleIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Toaster as Sonner } from "sonner";
 import { useIsMobile } from "~/lib/hooks/use-mobile";

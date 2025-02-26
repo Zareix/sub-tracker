@@ -11,24 +11,31 @@ export const userRouter = createTRPCRouter({
       columns: {
         id: true,
         name: true,
-        email: true,
+        username: true,
       },
       orderBy: [asc(users.name)],
     });
   }),
   create: publicProcedure
-    .input(z.object({ name: z.string(), email: z.string() }))
+    .input(
+      z.object({
+        name: z.string(),
+        username: z.string(),
+        password: z.string(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const usersReturned = await ctx.db
         .insert(users)
         .values({
           name: input.name,
-          email: input.email,
+          username: input.username,
+          passwordHash: await Bun.password.hash(input.password),
         })
         .returning({
           id: users.id,
           name: users.name,
-          email: users.email,
+          username: users.username,
         });
       const user = usersReturned[0];
       if (!user) {
@@ -40,23 +47,34 @@ export const userRouter = createTRPCRouter({
       return {
         id: user.id,
         name: user.name,
-        email: user.email,
+        username: user.username,
       };
     }),
   edit: publicProcedure
-    .input(z.object({ id: z.string(), name: z.string(), email: z.string() }))
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        username: z.string(),
+        password: z.string().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const usersReturned = await ctx.db
         .update(users)
         .set({
           name: input.name,
-          email: input.email,
+          username: input.username,
+          passwordHash:
+            input.password && input.password.length > 0
+              ? await Bun.password.hash(input.password)
+              : undefined,
         })
         .where(eq(users.id, input.id))
         .returning({
           id: users.id,
           name: users.name,
-          email: users.email,
+          username: users.username,
         });
       const user = usersReturned[0];
       if (!user) {
@@ -68,7 +86,7 @@ export const userRouter = createTRPCRouter({
       return {
         id: user.id,
         name: user.name,
-        email: user.email,
+        username: user.username,
       };
     }),
   delete: publicProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
@@ -98,7 +116,7 @@ export const userRouter = createTRPCRouter({
     return {
       id: user.id,
       name: user.name,
-      email: user.email,
+      username: user.username,
     };
   }),
 });

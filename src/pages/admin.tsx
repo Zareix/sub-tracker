@@ -103,7 +103,7 @@ export default function Home() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">Name</TableHead>
-                  <TableHead>Email</TableHead>
+                  <TableHead>Username</TableHead>
                   <TableHead className="text-end">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -122,7 +122,7 @@ export default function Home() {
                 {usersQuery.data?.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.username}</TableCell>
                     <TableCell className="flex items-center justify-end gap-2">
                       <DeleteUserDialog user={user} />
                       <EditUserDialog user={user} />
