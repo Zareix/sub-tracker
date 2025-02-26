@@ -85,11 +85,6 @@ export const authConfig = {
       },
     }),
   ],
-  // @ts-expect-error Missing email field but we don't need it
-  adapter: DrizzleAdapter(db, {
-    // @ts-expect-error Missing email field but we don't need it
-    usersTable: users,
-  }),
   session: {
     strategy: "jwt",
   },
