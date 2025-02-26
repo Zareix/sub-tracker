@@ -91,7 +91,7 @@ export const EditCreateForm = ({
         id: user.id,
       });
     } else {
-      createUserMutation.mutate(values);
+      createUserMutation.mutate({ ...values, password: values.password ?? "" });
     }
   }
 

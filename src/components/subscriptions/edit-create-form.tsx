@@ -22,12 +22,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { MultiSelect } from "~/components/ui/multi-select";
-import {
-  CURRENCIES,
-  type Currency,
-  type Schedule,
-  SCHEDULES,
-} from "~/lib/constant";
+import { CURRENCIES, SCHEDULES } from "~/lib/constant";
 import { cn, preprocessStringToNumber } from "~/lib/utils";
 import { ImageFileUploader } from "~/components/image-uploader";
 import {
@@ -176,9 +171,9 @@ export const EditCreateForm = ({
       category: subscription?.category.id ?? 1,
       image: subscription?.image ?? undefined,
       price: subscription?.price ?? 0,
-      currency: (subscription?.currency as Currency) ?? "EUR",
+      currency: subscription?.currency ?? "EUR",
       paymentMethod: subscription?.paymentMethod.id,
-      schedule: (subscription?.schedule as Schedule) ?? "Monthly",
+      schedule: subscription?.schedule ?? "Monthly",
       firstPaymentDate: subscription?.firstPaymentDate,
       payedBy: subscription?.users.map((u) => u.id) ?? [],
     },

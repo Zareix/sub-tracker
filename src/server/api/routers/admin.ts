@@ -1,6 +1,7 @@
 import { readdir } from "node:fs/promises";
 import { z } from "zod";
 import { env } from "~/env";
+import { CURRENCIES, SCHEDULES, UserRoles } from "~/lib/constant";
 import { preprocessStringToDate } from "~/lib/utils";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -75,9 +76,9 @@ export const adminRouter = createTRPCRouter({
             image: z.string().nullish(),
             description: z.string(),
             price: z.number(),
-            currency: z.string(),
+            currency: z.enum(CURRENCIES),
             paymentMethod: z.number(),
-            schedule: z.string(),
+            schedule: z.enum(SCHEDULES),
             firstPaymentDate: z.preprocess(preprocessStringToDate, z.date()),
             createdAt: z.preprocess(preprocessStringToDate, z.date()),
             updatedAt: z.preprocess(preprocessStringToDate, z.date()),
@@ -103,6 +104,7 @@ export const adminRouter = createTRPCRouter({
             name: z.string(),
             username: z.string(),
             passwordHash: z.string().optional(),
+            role: z.enum(UserRoles),
             emailVerified: z.preprocess(preprocessStringToDate, z.date()),
             image: z.string().nullish(),
           }),

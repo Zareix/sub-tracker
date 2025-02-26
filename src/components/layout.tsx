@@ -1,7 +1,5 @@
-import { CalendarSyncIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import Link from "next/link";
 import { LoginForm } from "~/components/login";
 import { AppSidebar, Navbar } from "~/components/nav";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";

@@ -2,7 +2,12 @@ import { TRPCError } from "@trpc/server";
 import { addMonths, addYears } from "date-fns";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
-import { BASE_CURRENCY, CURRENCIES, type Currency } from "~/lib/constant";
+import {
+  BASE_CURRENCY,
+  CURRENCIES,
+  SCHEDULES,
+  type Currency,
+} from "~/lib/constant";
 import { rounded } from "~/lib/utils";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -170,7 +175,7 @@ export const subscriptionRouter = createTRPCRouter({
         currency: z.enum(CURRENCIES),
         paymentMethod: z.number(),
         firstPaymentDate: z.date(),
-        schedule: z.string(),
+        schedule: z.enum(SCHEDULES),
         payedBy: z.array(z.string()),
       }),
     )
@@ -226,7 +231,7 @@ export const subscriptionRouter = createTRPCRouter({
         currency: z.enum(CURRENCIES),
         paymentMethod: z.number(),
         firstPaymentDate: z.date(),
-        schedule: z.string(),
+        schedule: z.enum(SCHEDULES),
         payedBy: z.array(z.string()),
       }),
     )

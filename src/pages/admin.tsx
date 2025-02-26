@@ -1,6 +1,5 @@
 import Head from "next/head";
 import Image from "next/image";
-import { CreatePaymentMethodDialog } from "~/components/admin/payment-methods/create";
 import { CreateUserDialog } from "~/components/admin/users/create";
 import { api, type RouterInputs } from "~/utils/api";
 import {
@@ -13,15 +12,9 @@ import {
 } from "~/components/ui/table";
 import { DeleteUserDialog } from "~/components/admin/users/delete";
 import { EditUserDialog } from "~/components/admin/users/edit";
-import { DeletePaymentMethodDialog } from "~/components/admin/payment-methods/delete";
-import { EditPaymentMethodDialog } from "~/components/admin/payment-methods/edit";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
-import { CreateCategoryDialog } from "~/components/admin/categories/create";
-import { DeleteCategoryDialog } from "~/components/admin/categories/delete";
-import { EditCategoryDialog } from "~/components/admin/categories/edit";
-import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 

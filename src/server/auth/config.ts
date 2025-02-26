@@ -22,7 +22,9 @@ declare module "next-auth" {
 
   interface User {
     username: string;
+    // @ts-expect-error Don"t know what to do with this
     name: string;
+    // @ts-expect-error Don"t know what to do with this
     image: string | null;
     role: UserRole;
     // ...other properties
@@ -83,6 +85,7 @@ export const authConfig = {
       },
     }),
   ],
+  // @ts-expect-error Missing email field but we don't need it
   adapter: DrizzleAdapter(db, {
     // @ts-expect-error Missing email field but we don't need it
     usersTable: users,
