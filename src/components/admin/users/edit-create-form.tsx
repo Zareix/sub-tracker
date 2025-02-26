@@ -17,12 +17,21 @@ import { DialogFooter } from "~/components/ui/dialog";
 import { ImageFileUploader } from "~/components/image-uploader";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { UserRoles } from "~/lib/constant";
+import { Select } from "@radix-ui/react-select";
+import {
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 
 const userCreateSchema = z.object({
   image: z.string().optional(),
   name: z.string(),
   username: z.string(),
   password: z.string().optional(),
+  role: z.enum(UserRoles),
 });
 
 export const EditCreateForm = ({
@@ -71,6 +80,7 @@ export const EditCreateForm = ({
       name: user?.name ?? "",
       username: user?.username ?? "",
       image: user?.image ?? undefined,
+      role: user?.role ?? "user",
     },
   });
 
@@ -129,6 +139,41 @@ export const EditCreateForm = ({
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input placeholder="***" type="password" {...field} />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Role</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={session.data?.user.id === user?.id}
+                >
+                  <FormControl>
+                    <SelectTrigger className="min-w-[170px] capitalize">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {UserRoles.map((role) => (
+                      <SelectItem
+                        value={role}
+                        key={role}
+                        className="capitalize"
+                      >
+                        {role}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormControl>
 
               <FormMessage />

@@ -11,7 +11,7 @@ import {
   users,
   usersToSubscriptions,
 } from "~/server/db/schema";
-import { updateExchangeRates } from "~/server/exchange-rates";
+import { updateExchangeRates } from "~/server/services/exchange-rates";
 
 export const adminRouter = createTRPCRouter({
   cleanUpFiles: protectedProcedure.mutation(async ({ ctx }) => {

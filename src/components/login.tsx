@@ -1,6 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { CalendarSyncIcon } from "lucide-react";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -20,6 +24,22 @@ const loginSchema = z.object({
 });
 
 export const LoginForm = () => {
+  const signInMutation = useMutation({
+    mutationFn: async (values: z.infer<typeof loginSchema>) =>
+      signIn("credentials", {
+        ...values,
+        redirect: false,
+      }).then((data) => {
+        console.log(data);
+        if (data && "error" in data && data.error) {
+          throw new Error(data.error);
+        }
+        return data;
+      }),
+    onError: () => {
+      toast.error("Could not login, please try again.");
+    },
+  });
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -29,12 +49,24 @@ export const LoginForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    signIn("credentials", values).catch(console.error);
+    signInMutation.mutate(values);
   }
 
   return (
     <Card>
       <CardHeader>
+        <Link
+          href="#"
+          className="flex items-center gap-2 self-center py-4 text-xl font-medium"
+        >
+          <div
+            className="flex h-9 w-9 items-center justify-center rounded-md bg-primary
+              text-primary-foreground"
+          >
+            <CalendarSyncIcon className="size-[22px]" />
+          </div>
+          Subtracker
+        </Link>
         <CardTitle className="text-2xl">Login</CardTitle>
       </CardHeader>
       <CardContent className="mt-4">
@@ -51,7 +83,7 @@ export const LoginForm = () => {
                   <FormItem className="grid gap-2">
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="shadcn" {...field} />
+                      <Input placeholder="raphael" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

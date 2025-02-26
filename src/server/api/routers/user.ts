@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
+import { UserRoles } from "~/lib/constant";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { subscriptions, users, usersToSubscriptions } from "~/server/db/schema";
@@ -13,6 +14,7 @@ export const userRouter = createTRPCRouter({
         name: true,
         username: true,
         image: true,
+        role: true,
       },
       orderBy: [asc(users.name)],
     });
@@ -23,6 +25,7 @@ export const userRouter = createTRPCRouter({
         name: z.string(),
         username: z.string(),
         password: z.string(),
+        role: z.enum(UserRoles),
         image: z.string().optional(),
       }),
     )
@@ -34,11 +37,10 @@ export const userRouter = createTRPCRouter({
           username: input.username,
           passwordHash: await Bun.password.hash(input.password),
           image: input.image,
+          role: input.role,
         })
         .returning({
           id: users.id,
-          name: users.name,
-          username: users.username,
         });
       const user = usersReturned[0];
       if (!user) {
@@ -49,8 +51,6 @@ export const userRouter = createTRPCRouter({
       }
       return {
         id: user.id,
-        name: user.name,
-        username: user.username,
       };
     }),
   edit: protectedProcedure
@@ -60,6 +60,7 @@ export const userRouter = createTRPCRouter({
         name: z.string(),
         username: z.string(),
         password: z.string().optional(),
+        role: z.enum(UserRoles),
         image: z.string().optional(),
       }),
     )
@@ -74,12 +75,11 @@ export const userRouter = createTRPCRouter({
               ? await Bun.password.hash(input.password)
               : undefined,
           image: input.image,
+          role: ctx.session.user.role === "admin" ? input.role : undefined,
         })
         .where(eq(users.id, input.id))
         .returning({
           id: users.id,
-          name: users.name,
-          username: users.username,
         });
       const user = usersReturned[0];
       if (!user) {
@@ -90,8 +90,6 @@ export const userRouter = createTRPCRouter({
       }
       return {
         id: user.id,
-        name: user.name,
-        username: user.username,
       };
     }),
   delete: protectedProcedure

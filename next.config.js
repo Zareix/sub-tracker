@@ -10,6 +10,15 @@ const config = {
   ...withBundleAnalyzer(),
   reactStrictMode: true,
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.r2.cloudflarestorage.com",
+      },
+    ],
+  },
+
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
    *

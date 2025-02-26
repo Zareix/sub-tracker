@@ -44,7 +44,7 @@ export const EditCreateForm = ({
   });
   const editPaymentMethodMutation = api.paymentMethod.edit.useMutation({
     onSuccess: () => {
-      toast.success("PaymentMethod edited!");
+      toast.success("Payment method edited!");
       apiUtils.paymentMethod.getAll.invalidate().catch(console.error);
       onFinished?.();
       setTimeout(() => {

@@ -7,7 +7,7 @@ import {
   sqliteTable,
   text,
 } from "drizzle-orm/sqlite-core";
-import type { AdapterAccount } from "next-auth/adapters";
+import type { Currency, Schedule, UserRole } from "~/lib/constant";
 
 export const exchangeRates = sqliteTable(
   "exchange_rate",
@@ -68,11 +68,14 @@ export const subscriptions = sqliteTable(
     image: text("image", { length: 256 }),
     description: text("description", { length: 256 }).notNull().default(""),
     price: real("price").notNull().default(0),
-    currency: text("currency", { length: 255 }).notNull().default("EUR"),
+    currency: text("currency", { length: 255 })
+      .notNull()
+      .$type<Currency>()
+      .default("EUR"),
     paymentMethod: int("payment_method", { mode: "number" })
       .notNull()
       .references(() => paymentMethods.id),
-    schedule: text("schedule", { length: 255 }).notNull(),
+    schedule: text("schedule", { length: 255 }).$type<Schedule>().notNull(),
     firstPaymentDate: int("first_payment_date", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),
@@ -136,6 +139,10 @@ export const users = sqliteTable(
     name: text("name", { length: 255 }).notNull(),
     username: text("username", { length: 255 }).notNull(),
     passwordHash: text("password_hash", { length: 255 }).notNull(),
+    role: text("role", { length: 255 })
+      .notNull()
+      .$type<UserRole>()
+      .default("user"),
     emailVerified: int("email_verified", {
       mode: "timestamp",
     }).default(sql`(unixepoch())`),

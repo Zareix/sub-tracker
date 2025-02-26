@@ -6,7 +6,8 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 
-COPY package.json bun.lock patches/ ./
+COPY package.json bun.lock ./
+COPY patches ./patches
 
 RUN bun install --frozen-lockfile
 

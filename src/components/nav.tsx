@@ -1,15 +1,12 @@
 import {
-  BadgeCheckIcon,
-  BellIcon,
   CalendarSyncIcon,
   ChartColumnIcon,
   ChevronsUpDownIcon,
-  CreditCardIcon,
-  GalleryVerticalEndIcon,
   HomeIcon,
   LogOutIcon,
   PlusIcon,
-  SparklesIcon,
+  ShieldIcon,
+  UserCircle2Icon,
   WrenchIcon,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
@@ -21,7 +18,6 @@ import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -33,12 +29,12 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
+import { cn } from "~/lib/utils";
 
 export const NAV_ITEMS = [
   {
@@ -52,9 +48,21 @@ export const NAV_ITEMS = [
     icon: ChartColumnIcon,
   },
   {
+    title: "Settings",
+    url: "/settings",
+    icon: WrenchIcon,
+  },
+  {
     title: "Admin",
     url: "/admin",
-    icon: WrenchIcon,
+    icon: ShieldIcon,
+    role: "admin",
+  },
+  {
+    title: "Profile",
+    url: "/profile",
+    icon: UserCircle2Icon,
+    role: "user",
   },
 ] as const;
 
@@ -63,7 +71,7 @@ export function AppSidebar() {
   const session = useSession();
 
   return (
-    <Sidebar side="left">
+    <Sidebar side="left" collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -77,7 +85,6 @@ export function AppSidebar() {
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-semibold">Subtracker</span>
-                  {/* <span className="">v1.0.0</span> */}
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -86,10 +93,11 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu>
-              {NAV_ITEMS.map((item) => (
+              {NAV_ITEMS.filter((item) =>
+                "role" in item ? item.role === session.data?.user.role : true,
+              ).map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
@@ -109,12 +117,12 @@ export function AppSidebar() {
       <SidebarFooter>
         {session.status === "authenticated" && (
           <SidebarMenu>
-            <SidebarMenuItem className="rounded-md border">
+            <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton
                     size="lg"
-                    className="data-[state=open]:bg-sidebar-accent
+                    className="border data-[state=open]:bg-sidebar-accent
                       data-[state=open]:text-sidebar-accent-foreground"
                   >
                     <Avatar className="h-8 w-8 rounded-lg">
@@ -144,7 +152,10 @@ export function AppSidebar() {
                   sideOffset={4}
                 >
                   <DropdownMenuLabel className="p-0 font-normal">
-                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2 rounded px-1 py-1.5 text-left text-sm hover:bg-muted"
+                    >
                       <Avatar className="h-8 w-8 rounded-lg">
                         <AvatarImage
                           src={session.data.user.image ?? undefined}
@@ -162,7 +173,7 @@ export function AppSidebar() {
                           {session.data.user.username}
                         </span>
                       </div>
-                    </div>
+                    </Link>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut()}>
@@ -190,8 +201,7 @@ const NavbarItem = ({
     key={item.title}
     asChild
     variant="link"
-    data-active={pathname === item.url}
-    className="text-foreground data-[active=true]:text-primary"
+    className={cn(pathname === item.url ? "text-primary" : "text-foreground")}
   >
     <Link
       href={item.url}
@@ -203,16 +213,24 @@ const NavbarItem = ({
 );
 
 export const Navbar = () => {
+  const session = useSession();
   const router = useRouter();
+
+  const navBarItems = NAV_ITEMS.filter((item) =>
+    "role" in item ? item.role === session.data?.user.role : true,
+  );
+  const middleIndex = Math.floor(navBarItems.length / 2);
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-10 flex h-14 items-center justify-between
         border-t border-border bg-background/80 px-4 backdrop-blur md:hidden md:px-8"
     >
-      <div className="grid h-full w-full grid-cols-4 items-center justify-around gap-2">
-        {NAV_ITEMS.filter((_, i) => i < 2).map((item) => (
-          <NavbarItem key={item.title} {...item} pathname={router.pathname} />
-        ))}
+      <div className="grid h-full w-full grid-cols-5 content-center items-center justify-around gap-2">
+        {navBarItems
+          .filter((_, i) => i < middleIndex)
+          .map((item) => (
+            <NavbarItem key={item.title} {...item} pathname={router.pathname} />
+          ))}
         <CreateSubscriptionDialog
           trigger={
             <Button
@@ -223,9 +241,11 @@ export const Navbar = () => {
             </Button>
           }
         />
-        {NAV_ITEMS.filter((_, i) => i >= 2).map((item) => (
-          <NavbarItem key={item.title} {...item} pathname={router.pathname} />
-        ))}
+        {navBarItems
+          .filter((_, i) => i >= middleIndex)
+          .map((item) => (
+            <NavbarItem key={item.title} {...item} pathname={router.pathname} />
+          ))}
       </div>
     </nav>
   );

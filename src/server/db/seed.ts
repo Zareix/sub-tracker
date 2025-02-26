@@ -24,6 +24,7 @@ if (users.length === 0) {
         name: "Admin",
         username: "admin",
         passwordHash: await Bun.password.hash("password"),
+        role: "admin",
       },
     ]);
   });

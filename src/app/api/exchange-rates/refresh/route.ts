@@ -1,4 +1,4 @@
-import { updateExchangeRates } from "~/server/exchange-rates";
+import { updateExchangeRates } from "~/server/services/exchange-rates";
 
 export const POST = async () => {
   await updateExchangeRates();

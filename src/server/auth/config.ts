@@ -2,6 +2,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
+import type { UserRole } from "~/lib/constant";
 
 import { db } from "~/server/db";
 import { users } from "~/server/db/schema";
@@ -13,6 +14,7 @@ declare module "next-auth" {
       name: string;
       username: string;
       image: string | null;
+      role: UserRole;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -22,6 +24,7 @@ declare module "next-auth" {
     username: string;
     name: string;
     image: string | null;
+    role: UserRole;
     // ...other properties
     // role: UserRole;
   }
@@ -55,6 +58,7 @@ export const authConfig = {
             username: true,
             image: true,
             passwordHash: true,
+            role: true,
           },
           where: (tb, { eq }) => eq(tb.username, credentials.username),
         });
@@ -74,6 +78,7 @@ export const authConfig = {
           name: user.name,
           username: user.username,
           image: user.image,
+          role: user.role,
         };
       },
     }),
@@ -92,6 +97,7 @@ export const authConfig = {
         token.username = user.username;
         token.name = user.name;
         token.image = user.image;
+        token.role = user.role;
       }
       return token;
     },
@@ -103,6 +109,7 @@ export const authConfig = {
             name: true,
             username: true,
             image: true,
+            role: true,
           },
           where: (tb, { eq }) => eq(tb.id, token.id as string),
         });
@@ -113,6 +120,7 @@ export const authConfig = {
         session.user.username = user.username;
         session.user.name = user.name;
         session.user.image = user.image;
+        session.user.role = user.role;
       }
       return session;
     },

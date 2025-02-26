@@ -1,4 +1,5 @@
 import { TrashIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -17,6 +18,7 @@ export const DeleteUserDialog = ({
   user: Pick<User, "id" | "name">;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const session = useSession();
   const apiUtils = api.useUtils();
   const deleteUserMutation = api.user.delete.useMutation({
     onSuccess: () => {
@@ -38,7 +40,12 @@ export const DeleteUserDialog = ({
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       trigger={
-        <Button variant="ghost" className="w-8 text-destructive" size="icon">
+        <Button
+          variant="ghost"
+          className="w-8 text-destructive"
+          size="icon"
+          disabled={session.data?.user.id === user?.id}
+        >
           <TrashIcon size={20} />
         </Button>
       }
