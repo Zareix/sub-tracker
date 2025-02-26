@@ -5,7 +5,7 @@ import { z } from "zod";
 import { BASE_CURRENCY, CURRENCIES, type Currency } from "~/lib/constant";
 import { rounded } from "~/lib/utils";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   categories,
   type Category,
@@ -90,7 +90,7 @@ const calculateNextPaymentDate = (
 };
 
 export const subscriptionRouter = createTRPCRouter({
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     const [rows, exchangeRates] = await Promise.all([
       ctx.db
         .select()
@@ -159,7 +159,7 @@ export const subscriptionRouter = createTRPCRouter({
         ),
       }));
   }),
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         name: z.string(),
@@ -214,7 +214,7 @@ export const subscriptionRouter = createTRPCRouter({
         id: subscription.id,
       };
     }),
-  edit: publicProcedure
+  edit: protectedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -276,12 +276,14 @@ export const subscriptionRouter = createTRPCRouter({
         id: subscription.id,
       };
     }),
-  delete: publicProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
-    await ctx.db.transaction(async (trx) => {
-      await trx
-        .delete(usersToSubscriptions)
-        .where(eq(usersToSubscriptions.subscriptionId, input));
-      await trx.delete(subscriptions).where(eq(subscriptions.id, input));
-    });
-  }),
+  delete: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.transaction(async (trx) => {
+        await trx
+          .delete(usersToSubscriptions)
+          .where(eq(usersToSubscriptions.subscriptionId, input));
+        await trx.delete(subscriptions).where(eq(subscriptions.id, input));
+      });
+    }),
 });

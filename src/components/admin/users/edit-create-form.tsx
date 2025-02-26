@@ -14,8 +14,12 @@ import { Input } from "~/components/ui/input";
 import { api, type RouterOutputs } from "~/utils/api";
 import { toast } from "sonner";
 import { DialogFooter } from "~/components/ui/dialog";
+import { ImageFileUploader } from "~/components/image-uploader";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const userCreateSchema = z.object({
+  image: z.string().optional(),
   name: z.string(),
   username: z.string(),
   password: z.string().optional(),
@@ -28,6 +32,8 @@ export const EditCreateForm = ({
   user?: RouterOutputs["user"]["getAll"][number];
   onFinished?: () => void;
 }) => {
+  const session = useSession();
+  const router = useRouter();
   const apiUtils = api.useUtils();
   const createUserMutation = api.user.create.useMutation({
     onSuccess: () => {
@@ -43,13 +49,16 @@ export const EditCreateForm = ({
     },
   });
   const editUserMutation = api.user.edit.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("User edited!");
       apiUtils.user.getAll.invalidate().catch(console.error);
       onFinished?.();
       setTimeout(() => {
         form.reset();
       }, 300);
+      if (session.data?.user.id === data.id) {
+        router.reload();
+      }
     },
     onError: (error) => {
       toast.error(error.message);
@@ -61,6 +70,7 @@ export const EditCreateForm = ({
     defaultValues: {
       name: user?.name ?? "",
       username: user?.username ?? "",
+      image: user?.image ?? undefined,
     },
   });
 
@@ -78,19 +88,25 @@ export const EditCreateForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Raphael" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-12 gap-2">
+          <ImageFileUploader
+            setFileUrl={(v) => form.setValue("image", v)}
+            fileUrl={form.watch("image")}
+          />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem className="col-span-10">
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Raphael" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="username"

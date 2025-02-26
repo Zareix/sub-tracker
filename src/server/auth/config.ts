@@ -10,7 +10,9 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      name: string;
       username: string;
+      image: string | null;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -18,6 +20,8 @@ declare module "next-auth" {
 
   interface User {
     username: string;
+    name: string;
+    image: string | null;
     // ...other properties
     // role: UserRole;
   }
@@ -49,6 +53,7 @@ export const authConfig = {
             id: true,
             name: true,
             username: true,
+            image: true,
             passwordHash: true,
           },
           where: (tb, { eq }) => eq(tb.username, credentials.username),
@@ -68,6 +73,7 @@ export const authConfig = {
           id: user.id,
           name: user.name,
           username: user.username,
+          image: user.image,
         };
       },
     }),
@@ -85,14 +91,28 @@ export const authConfig = {
         token.id = user.id;
         token.username = user.username;
         token.name = user.name;
+        token.image = user.image;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
-        session.user.username = token.username as string;
-        session.user.name = token.name!;
+        const user = await db.query.users.findFirst({
+          columns: {
+            id: true,
+            name: true,
+            username: true,
+            image: true,
+          },
+          where: (tb, { eq }) => eq(tb.id, token.id as string),
+        });
+        if (!user) {
+          throw new Error("Invalid credentials.");
+        }
+        session.user.id = user.id;
+        session.user.username = user.username;
+        session.user.name = user.name;
+        session.user.image = user.image;
       }
       return session;
     },

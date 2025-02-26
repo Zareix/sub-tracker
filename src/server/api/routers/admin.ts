@@ -1,10 +1,9 @@
-import { eq } from "drizzle-orm";
 import { readdir } from "node:fs/promises";
 import { z } from "zod";
 import { env } from "~/env";
 import { preprocessStringToDate } from "~/lib/utils";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   categories,
   paymentMethods,
@@ -15,7 +14,7 @@ import {
 import { updateExchangeRates } from "~/server/exchange-rates";
 
 export const adminRouter = createTRPCRouter({
-  cleanUpFiles: publicProcedure.mutation(async ({ ctx }) => {
+  cleanUpFiles: protectedProcedure.mutation(async ({ ctx }) => {
     let filesInUse = (
       await ctx.db.query.subscriptions.findMany({
         columns: {
@@ -46,10 +45,10 @@ export const adminRouter = createTRPCRouter({
       }
     }
   }),
-  updateExchangeRates: publicProcedure.mutation(async () => {
+  updateExchangeRates: protectedProcedure.mutation(async () => {
     await updateExchangeRates();
   }),
-  exportData: publicProcedure.mutation(async ({ ctx }) => {
+  exportData: protectedProcedure.mutation(async ({ ctx }) => {
     const subscriptions = await ctx.db.query.subscriptions.findMany();
     const paymentMethods = await ctx.db.query.paymentMethods.findMany();
     const categories = await ctx.db.query.categories.findMany();
@@ -65,7 +64,7 @@ export const adminRouter = createTRPCRouter({
       userToSubscriptions,
     };
   }),
-  importData: publicProcedure
+  importData: protectedProcedure
     .input(
       z.object({
         subscriptions: z.array(
@@ -103,7 +102,7 @@ export const adminRouter = createTRPCRouter({
             id: z.string(),
             name: z.string(),
             username: z.string(),
-            passwordHash: z.string(),
+            passwordHash: z.string().optional(),
             emailVerified: z.preprocess(preprocessStringToDate, z.date()),
             image: z.string().nullish(),
           }),
@@ -118,7 +117,12 @@ export const adminRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.transaction(async (trx) => {
-        await trx.insert(users).values(input.users);
+        await trx.insert(users).values(
+          input.users.map((u) => ({
+            ...u,
+            passwordHash: u.passwordHash ?? Bun.password.hashSync("password"),
+          })),
+        );
         await trx.insert(paymentMethods).values(input.paymentMethods);
         await trx.insert(categories).values(input.categories);
         await trx.insert(subscriptions).values(input.subscriptions);

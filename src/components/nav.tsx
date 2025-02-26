@@ -1,16 +1,32 @@
 import {
+  BadgeCheckIcon,
+  BellIcon,
   CalendarSyncIcon,
   ChartColumnIcon,
+  ChevronsUpDownIcon,
+  CreditCardIcon,
   GalleryVerticalEndIcon,
   HomeIcon,
+  LogOutIcon,
   PlusIcon,
+  SparklesIcon,
   WrenchIcon,
 } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -44,6 +60,8 @@ export const NAV_ITEMS = [
 
 export function AppSidebar() {
   const router = useRouter();
+  const session = useSession();
+
   return (
     <Sidebar side="left">
       <SidebarHeader>
@@ -68,7 +86,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Subtracker</SidebarGroupLabel>
+          {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu>
               {NAV_ITEMS.map((item) => (
@@ -89,26 +107,73 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => signOut()}>
-              Sign out
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <CreateSubscriptionDialog
-              trigger={
-                <SidebarMenuButton
-                  variant="outline"
-                  className="flex items-center gap-2"
+        {session.status === "authenticated" && (
+          <SidebarMenu>
+            <SidebarMenuItem className="rounded-md border">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-[state=open]:bg-sidebar-accent
+                      data-[state=open]:text-sidebar-accent-foreground"
+                  >
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarImage
+                        src={session.data.user.image ?? undefined}
+                        alt={session.data.user.name ?? ""}
+                      />
+                      <AvatarFallback className="rounded-lg">
+                        {session.data.user.name.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        {session.data.user.name}
+                      </span>
+                      <span className="truncate text-xs">
+                        {session.data.user.username}
+                      </span>
+                    </div>
+                    <ChevronsUpDownIcon className="ml-auto size-4" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                  side="right"
+                  align="end"
+                  sideOffset={4}
                 >
-                  <PlusIcon />
-                  <span>Add Subscription</span>
-                </SidebarMenuButton>
-              }
-            />
-          </SidebarMenuItem>
-        </SidebarMenu>
+                  <DropdownMenuLabel className="p-0 font-normal">
+                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                      <Avatar className="h-8 w-8 rounded-lg">
+                        <AvatarImage
+                          src={session.data.user.image ?? undefined}
+                          alt={session.data.user.name}
+                        />
+                        <AvatarFallback className="rounded-lg">
+                          {session.data.user.name.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="grid flex-1 text-left text-sm leading-tight">
+                        <span className="truncate font-semibold">
+                          {session.data.user.name}
+                        </span>
+                        <span className="truncate text-xs">
+                          {session.data.user.username}
+                        </span>
+                      </div>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut()}>
+                    <LogOutIcon />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        )}
       </SidebarFooter>
       <SidebarFooter />
     </Sidebar>

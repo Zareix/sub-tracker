@@ -23,6 +23,7 @@ import { DeleteCategoryDialog } from "~/components/admin/categories/delete";
 import { EditCategoryDialog } from "~/components/admin/categories/edit";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 
 export default function Home() {
   const apiUtils = api.useUtils();
@@ -92,9 +93,9 @@ export default function Home() {
       <Head>
         <title>Sub Tracker - Admin</title>
       </Head>
-      <div className="grid items-start gap-4">
+      <div className="grid max-w-[100vw] items-start gap-4">
         <section>
-          <header className="flex items-center justify-between">
+          <header className="flex flex-wrap items-center justify-between">
             <h1 className="text-3xl font-bold">Users</h1>
             <CreateUserDialog />
           </header>
@@ -102,6 +103,7 @@ export default function Home() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[70px]">Image</TableHead>
                   <TableHead className="w-[100px]">Name</TableHead>
                   <TableHead>Username</TableHead>
                   <TableHead className="text-end">Actions</TableHead>
@@ -110,6 +112,9 @@ export default function Home() {
               <TableBody>
                 {usersQuery.isLoading && (
                   <TableRow>
+                    <TableCell>
+                      <Skeleton className="h-10 w-16" />
+                    </TableCell>
                     <TableCell className="font-medium">
                       <Skeleton className="h-4 w-20" />
                     </TableCell>
@@ -121,6 +126,17 @@ export default function Home() {
                 )}
                 {usersQuery.data?.map((user) => (
                   <TableRow key={user.id}>
+                    <TableCell>
+                      {user.image && (
+                        <Image
+                          src={user.image}
+                          alt={user.name}
+                          width={64}
+                          height={40}
+                          className="max-h-[40px] max-w-[64px] object-contain"
+                        />
+                      )}
+                    </TableCell>
                     <TableCell className="font-medium">{user.name}</TableCell>
                     <TableCell>{user.username}</TableCell>
                     <TableCell className="flex items-center justify-end gap-2">
@@ -135,7 +151,7 @@ export default function Home() {
         </section>
 
         <section>
-          <header className="flex items-center justify-between">
+          <header className="flex flex-wrap items-center justify-between">
             <h1 className="text-3xl font-bold">Payment Methods</h1>
             <CreatePaymentMethodDialog />
           </header>
@@ -190,7 +206,7 @@ export default function Home() {
         </section>
 
         <section>
-          <header className="flex items-center justify-between">
+          <header className="flex flex-wrap items-center justify-between">
             <h1 className="text-3xl font-bold">Categories</h1>
             <CreateCategoryDialog />
           </header>
@@ -238,7 +254,7 @@ export default function Home() {
           <header className="flex items-center justify-between">
             <h1 className="text-3xl font-bold">Misc</h1>
           </header>
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-2 flex flex-wrap items-center gap-2">
             <Button
               onClick={() => {
                 cleanUpFilesMutation.mutate();
@@ -263,26 +279,25 @@ export default function Home() {
             >
               Export data
             </Button>
-            <Input
-              disabled={importDataMutation.isPending}
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) {
-                  return;
-                }
-                const text = await file.text();
-                importDataMutation
-                  .mutateAsync(
+            <div className="flex max-w-64 flex-col gap-2">
+              <Label>Import data</Label>
+              <Input
+                disabled={importDataMutation.isPending}
+                placeholder="Import data"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) {
+                    return;
+                  }
+                  const text = await file.text();
+                  importDataMutation.mutate(
                     JSON.parse(text) as RouterInputs["admin"]["importData"],
-                  )
-                  .then(() => {
-                    e.target.files = null;
-                  })
-                  .catch(console.error);
-              }}
-              type="file"
-              accept=".json"
-            />
+                  );
+                }}
+                type="file"
+                accept=".json"
+              />
+            </div>
           </div>
         </section>
       </div>
