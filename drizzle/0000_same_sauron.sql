@@ -64,9 +64,9 @@ CREATE TABLE `subscription` (
 CREATE INDEX `subscription_name_idx` ON `subscription` (`name`);--> statement-breakpoint
 CREATE TABLE `user` (
 	`id` text(255) PRIMARY KEY NOT NULL,
+	`email` text(255) NOT NULL,
 	`name` text(255) NOT NULL,
-	`username` text(255) NOT NULL,
-	`password_hash` text(255) NOT NULL,
+	`role` text(255) DEFAULT 'user' NOT NULL,
 	`email_verified` integer DEFAULT (unixepoch()),
 	`image` text(255)
 );

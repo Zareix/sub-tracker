@@ -11,12 +11,15 @@ export const env = createEnv({
       process.env.NODE_ENV === "production"
         ? z.string()
         : z.string().optional(),
+    AUTH_GOOGLE_ID: z.string(),
+    AUTH_GOOGLE_SECRET: z.string(),
     DATABASE_PATH: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
     UPLOADS_FOLDER: z.string(),
     FIXER_API_KEY: z.string().optional(),
+    ADMIN_EMAIL: z.string(),
   },
 
   /**
@@ -36,11 +39,14 @@ export const env = createEnv({
    */
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
+    AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
+    AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
     DATABASE_PATH: process.env.DATABASE_PATH,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV,
     UPLOADS_FOLDER: process.env.UPLOADS_FOLDER,
     FIXER_API_KEY: process.env.FIXER_API_KEY,
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -22,8 +22,7 @@ if (users.length === 0) {
     await trx.insert(schema.users).values([
       {
         name: "Admin",
-        username: "admin",
-        passwordHash: await Bun.password.hash("password"),
+        email: env.ADMIN_EMAIL,
         role: "admin",
       },
     ]);

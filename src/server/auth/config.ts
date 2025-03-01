@@ -1,18 +1,21 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import { z } from "zod";
+import GoogleProvider from "next-auth/providers/google";
 import type { UserRole } from "~/lib/constant";
 
 import { db } from "~/server/db";
-import { users } from "~/server/db/schema";
+import {
+  accounts,
+  sessions,
+  users,
+  verificationTokens,
+} from "~/server/db/schema";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
       name: string;
-      username: string;
       image: string | null;
       role: UserRole;
       // ...other properties
@@ -22,9 +25,7 @@ declare module "next-auth" {
 
   interface User {
     username: string;
-    // @ts-expect-error Don"t know what to do with this
     name: string;
-    // @ts-expect-error Don"t know what to do with this
     image: string | null;
     role: UserRole;
     // ...other properties
@@ -34,93 +35,24 @@ declare module "next-auth" {
 
 export const authConfig = {
   providers: [
-    Credentials({
-      credentials: {
-        username: {},
-        password: {},
-      },
-      authorize: async (cres) => {
-        const parsedCreds = z
-          .object({
-            username: z.string(),
-            password: z.string(),
-          })
-          .safeParse(cres);
-
-        if (!parsedCreds.success) {
-          throw new Error("Invalid credentials");
-        }
-
-        const credentials = parsedCreds.data;
-
-        const user = await db.query.users.findFirst({
-          columns: {
-            id: true,
-            name: true,
-            username: true,
-            image: true,
-            passwordHash: true,
-            role: true,
-          },
-          where: (tb, { eq }) => eq(tb.username, credentials.username),
-        });
-
-        if (!user) {
-          throw new Error("Invalid credentials.");
-        }
-
-        if (
-          !(await Bun.password.verify(credentials.password, user.passwordHash))
-        ) {
-          throw new Error("Invalid credentials.");
-        }
-
-        return {
-          id: user.id,
-          name: user.name,
-          username: user.username,
-          image: user.image,
-          role: user.role,
-        };
-      },
+    GoogleProvider({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
     }),
   ],
-  session: {
-    strategy: "jwt",
-  },
+  adapter: DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens,
+  }),
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.username = user.username;
-        token.name = user.name;
-        token.image = user.image;
-        token.role = user.role;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        const user = await db.query.users.findFirst({
-          columns: {
-            id: true,
-            name: true,
-            username: true,
-            image: true,
-            role: true,
-          },
-          where: (tb, { eq }) => eq(tb.id, token.id as string),
-        });
-        if (!user) {
-          throw new Error("Invalid credentials.");
-        }
-        session.user.id = user.id;
-        session.user.username = user.username;
-        session.user.name = user.name;
-        session.user.image = user.image;
-        session.user.role = user.role;
-      }
-      return session;
-    },
+    session: ({ session, user }) => ({
+      ...session,
+      user: {
+        ...session.user,
+        id: user.id,
+      },
+    }),
   },
 } satisfies NextAuthConfig;
