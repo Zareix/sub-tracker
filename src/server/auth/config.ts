@@ -22,10 +22,6 @@ declare module "next-auth" {
   }
 
   interface User {
-    // @ts-expect-error Don't know why this is needed
-    name: string;
-    // @ts-expect-error Don't know why this is needed
-    image: string | null;
     role: UserRole;
   }
 }
