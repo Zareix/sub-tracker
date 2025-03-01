@@ -9,7 +9,6 @@
 
 import { initTRPC, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { headers } from "next/headers";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { auth, type Session } from "~/server/auth";
@@ -51,7 +50,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts;
+  const { req } = opts;
 
   const headers = new Headers();
   headers.set("cookie", req.headers.cookie ?? "");
