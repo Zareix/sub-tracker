@@ -12,7 +12,7 @@ export const userRouter = createTRPCRouter({
       columns: {
         id: true,
         name: true,
-        username: true,
+        email: true,
         image: true,
         role: true,
       },
@@ -23,8 +23,7 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        username: z.string(),
-        password: z.string(),
+        email: z.string().email(),
         role: z.enum(UserRoles),
         image: z.string().optional(),
       }),
@@ -34,8 +33,7 @@ export const userRouter = createTRPCRouter({
         .insert(users)
         .values({
           name: input.name,
-          username: input.username,
-          passwordHash: await Bun.password.hash(input.password),
+          email: input.email,
           image: input.image,
           role: input.role,
         })
@@ -58,8 +56,7 @@ export const userRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         name: z.string(),
-        username: z.string(),
-        password: z.string().optional(),
+        email: z.string().email(),
         role: z.enum(UserRoles),
         image: z.string().optional(),
       }),
@@ -69,11 +66,7 @@ export const userRouter = createTRPCRouter({
         .update(users)
         .set({
           name: input.name,
-          username: input.username,
-          passwordHash:
-            input.password && input.password.length > 0
-              ? await Bun.password.hash(input.password)
-              : undefined,
+          email: input.email,
           image: input.image,
           role: ctx.session.user.role === "admin" ? input.role : undefined,
         })
@@ -121,7 +114,6 @@ export const userRouter = createTRPCRouter({
       return {
         id: user.id,
         name: user.name,
-        username: user.username,
       };
     }),
 });

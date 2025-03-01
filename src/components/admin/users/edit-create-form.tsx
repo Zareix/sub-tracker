@@ -29,8 +29,7 @@ import {
 const userCreateSchema = z.object({
   image: z.string().optional(),
   name: z.string(),
-  username: z.string(),
-  password: z.string().optional(),
+  email: z.string().email(),
   role: z.enum(UserRoles),
 });
 
@@ -78,7 +77,6 @@ export const EditCreateForm = ({
     resolver: zodResolver(userCreateSchema),
     defaultValues: {
       name: user?.name ?? "",
-      username: user?.username ?? "",
       image: user?.image ?? undefined,
       role: user?.role ?? "user",
     },
@@ -91,7 +89,7 @@ export const EditCreateForm = ({
         id: user.id,
       });
     } else {
-      createUserMutation.mutate({ ...values, password: values.password ?? "" });
+      createUserMutation.mutate(values);
     }
   }
 
@@ -119,28 +117,13 @@ export const EditCreateForm = ({
         </div>
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="raphael" {...field} />
+                <Input placeholder="raphael@example.com" {...field} />
               </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input placeholder="***" type="password" {...field} />
-              </FormControl>
-
               <FormMessage />
             </FormItem>
           )}

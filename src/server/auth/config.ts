@@ -1,5 +1,5 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { type DefaultSession, type NextAuthConfig } from "next-auth";
+import { type User, type DefaultSession, type NextAuthConfig } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import type { UserRole } from "~/lib/constant";
 
@@ -18,18 +18,26 @@ declare module "next-auth" {
       name: string;
       image: string | null;
       role: UserRole;
-      // ...other properties
-      // role: UserRole;
     } & DefaultSession["user"];
   }
 
   interface User {
-    username: string;
+    // @ts-expect-error Don't know why this is needed
     name: string;
+    // @ts-expect-error Don't know why this is needed
     image: string | null;
     role: UserRole;
-    // ...other properties
-    // role: UserRole;
+  }
+}
+
+declare module "@auth/core/adapters" {
+  interface AdapterUser extends User {
+    id: string;
+    email: string;
+    name: string;
+    image: string | null;
+    emailVerified: Date | null;
+    role: UserRole;
   }
 }
 

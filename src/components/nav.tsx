@@ -139,7 +139,7 @@ export function AppSidebar() {
                         {session.data.user.name}
                       </span>
                       <span className="truncate text-xs">
-                        {session.data.user.username}
+                        {session.data.user.email}
                       </span>
                     </div>
                     <ChevronsUpDownIcon className="ml-auto size-4" />
@@ -170,7 +170,7 @@ export function AppSidebar() {
                           {session.data.user.name}
                         </span>
                         <span className="truncate text-xs">
-                          {session.data.user.username}
+                          {session.data.user.email}
                         </span>
                       </div>
                     </Link>
