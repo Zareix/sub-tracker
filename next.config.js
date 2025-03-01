@@ -28,7 +28,7 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
-  transpilePackages: ["geist"],
+  transpilePackages: ["geist", "@auth/core", "@panva/hkdf"],
   output: "standalone",
 };
 
