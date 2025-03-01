@@ -9,7 +9,6 @@ import {
   UserCircle2Icon,
   WrenchIcon,
 } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
@@ -34,6 +33,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
+import { signOut, useSession } from "~/lib/auth-client";
 import { cn } from "~/lib/utils";
 
 export const NAV_ITEMS = [
@@ -115,7 +115,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        {session.status === "authenticated" && (
+        {session.data && (
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
@@ -139,7 +139,7 @@ export function AppSidebar() {
                         {session.data.user.name}
                       </span>
                       <span className="truncate text-xs">
-                        {session.data.user.username}
+                        {session.data.user.email}
                       </span>
                     </div>
                     <ChevronsUpDownIcon className="ml-auto size-4" />
@@ -170,7 +170,7 @@ export function AppSidebar() {
                           {session.data.user.name}
                         </span>
                         <span className="truncate text-xs">
-                          {session.data.user.username}
+                          {session.data.user.email}
                         </span>
                       </div>
                     </Link>

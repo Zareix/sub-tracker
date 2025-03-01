@@ -1,6 +1,4 @@
 import { GeistSans } from "geist/font/sans";
-import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { NuqsAdapter } from "nuqs/adapters/next/pages";
 import { api } from "~/utils/api";
@@ -14,10 +12,7 @@ import { TooltipProvider } from "~/components/ui/tooltip";
 
 import "~/styles/globals.css";
 
-const MyApp: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, ...pageProps },
-}) => {
+const MyApp: AppType = ({ Component, pageProps }) => {
   // useEffect(() => {
   //   if (env.NEXT_PUBLIC_ENV === "development") {
   //     scan({
@@ -35,19 +30,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
           font-family: ${GeistSans.style.fontFamily};
         }
       `}</style>
-      <SessionProvider session={session}>
-        <NuqsAdapter>
-          <TooltipProvider>
-            <div className={GeistSans.className}>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </div>
-            <Toaster />
-            {/* {env.NEXT_PUBLIC_ENV === "development" && <ReactQueryDevtools />} */}
-          </TooltipProvider>
-        </NuqsAdapter>
-      </SessionProvider>
+      <NuqsAdapter>
+        <TooltipProvider>
+          <div className={GeistSans.className}>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </div>
+          <Toaster />
+          {/* {env.NEXT_PUBLIC_ENV === "development" && <ReactQueryDevtools />} */}
+        </TooltipProvider>
+      </NuqsAdapter>
     </>
   );
 };

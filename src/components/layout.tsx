@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useSession } from "~/lib/auth-client";
 import Head from "next/head";
 import { LoginForm } from "~/components/login";
 import { AppSidebar, Navbar } from "~/components/nav";
@@ -7,9 +7,9 @@ import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const session = useSession();
 
-  if (session.status === "loading") return <></>;
+  if (session.isPending) return <></>;
 
-  if (session.status === "unauthenticated") {
+  if (!session.data) {
     return (
       <>
         <Head>

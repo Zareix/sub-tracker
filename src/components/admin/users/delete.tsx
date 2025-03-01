@@ -1,5 +1,5 @@
 import { TrashIcon } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { useSession } from "~/lib/auth-client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";

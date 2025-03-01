@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { CalendarSyncIcon } from "lucide-react";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -17,25 +16,21 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { signIn } from "~/lib/auth-client";
 
 const loginSchema = z.object({
-  username: z.string(),
+  email: z.string(),
   password: z.string(),
 });
 
 export const LoginForm = () => {
   const signInMutation = useMutation({
-    mutationFn: async (values: z.infer<typeof loginSchema>) =>
-      signIn("credentials", {
-        ...values,
-        redirect: false,
-      }).then((data) => {
-        console.log(data);
-        if (data && "error" in data && data.error) {
-          throw new Error(data.error);
-        }
-        return data;
-      }),
+    mutationFn: async (values: z.infer<typeof loginSchema>) => {
+      return signIn.email({
+        email: values.email,
+        password: values.password,
+      });
+    },
     onError: () => {
       toast.error("Could not login, please try again.");
     },
@@ -43,7 +38,7 @@ export const LoginForm = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -78,12 +73,12 @@ export const LoginForm = () => {
             <div className="flex flex-col gap-6">
               <FormField
                 control={form.control}
-                name="username"
+                name="email"
                 render={({ field }) => (
                   <FormItem className="grid gap-2">
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="raphael" {...field} />
+                      <Input placeholder="raphael@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

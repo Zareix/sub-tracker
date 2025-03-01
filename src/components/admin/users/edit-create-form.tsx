@@ -15,7 +15,7 @@ import { api, type RouterOutputs } from "~/utils/api";
 import { toast } from "sonner";
 import { DialogFooter } from "~/components/ui/dialog";
 import { ImageFileUploader } from "~/components/image-uploader";
-import { useSession } from "next-auth/react";
+import { useSession } from "~/lib/auth-client";
 import { useRouter } from "next/router";
 import { UserRoles } from "~/lib/constant";
 import { Select } from "@radix-ui/react-select";
@@ -29,7 +29,7 @@ import {
 const userCreateSchema = z.object({
   image: z.string().optional(),
   name: z.string(),
-  username: z.string(),
+  email: z.string(),
   password: z.string().optional(),
   role: z.enum(UserRoles),
 });
@@ -38,7 +38,10 @@ export const EditCreateForm = ({
   user,
   onFinished,
 }: {
-  user?: RouterOutputs["user"]["getAll"][number];
+  user?: Pick<
+    RouterOutputs["user"]["getAll"][number],
+    "id" | "name" | "email" | "role" | "image"
+  >;
   onFinished?: () => void;
 }) => {
   const session = useSession();
@@ -78,7 +81,7 @@ export const EditCreateForm = ({
     resolver: zodResolver(userCreateSchema),
     defaultValues: {
       name: user?.name ?? "",
-      username: user?.username ?? "",
+      email: user?.email ?? "",
       image: user?.image ?? undefined,
       role: user?.role ?? "user",
     },
@@ -94,6 +97,8 @@ export const EditCreateForm = ({
       createUserMutation.mutate({ ...values, password: values.password ?? "" });
     }
   }
+
+  const isCurrentUser = session.data?.user.id === user?.id;
 
   return (
     <Form {...form}>
@@ -119,10 +124,10 @@ export const EditCreateForm = ({
         </div>
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input placeholder="raphael" {...field} />
               </FormControl>
@@ -155,7 +160,7 @@ export const EditCreateForm = ({
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                  disabled={session.data?.user.id === user?.id}
+                  disabled={isCurrentUser}
                 >
                   <FormControl>
                     <SelectTrigger className="min-w-[170px] capitalize">

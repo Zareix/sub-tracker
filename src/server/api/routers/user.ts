@@ -4,6 +4,7 @@ import { z } from "zod";
 import { UserRoles } from "~/lib/constant";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { auth } from "~/server/auth";
 import { subscriptions, users, usersToSubscriptions } from "~/server/db/schema";
 
 export const userRouter = createTRPCRouter({
@@ -12,7 +13,7 @@ export const userRouter = createTRPCRouter({
       columns: {
         id: true,
         name: true,
-        username: true,
+        email: true,
         image: true,
         role: true,
       },
@@ -23,7 +24,7 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        username: z.string(),
+        email: z.string().email(),
         password: z.string(),
         role: z.enum(UserRoles),
         image: z.string().optional(),
@@ -34,8 +35,7 @@ export const userRouter = createTRPCRouter({
         .insert(users)
         .values({
           name: input.name,
-          username: input.username,
-          passwordHash: await Bun.password.hash(input.password),
+          email: input.email,
           image: input.image,
           role: input.role,
         })
@@ -58,7 +58,7 @@ export const userRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         name: z.string(),
-        username: z.string(),
+        email: z.string().email(),
         password: z.string().optional(),
         role: z.enum(UserRoles),
         image: z.string().optional(),
@@ -69,11 +69,7 @@ export const userRouter = createTRPCRouter({
         .update(users)
         .set({
           name: input.name,
-          username: input.username,
-          passwordHash:
-            input.password && input.password.length > 0
-              ? await Bun.password.hash(input.password)
-              : undefined,
+          email: input.email,
           image: input.image,
           role: ctx.session.user.role === "admin" ? input.role : undefined,
         })
@@ -87,6 +83,11 @@ export const userRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
           message: "Error updating user",
         });
+      }
+      if (ctx.session.user.role === "admin" && input.password) {
+        const ctx = await auth.$context;
+        const hash = await ctx.password.hash(input.password);
+        await ctx.internalAdapter.updatePassword(user.id, hash);
       }
       return {
         id: user.id,
@@ -121,7 +122,7 @@ export const userRouter = createTRPCRouter({
       return {
         id: user.id,
         name: user.name,
-        username: user.username,
+        email: user.email,
       };
     }),
 });

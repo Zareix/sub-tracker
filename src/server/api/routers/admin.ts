@@ -102,11 +102,12 @@ export const adminRouter = createTRPCRouter({
           z.object({
             id: z.string(),
             name: z.string(),
-            username: z.string(),
-            passwordHash: z.string().optional(),
+            email: z.string(),
             role: z.enum(UserRoles),
-            emailVerified: z.preprocess(preprocessStringToDate, z.date()),
+            emailVerified: z.boolean(),
             image: z.string().nullish(),
+            createdAt: z.preprocess(preprocessStringToDate, z.date()),
+            updatedAt: z.preprocess(preprocessStringToDate, z.date()),
           }),
         ),
         userToSubscriptions: z.array(
@@ -119,12 +120,7 @@ export const adminRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.transaction(async (trx) => {
-        await trx.insert(users).values(
-          input.users.map((u) => ({
-            ...u,
-            passwordHash: u.passwordHash ?? Bun.password.hashSync("password"),
-          })),
-        );
+        await trx.insert(users).values(input.users);
         await trx.insert(paymentMethods).values(input.paymentMethods);
         await trx.insert(categories).values(input.categories);
         await trx.insert(subscriptions).values(input.subscriptions);

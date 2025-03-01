@@ -101,7 +101,7 @@ export default function AdminPage() {
                 <TableRow>
                   <TableHead className="w-[70px]">Image</TableHead>
                   <TableHead className="w-[100px]">Name</TableHead>
-                  <TableHead>Username</TableHead>
+                  <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead className="text-end">Actions</TableHead>
                 </TableRow>
@@ -138,7 +138,7 @@ export default function AdminPage() {
                       )}
                     </TableCell>
                     <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.username}</TableCell>
+                    <TableCell>{user.email}</TableCell>
                     <TableCell className="capitalize">{user.role}</TableCell>
                     <TableCell className="flex items-center justify-end gap-2">
                       <DeleteUserDialog user={user} />
