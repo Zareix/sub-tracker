@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext } from "next";
+import { type GetServerSidePropsContext } from "next";
 import {
   type NextAuthOptions,
   type DefaultSession,
@@ -18,8 +18,6 @@ declare module "next-auth" {
       username: string;
       image: string | null;
       role: UserRole;
-      // ...other properties
-      // role: UserRole;
     } & DefaultSession["user"];
   }
 
@@ -28,8 +26,6 @@ declare module "next-auth" {
     name: string;
     image: string | null;
     role: UserRole;
-    // ...other properties
-    // role: UserRole;
   }
 }
 
