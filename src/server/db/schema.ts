@@ -166,7 +166,9 @@ export const usersRelations = relations(users, ({ many }) => ({
 // --- BETTER AUTH ---
 
 export const session = sqliteTable("session", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => Bun.randomUUIDv7()),
   expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
   token: text("token").notNull().unique(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
@@ -179,7 +181,9 @@ export const session = sqliteTable("session", {
 });
 
 export const account = sqliteTable("account", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => Bun.randomUUIDv7()),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
   userId: text("user_id")
@@ -201,7 +205,9 @@ export const account = sqliteTable("account", {
 });
 
 export const verification = sqliteTable("verification", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => Bun.randomUUIDv7()),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
