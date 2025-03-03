@@ -23,6 +23,9 @@ export const auth = betterAuth({
       },
     },
   },
+  advanced: {
+    generateId: false,
+  },
   user: {
     additionalFields: {
       role: {

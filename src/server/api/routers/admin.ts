@@ -84,49 +84,67 @@ export const adminRouter = createTRPCRouter({
             updatedAt: z.preprocess(preprocessStringToDate, z.date()),
           }),
         ),
-        paymentMethods: z.array(
-          z.object({
-            id: z.number(),
-            name: z.string(),
-            image: z.string().nullish(),
-          }),
-        ),
-        categories: z.array(
-          z.object({
-            id: z.number(),
-            name: z.string(),
-            icon: z.string(),
-          }),
-        ),
-        users: z.array(
-          z.object({
-            id: z.string(),
-            name: z.string(),
-            email: z.string(),
-            role: z.enum(UserRoles),
-            emailVerified: z.boolean(),
-            image: z.string().nullish(),
-            createdAt: z.preprocess(preprocessStringToDate, z.date()),
-            updatedAt: z.preprocess(preprocessStringToDate, z.date()),
-          }),
-        ),
-        userToSubscriptions: z.array(
-          z.object({
-            userId: z.string(),
-            subscriptionId: z.number(),
-          }),
-        ),
+        paymentMethods: z
+          .array(
+            z.object({
+              id: z.number(),
+              name: z.string(),
+              image: z.string().nullish(),
+            }),
+          )
+          .optional(),
+        categories: z
+          .array(
+            z.object({
+              id: z.number(),
+              name: z.string(),
+              icon: z.string(),
+            }),
+          )
+          .optional(),
+        users: z
+          .array(
+            z.object({
+              id: z.string(),
+              name: z.string(),
+              email: z.string(),
+              role: z.enum(UserRoles),
+              emailVerified: z.boolean(),
+              image: z.string().nullish(),
+              createdAt: z.preprocess(preprocessStringToDate, z.date()),
+              updatedAt: z.preprocess(preprocessStringToDate, z.date()),
+            }),
+          )
+          .optional(),
+        userToSubscriptions: z
+          .array(
+            z.object({
+              userId: z.string(),
+              subscriptionId: z.number(),
+            }),
+          )
+          .optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.transaction(async (trx) => {
-        await trx.insert(users).values(input.users);
-        await trx.insert(paymentMethods).values(input.paymentMethods);
-        await trx.insert(categories).values(input.categories);
-        await trx.insert(subscriptions).values(input.subscriptions);
-        await trx
-          .insert(usersToSubscriptions)
-          .values(input.userToSubscriptions);
+        if (input.users && input.users.length > 0) {
+          await trx.insert(users).values(input.users);
+        }
+        if (input.paymentMethods && input.paymentMethods.length > 0) {
+          await trx.insert(paymentMethods).values(input.paymentMethods);
+        }
+        if (input.categories && input.categories.length > 0) {
+          await trx.insert(categories).values(input.categories);
+        }
+        if (input.subscriptions && input.subscriptions.length > 0) {
+          await trx.insert(subscriptions).values(input.subscriptions);
+        }
+        if (input.userToSubscriptions && input.userToSubscriptions.length > 0) {
+          await trx
+            .insert(usersToSubscriptions)
+            .values(input.userToSubscriptions);
+        }
       });
     }),
 });
