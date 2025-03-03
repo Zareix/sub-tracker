@@ -73,7 +73,7 @@ CREATE TABLE `user` (
 	`email` text NOT NULL,
 	`role` text(255) DEFAULT 'user' NOT NULL,
 	`image` text(255),
-	`email_verified` integer NOT NULL,
+	`email_verified` integer DEFAULT false NOT NULL,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch()) NOT NULL
 );
