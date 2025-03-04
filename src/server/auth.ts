@@ -45,9 +45,9 @@ export const auth = betterAuth({
   trustedOrigins: [env.BETTER_AUTH_URL],
   plugins: [
     passkey({
-      rpID: env.NODE_ENV === "production" ? "subtracker" : "localhost",
-      rpName: "Subtracker",
-      origin: env.BETTER_AUTH_URL,
+      // rpID: env.NODE_ENV === "production" ? "subtracker" : "localhost",
+      // rpName: "Subtracker",
+      // origin: env.BETTER_AUTH_URL,
     }),
   ],
 });
