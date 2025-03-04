@@ -135,11 +135,13 @@ export const LoginForm = () => {
             </div>
           </form>
         </Form>
-        <Separator />
+        <Separator className="my-4 w-full" />
         <Button
           onClick={() => {
             signInPassKeyMutation.mutate();
           }}
+          variant="outline"
+          className="w-full"
         >
           Login with passkey
         </Button>
