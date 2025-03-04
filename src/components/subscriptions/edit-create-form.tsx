@@ -206,7 +206,7 @@ export const EditCreateForm = ({
       ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-            <div className="grid grid-cols-12 gap-1">
+            <div className="grid grid-cols-12 gap-2">
               <ImageFileUploader
                 setFileUrl={(v) => form.setValue("image", v)}
                 fileUrl={form.watch("image")}
@@ -427,10 +427,9 @@ export const EditCreateForm = ({
                       <Popover modal>
                         <PopoverTrigger asChild>
                           <Button
-                            variant="outline"
+                            variant="outline-t"
                             className={cn(
-                              `w-full justify-start bg-transparent from-transparent to-transparent text-left
-                                font-normal`,
+                              "w-full justify-start text-left font-normal",
                               !field.value && "text-muted-foreground",
                             )}
                           >

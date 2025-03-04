@@ -120,8 +120,9 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <CreateSubscriptionDialog
                 trigger={
-                  <SidebarMenuButton className="text-foreground flex h-full items-center justify-center gap-2">
-                    <PlusIcon /> Add subscription
+                  <SidebarMenuButton className="flex">
+                    <PlusIcon />
+                    <span>Add subscription</span>
                   </SidebarMenuButton>
                 }
               />

@@ -17,8 +17,8 @@ const buttonVariants = cva(
         //   "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         destructive:
           "from-destructive to-destructive/85 text-destructive-foreground border border-zinc-900/25 bg-linear-to-t shadow-md shadow-zinc-900/20 ring-1 ring-inset ring-white/20 transition-[filter] duration-200 hover:brightness-110 active:brightness-90 dark:border-white/15 dark:ring-transparent",
-        // outline:
-        //   "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        "outline-t":
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         outline:
           "shadow-2xs bg-linear-to-t hover:to-muted to-background from-muted dark:from-muted/50 dark:border-border border border-border shadow-zinc-900/10 duration-200",
         secondary:
@@ -47,33 +47,36 @@ export interface ButtonProps
   isLoading?: boolean;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    { className, variant, size, asChild = false, isLoading = false, ...props },
-    ref,
-  ) => {
-    const Comp = asChild ? Slot : "button";
-    if (isLoading) {
-      return (
-        <Comp
-          className={cn(buttonVariants({ variant, size, className }))}
-          ref={ref}
-          disabled
-          {...props}
-        >
-          <LoaderCircleIcon className="animate-spin" />
-        </Comp>
-      );
-    }
+export const Button = ({
+  className,
+  variant,
+  size,
+  asChild = false,
+  isLoading = false,
+  ...props
+}: React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+    isLoading?: boolean;
+  }) => {
+  const Comp = asChild ? Slot : "button";
+  if (isLoading) {
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
+        disabled
         {...props}
-      />
+      >
+        <LoaderCircleIcon className="animate-spin" />
+      </Comp>
     );
-  },
-);
-Button.displayName = "Button";
+  }
+  return (
+    <Comp
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  );
+};
 
-export { Button, buttonVariants };
+export { buttonVariants };
