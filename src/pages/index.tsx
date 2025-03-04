@@ -2,7 +2,7 @@ import { api } from "~/utils/api";
 import { FiltersButton } from "~/components/subscriptions/filters";
 import { SortButton } from "~/components/subscriptions/sort";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
-import { Calendar1Icon, EllipsisVerticalIcon, InfoIcon } from "lucide-react";
+import { Calendar1Icon, InfoIcon } from "lucide-react";
 import { Card, CardContent } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";

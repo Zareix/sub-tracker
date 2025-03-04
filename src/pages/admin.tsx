@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Image from "next/image";
 import { CreateUserDialog } from "~/components/admin/users/create";
 import { api, type RouterInputs } from "~/utils/api";
 import {
@@ -16,7 +15,6 @@ import { Skeleton } from "~/components/ui/skeleton";
 import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 export default function AdminPage() {
