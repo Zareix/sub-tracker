@@ -102,7 +102,7 @@ export default function SettingsPage() {
               {categoriesQuery.isLoading && (
                 <TableRow>
                   <TableCell>
-                    <Skeleton className="h-6 w-6" />
+                    <Skeleton className="size-6" />
                   </TableCell>
                   <TableCell className="font-medium">
                     <Skeleton className="h-4 w-20" />

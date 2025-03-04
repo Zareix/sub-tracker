@@ -206,7 +206,7 @@ export const EditCreateForm = ({
       ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-            <div className="grid grid-cols-12 gap-1">
+            <div className="grid grid-cols-12 gap-2">
               <ImageFileUploader
                 setFileUrl={(v) => form.setValue("image", v)}
                 fileUrl={form.watch("image")}
@@ -283,7 +283,7 @@ export const EditCreateForm = ({
                 control={form.control}
                 name="price"
                 render={({ field }) => (
-                  <FormItem className="flex-grow">
+                  <FormItem className="grow">
                     <FormLabel>Price</FormLabel>
                     <FormControl>
                       <Input placeholder="10" type="number" {...field} />
@@ -367,7 +367,7 @@ export const EditCreateForm = ({
               control={form.control}
               name="payedBy"
               render={({ field }) => (
-                <FormItem className="flex-grow">
+                <FormItem className="grow">
                   <FormLabel>Payed By</FormLabel>
                   <FormControl>
                     <MultiSelect
@@ -421,20 +421,19 @@ export const EditCreateForm = ({
                 control={form.control}
                 name="firstPaymentDate"
                 render={({ field }) => (
-                  <FormItem className="flex-grow">
+                  <FormItem className="grow">
                     <FormLabel>First Payment Date</FormLabel>
                     <FormControl>
                       <Popover modal>
                         <PopoverTrigger asChild>
                           <Button
-                            variant="outline"
+                            variant="outline-t"
                             className={cn(
-                              `w-full justify-start bg-transparent from-transparent to-transparent text-left
-                                font-normal`,
+                              "w-full justify-start text-left font-normal",
                               !field.value && "text-muted-foreground",
                             )}
                           >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            <CalendarIcon className="mr-2 size-4" />
                             {field.value ? (
                               format(field.value, "dd/MM/yyyy")
                             ) : (

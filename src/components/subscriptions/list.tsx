@@ -68,7 +68,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 
   if (subs.length === 0) {
     return (
-      <div className="text-center text-muted-foreground">
+      <div className="text-muted-foreground text-center">
         No subscriptions found
       </div>
     );
@@ -113,9 +113,7 @@ const SubscriptionListItem = ({
                 className="max-h-[48px] max-w-[40px] object-contain md:max-w-[64px]"
               />
             )}
-            <h2 className="flex-grow text-xl font-semibold">
-              {subscription.name}
-            </h2>
+            <h2 className="grow text-xl font-semibold">{subscription.name}</h2>
             <div className="text-lg">{subscription.price}€</div>
             <Button
               size="icon"
@@ -146,9 +144,9 @@ const SubscriptionListItem = ({
                   className="max-h-[48px] max-w-[40px] object-contain md:max-w-[64px]"
                 />
               )}
-              <div className="flex flex-grow flex-col gap-1">
+              <div className="flex grow flex-col gap-1">
                 <h2 className="text-xl font-semibold">{subscription.name}</h2>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <div className="text-muted-foreground flex items-center gap-1 text-sm">
                   <Calendar1Icon size={16} />
                   {formatNextPaymentDate(subscription.nextPaymentDate)}
                 </div>
@@ -156,7 +154,11 @@ const SubscriptionListItem = ({
               <div className="text-lg">{subscription.price}€</div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="icon" variant="ghost" className="w-4 md:w-10">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="text-muted-foreground w-5 md:w-10"
+                  >
                     <InfoIcon size={20} />
                   </Button>
                 </DropdownMenuTrigger>
@@ -188,7 +190,7 @@ const SubscriptionListItem = ({
           </AccordionTrigger>
           <AccordionContent>
             <div
-              className="flex flex-wrap gap-x-4 gap-y-2 pl-12 pt-1 text-base text-foreground/80
+              className="text-foreground/80 flex flex-wrap gap-x-4 gap-y-2 pt-1 pl-12 text-base
                 md:gap-x-6 md:pl-6"
             >
               <div className="flex items-center gap-1">

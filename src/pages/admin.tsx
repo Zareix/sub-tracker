@@ -126,7 +126,7 @@ export default function AdminPage() {
                 {usersQuery.data?.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>
-                      <Avatar className="h-8 w-8 rounded-lg">
+                      <Avatar className="size-8 rounded-lg">
                         <AvatarImage
                           src={user.image ?? undefined}
                           alt={user.name}
@@ -182,7 +182,7 @@ export default function AdminPage() {
             <div className="relative">
               <Button>Import data</Button>
               <Input
-                className="absolute bottom-0 left-0 right-0 top-0 cursor-pointer opacity-0
+                className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer opacity-0
                   disabled:opacity-0"
                 disabled={importDataMutation.isPending}
                 placeholder="Import data"
