@@ -56,7 +56,7 @@ export const DeleteCategoryDialog = ({
         Are you sure you want to delete this category?
       </DialogDescription>
       <DialogFooter>
-        <Button variant="secondary" onClick={() => setIsOpen(false)}>
+        <Button variant="outline" onClick={() => setIsOpen(false)}>
           Cancel
         </Button>
         <Button variant="destructive" onClick={onDelete}>

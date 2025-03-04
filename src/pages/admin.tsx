@@ -17,6 +17,7 @@ import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 export default function AdminPage() {
   const apiUtils = api.useUtils();
@@ -127,15 +128,15 @@ export default function AdminPage() {
                 {usersQuery.data?.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>
-                      {user.image && (
-                        <Image
-                          src={user.image}
+                      <Avatar className="h-8 w-8 rounded-lg">
+                        <AvatarImage
+                          src={user.image ?? undefined}
                           alt={user.name}
-                          width={64}
-                          height={40}
-                          className="max-h-[40px] max-w-[64px] object-contain"
                         />
-                      )}
+                        <AvatarFallback className="rounded-lg">
+                          {user.name.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
                     </TableCell>
                     <TableCell className="font-medium">{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
@@ -180,9 +181,11 @@ export default function AdminPage() {
             >
               Export data
             </Button>
-            <div className="flex max-w-64 flex-col gap-2">
-              <Label>Import data</Label>
+            <div className="relative">
+              <Button>Import data</Button>
               <Input
+                className="absolute bottom-0 left-0 right-0 top-0 cursor-pointer opacity-0
+                  disabled:opacity-0"
                 disabled={importDataMutation.isPending}
                 placeholder="Import data"
                 onChange={async (e) => {

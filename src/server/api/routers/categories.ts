@@ -3,6 +3,7 @@ import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { db, runTransaction } from "~/server/db";
 import {
   categories,
   subscriptions,
@@ -93,18 +94,18 @@ export const categoryRouter = createTRPCRouter({
           message: "Error creating category",
         });
       }
-      await ctx.db.transaction(async (trx) => {
-        const subs = await trx
+      await runTransaction(db, async () => {
+        const subs = await db
           .select()
           .from(subscriptions)
           .where(eq(subscriptions.category, input));
         for (const sub of subs) {
-          await trx
+          await db
             .delete(usersToSubscriptions)
             .where(eq(usersToSubscriptions.subscriptionId, sub.id));
-          await trx.delete(subscriptions).where(eq(subscriptions.id, sub.id));
+          await db.delete(subscriptions).where(eq(subscriptions.id, sub.id));
         }
-        await trx.delete(categories).where(eq(categories.id, input));
+        await db.delete(categories).where(eq(categories.id, input));
       });
       return {
         id: category.id,

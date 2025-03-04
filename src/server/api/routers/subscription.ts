@@ -11,6 +11,7 @@ import {
 import { rounded } from "~/lib/utils";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { db, runTransaction } from "~/server/db";
 import {
   categories,
   type Category,
@@ -76,7 +77,7 @@ const calculateNextPaymentDate = (
     if (res > currentDateInfo.base) {
       return res;
     }
-    return addMonths(firstPaymentDate, 1);
+    return addMonths(res, 1);
   }
 
   if (schedule === "Yearly") {
@@ -179,9 +180,9 @@ export const subscriptionRouter = createTRPCRouter({
         payedBy: z.array(z.string()),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      const subscription = await ctx.db.transaction(async (trx) => {
-        const subscriptionsReturned = await trx
+    .mutation(async ({ input }) => {
+      const subscription = await runTransaction(db, async () => {
+        const subscriptionsReturned = await db
           .insert(subscriptions)
           .values({
             name: input.name,
@@ -206,7 +207,7 @@ export const subscriptionRouter = createTRPCRouter({
         }
         await Promise.all(
           input.payedBy.map(async (payedBy) => {
-            await trx.insert(usersToSubscriptions).values({
+            await db.insert(usersToSubscriptions).values({
               userId: payedBy,
               subscriptionId: subscription.id,
             });
@@ -235,9 +236,9 @@ export const subscriptionRouter = createTRPCRouter({
         payedBy: z.array(z.string()),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      const subscription = await ctx.db.transaction(async (trx) => {
-        const subscriptionsReturned = await trx
+    .mutation(async ({ input }) => {
+      const subscription = await runTransaction(db, async () => {
+        const subscriptionsReturned = await db
           .update(subscriptions)
           .set({
             name: input.name,
@@ -263,12 +264,12 @@ export const subscriptionRouter = createTRPCRouter({
           });
         }
 
-        await trx
+        await db
           .delete(usersToSubscriptions)
           .where(eq(usersToSubscriptions.subscriptionId, input.id));
         await Promise.all(
           input.payedBy.map((payedBy) =>
-            trx.insert(usersToSubscriptions).values({
+            db.insert(usersToSubscriptions).values({
               userId: payedBy,
               subscriptionId: subscription.id,
             }),
@@ -281,14 +282,12 @@ export const subscriptionRouter = createTRPCRouter({
         id: subscription.id,
       };
     }),
-  delete: protectedProcedure
-    .input(z.number())
-    .mutation(async ({ ctx, input }) => {
-      await ctx.db.transaction(async (trx) => {
-        await trx
-          .delete(usersToSubscriptions)
-          .where(eq(usersToSubscriptions.subscriptionId, input));
-        await trx.delete(subscriptions).where(eq(subscriptions.id, input));
-      });
-    }),
+  delete: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
+    await runTransaction(db, async () => {
+      await db
+        .delete(usersToSubscriptions)
+        .where(eq(usersToSubscriptions.subscriptionId, input));
+      await db.delete(subscriptions).where(eq(subscriptions.id, input));
+    });
+  }),
 });

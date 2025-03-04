@@ -78,8 +78,8 @@ export function AppSidebar() {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
                 <div
-                  className="flex aspect-square size-8 items-center justify-center rounded-lg
-                    bg-sidebar-primary text-sidebar-primary-foreground"
+                  className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary
+                    text-sidebar-primary-foreground"
                 >
                   <CalendarSyncIcon className="size-4" />
                 </div>
@@ -117,6 +117,15 @@ export function AppSidebar() {
       <SidebarFooter>
         {session.data && (
           <SidebarMenu>
+            <SidebarMenuItem>
+              <CreateSubscriptionDialog
+                trigger={
+                  <SidebarMenuButton className="flex h-full items-center justify-center gap-2 text-foreground">
+                    <PlusIcon /> Add subscription
+                  </SidebarMenuButton>
+                }
+              />
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -213,11 +222,10 @@ const NavbarItem = ({
 );
 
 export const Navbar = () => {
-  const session = useSession();
   const router = useRouter();
 
   const navBarItems = NAV_ITEMS.filter((item) =>
-    "role" in item ? item.role === session.data?.user.role : true,
+    "role" in item ? item.role === "user" : true,
   );
   const middleIndex = Math.floor(navBarItems.length / 2);
   return (

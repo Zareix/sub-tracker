@@ -5,6 +5,7 @@ import { UserRoles } from "~/lib/constant";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { auth } from "~/server/auth";
+import { db, runTransaction } from "~/server/db";
 import { subscriptions, users, usersToSubscriptions } from "~/server/db/schema";
 
 export const userRouter = createTRPCRouter({
@@ -105,19 +106,19 @@ export const userRouter = createTRPCRouter({
           message: "Error creating user",
         });
       }
-      await ctx.db.transaction(async (trx) => {
-        const usersToSubscriptionsReturned = await trx
+      await runTransaction(db, async () => {
+        const usersToSubscriptionsReturned = await db
           .delete(usersToSubscriptions)
           .where(eq(usersToSubscriptions.userId, input))
           .returning({
             subscriptionId: usersToSubscriptions.subscriptionId,
           });
         for (const userToSubscription of usersToSubscriptionsReturned) {
-          await trx
+          await db
             .delete(subscriptions)
             .where(eq(subscriptions.id, userToSubscription.subscriptionId));
         }
-        await trx.delete(users).where(eq(users.id, input));
+        await db.delete(users).where(eq(users.id, input));
       });
       return {
         id: user.id,

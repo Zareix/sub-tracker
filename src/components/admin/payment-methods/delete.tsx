@@ -51,7 +51,7 @@ export const DeletePaymentMethodDialog = ({
         Are you sure you want to delete paymentMethod this payment method?
       </DialogDescription>
       <DialogFooter>
-        <Button variant="secondary" onClick={() => setIsOpen(false)}>
+        <Button variant="outline" onClick={() => setIsOpen(false)}>
           Cancel
         </Button>
         <Button variant="destructive" onClick={onDelete}>

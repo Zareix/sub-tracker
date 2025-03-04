@@ -5,6 +5,7 @@ import { CURRENCIES, SCHEDULES, UserRoles } from "~/lib/constant";
 import { preprocessStringToDate } from "~/lib/utils";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { db, runTransaction } from "~/server/db";
 import {
   categories,
   paymentMethods,
@@ -126,22 +127,22 @@ export const adminRouter = createTRPCRouter({
           .optional(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      await ctx.db.transaction(async (trx) => {
+    .mutation(async ({ input }) => {
+      await runTransaction(db, async () => {
         if (input.users && input.users.length > 0) {
-          await trx.insert(users).values(input.users);
+          await db.insert(users).values(input.users);
         }
         if (input.paymentMethods && input.paymentMethods.length > 0) {
-          await trx.insert(paymentMethods).values(input.paymentMethods);
+          await db.insert(paymentMethods).values(input.paymentMethods);
         }
         if (input.categories && input.categories.length > 0) {
-          await trx.insert(categories).values(input.categories);
+          await db.insert(categories).values(input.categories);
         }
         if (input.subscriptions && input.subscriptions.length > 0) {
-          await trx.insert(subscriptions).values(input.subscriptions);
+          await db.insert(subscriptions).values(input.subscriptions);
         }
         if (input.userToSubscriptions && input.userToSubscriptions.length > 0) {
-          await trx
+          await db
             .insert(usersToSubscriptions)
             .values(input.userToSubscriptions);
         }

@@ -101,7 +101,7 @@ export const FiltersButton = ({
                       variant="outline"
                       role="combobox"
                       className={cn(
-                        "justify-between",
+                        "justify-between from-transparent to-transparent",
                         filters.users ? "w-[150px]" : "w-[200px]",
                       )}
                     >
@@ -175,7 +175,7 @@ export const FiltersButton = ({
                       variant="outline"
                       role="combobox"
                       className={cn(
-                        "justify-between",
+                        "justify-between from-transparent to-transparent",
                         filters.schedule ? "w-[150px]" : "w-[200px]",
                       )}
                     >
@@ -248,7 +248,7 @@ export const FiltersButton = ({
                       variant="outline"
                       role="combobox"
                       className={cn(
-                        "justify-between",
+                        "justify-between from-transparent to-transparent",
                         filters.paymentMethodId ? "w-[150px]" : "w-[200px]",
                       )}
                     >
@@ -328,7 +328,7 @@ export const FiltersButton = ({
                       variant="outline"
                       role="combobox"
                       className={cn(
-                        "justify-between",
+                        "justify-between from-transparent to-transparent",
                         filters.categoryId ? "w-[150px]" : "w-[200px]",
                       )}
                     >

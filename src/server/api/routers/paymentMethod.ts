@@ -3,6 +3,7 @@ import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { db, runTransaction } from "~/server/db";
 import {
   paymentMethods,
   subscriptions,
@@ -68,24 +69,22 @@ export const paymentMethodRouter = createTRPCRouter({
         id: paymentMethod.id,
       };
     }),
-  delete: protectedProcedure
-    .input(z.number())
-    .mutation(async ({ ctx, input }) => {
-      await ctx.db.transaction(async (trx) => {
-        const subs = await trx
-          .select()
-          .from(subscriptions)
-          .where(eq(subscriptions.paymentMethod, input));
-        for (const sub of subs) {
-          await trx
-            .delete(usersToSubscriptions)
-            .where(eq(usersToSubscriptions.subscriptionId, sub.id));
-          await trx.delete(subscriptions).where(eq(subscriptions.id, sub.id));
-        }
-        await trx.delete(paymentMethods).where(eq(paymentMethods.id, input));
-      });
-      return {
-        id: input,
-      };
-    }),
+  delete: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
+    await runTransaction(db, async () => {
+      const subs = await db
+        .select()
+        .from(subscriptions)
+        .where(eq(subscriptions.paymentMethod, input));
+      for (const sub of subs) {
+        await db
+          .delete(usersToSubscriptions)
+          .where(eq(usersToSubscriptions.subscriptionId, sub.id));
+        await db.delete(subscriptions).where(eq(subscriptions.id, sub.id));
+      }
+      await db.delete(paymentMethods).where(eq(paymentMethods.id, input));
+    });
+    return {
+      id: input,
+    };
+  }),
 });

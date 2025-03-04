@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { CalendarSyncIcon } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -16,6 +17,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { Separator } from "~/components/ui/separator";
 import { signIn } from "~/lib/auth-client";
 
 const loginSchema = z.object({
@@ -35,6 +37,14 @@ export const LoginForm = () => {
       toast.error("Could not login, please try again.");
     },
   });
+  const signInPassKeyMutation = useMutation({
+    mutationFn: async () => {
+      return signIn.passkey();
+    },
+    onError: () => {
+      toast.error("Could not login, please try again.");
+    },
+  });
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -42,6 +52,19 @@ export const LoginForm = () => {
       password: "",
     },
   });
+
+  useEffect(() => {
+    if (typeof PublicKeyCredential === "undefined") {
+      return;
+    }
+    PublicKeyCredential.isConditionalMediationAvailable()
+      .then((available) => {
+        if (available) {
+          void signIn.passkey({ autoFill: true });
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
     signInMutation.mutate(values);
@@ -78,7 +101,11 @@ export const LoginForm = () => {
                   <FormItem className="grid gap-2">
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="raphael@example.com" {...field} />
+                      <Input
+                        placeholder="raphael@example.com"
+                        autoComplete="email webauthn"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -94,6 +121,7 @@ export const LoginForm = () => {
                       <Input
                         type="password"
                         placeholder="********"
+                        autoComplete="current-password webauthn"
                         {...field}
                       />
                     </FormControl>
@@ -107,6 +135,14 @@ export const LoginForm = () => {
             </div>
           </form>
         </Form>
+        <Separator />
+        <Button
+          onClick={() => {
+            signInPassKeyMutation.mutate();
+          }}
+        >
+          Login with passkey
+        </Button>
       </CardContent>
     </Card>
   );

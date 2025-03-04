@@ -8,7 +8,7 @@
     "db:generate": "bunx drizzle-kit generate --dialect sqlite --schema ./src/server/db/schema.ts",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "dev": "bun run --bun next dev",
+    "dev": "bun run --bun next dev --turbo",
     "prettier": "prettier --write .",
     "lint": "next lint",
     "lint:fix": "next lint --fix",

@@ -6,25 +6,31 @@ import { cn } from "~/lib/utils";
 import { LoaderCircleIcon } from "lucide-react";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        //default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default:
+          "from-primary to-primary/85 text-primary-foreground border border-zinc-900/25 bg-gradient-to-t shadow-md shadow-zinc-900/20 ring-1 ring-inset ring-white/20 transition-[filter] duration-200 hover:brightness-110 active:brightness-90 dark:border-white/20 dark:ring-transparent",
+        // destructive:
+        //   "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "from-destructive to-destructive/85 text-destructive-foreground border border-zinc-900/25 bg-gradient-to-t shadow-md shadow-zinc-900/20 ring-1 ring-inset ring-white/20 transition-[filter] duration-200 hover:brightness-110 active:brightness-90 dark:border-white/15 dark:ring-transparent",
+        // outline:
+        //   "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "shadow-xs bg-gradient-to-t hover:to-muted to-background from-muted dark:from-muted/50 dark:border-border border border-border shadow-zinc-900/10 duration-200",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-10 px-4 py-2",
+        default: "h-9 px-3 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        icon: "h-9 w-8",
       },
     },
     defaultVariants: {

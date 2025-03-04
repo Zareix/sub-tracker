@@ -170,7 +170,7 @@ export const EditCreateForm = ({
       description: subscription?.description ?? "",
       category: subscription?.category.id ?? 1,
       image: subscription?.image ?? undefined,
-      price: subscription?.price ?? 0,
+      price: subscription?.originalPrice ?? 0,
       currency: subscription?.currency ?? "EUR",
       paymentMethod: subscription?.paymentMethod.id,
       schedule: subscription?.schedule ?? "Monthly",
@@ -206,7 +206,7 @@ export const EditCreateForm = ({
       ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-            <div className="grid grid-cols-12">
+            <div className="grid grid-cols-12 gap-1">
               <ImageFileUploader
                 setFileUrl={(v) => form.setValue("image", v)}
                 fileUrl={form.watch("image")}
@@ -429,7 +429,8 @@ export const EditCreateForm = ({
                           <Button
                             variant="outline"
                             className={cn(
-                              "w-full justify-start text-left font-normal",
+                              `w-full justify-start bg-transparent from-transparent to-transparent text-left
+                                font-normal`,
                               !field.value && "text-muted-foreground",
                             )}
                           >

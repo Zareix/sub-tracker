@@ -58,7 +58,7 @@ export const DeleteUserDialog = ({
         Are you sure you want to delete user this user?
       </DialogDescription>
       <DialogFooter>
-        <Button variant="secondary" onClick={() => setIsOpen(false)}>
+        <Button variant="outline" onClick={() => setIsOpen(false)}>
           Cancel
         </Button>
         <Button variant="destructive" onClick={onDelete}>

@@ -1,13 +1,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { s3 } from "bun";
 import { env } from "~/env";
 
 const saveToS3 = async (file: File) => {
   const fileName = Bun.randomUUIDv7() + ".png";
 
   try {
-    const s3UploadedFile = s3.file(fileName);
+    const s3UploadedFile = Bun.s3.file(fileName);
     await s3UploadedFile.write(file);
 
     const url = s3UploadedFile.presign({

@@ -1,8 +1,15 @@
 import { db } from "~/server/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { account, session, users, verification } from "~/server/db/schema";
+import {
+  account,
+  session,
+  users,
+  verification,
+  passkey as passkeySchema,
+} from "~/server/db/schema";
 import { env } from "~/env";
+import { passkey } from "better-auth/plugins/passkey";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -12,6 +19,7 @@ export const auth = betterAuth({
       session,
       account,
       verification,
+      passkey: passkeySchema,
     },
   }),
   emailAndPassword: {
@@ -35,6 +43,18 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: [env.BETTER_AUTH_URL],
+  plugins: [
+    // passkey({
+    //   rpID: env.NODE_ENV === "production" ? "subtracker" : "localhost",
+    //   rpName: "Subtracker",
+    //   origin: env.BETTER_AUTH_URL,
+    // }),
+    passkey({
+      schema: {
+        passkey: passkeySchema,
+      },
+    }),
+  ],
 });
 
 export type Session = typeof auth.$Infer.Session;
