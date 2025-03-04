@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { CalendarSyncIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -26,6 +27,7 @@ const loginSchema = z.object({
 });
 
 export const LoginForm = () => {
+  const router = useRouter();
   const signInMutation = useMutation({
     mutationFn: async (values: z.infer<typeof loginSchema>) => {
       return signIn.email({
@@ -40,6 +42,9 @@ export const LoginForm = () => {
   const signInPassKeyMutation = useMutation({
     mutationFn: async () => {
       return signIn.passkey();
+    },
+    onSuccess: () => {
+      router.reload();
     },
     onError: () => {
       toast.error("Could not login, please try again.");
