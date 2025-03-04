@@ -113,7 +113,7 @@ const SubscriptionListItem = ({
                 className="max-h-[48px] max-w-[40px] object-contain md:max-w-[64px]"
               />
             )}
-            <h2 className="flex-grow text-xl font-semibold">
+            <h2 className="grow text-xl font-semibold">
               {subscription.name}
             </h2>
             <div className="text-lg">{subscription.price}€</div>
@@ -146,7 +146,7 @@ const SubscriptionListItem = ({
                   className="max-h-[48px] max-w-[40px] object-contain md:max-w-[64px]"
                 />
               )}
-              <div className="flex flex-grow flex-col gap-1">
+              <div className="flex grow flex-col gap-1">
                 <h2 className="text-xl font-semibold">{subscription.name}</h2>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Calendar1Icon size={16} />

@@ -283,7 +283,7 @@ export const EditCreateForm = ({
                 control={form.control}
                 name="price"
                 render={({ field }) => (
-                  <FormItem className="flex-grow">
+                  <FormItem className="grow">
                     <FormLabel>Price</FormLabel>
                     <FormControl>
                       <Input placeholder="10" type="number" {...field} />
@@ -367,7 +367,7 @@ export const EditCreateForm = ({
               control={form.control}
               name="payedBy"
               render={({ field }) => (
-                <FormItem className="flex-grow">
+                <FormItem className="grow">
                   <FormLabel>Payed By</FormLabel>
                   <FormControl>
                     <MultiSelect
@@ -421,7 +421,7 @@ export const EditCreateForm = ({
                 control={form.control}
                 name="firstPaymentDate"
                 render={({ field }) => (
-                  <FormItem className="flex-grow">
+                  <FormItem className="grow">
                     <FormLabel>First Payment Date</FormLabel>
                     <FormControl>
                       <Popover modal>
@@ -434,7 +434,7 @@ export const EditCreateForm = ({
                               !field.value && "text-muted-foreground",
                             )}
                           >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            <CalendarIcon className="mr-2 size-4" />
                             {field.value ? (
                               format(field.value, "dd/MM/yyyy")
                             ) : (

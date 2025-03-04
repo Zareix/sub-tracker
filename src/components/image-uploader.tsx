@@ -46,7 +46,7 @@ export const ImageFileUploader = ({ setFileUrl, fileUrl }: Props) => {
   return (
     <div className="group relative col-span-2 grid cursor-pointer place-content-center">
       {uploadFileMutation.isPending ? (
-        <LoaderCircleIcon className="h-8 w-8 animate-spin" />
+        <LoaderCircleIcon className="size-8 animate-spin" />
       ) : fileUrl ? (
         <Image
           src={fileUrl}
@@ -56,7 +56,7 @@ export const ImageFileUploader = ({ setFileUrl, fileUrl }: Props) => {
           className="max-h-[70px] object-contain"
         />
       ) : (
-        <ImageIcon className="h-8 w-8 group-hover:text-primary" />
+        <ImageIcon className="group-hover:text-primary size-8" />
       )}
       <input
         type="file"
