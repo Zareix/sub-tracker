@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { Button } from "~/components/ui/button";
 import { EditUserProfile } from "~/components/users/edit";
 import { passkey, useSession } from "~/lib/auth-client";
@@ -5,15 +6,17 @@ import type { UserRole } from "~/lib/constant";
 
 export default function ProfilePage() {
   const session = useSession();
+  const router = useRouter();
 
   const registerPasskey = () => {
     passkey
       .addPasskey()
       .then((data) => {
-        alert(JSON.stringify(data));
+        console.log(data);
+        router.reload();
       })
       .catch((error) => {
-        alert(error);
+        console.error(error);
       });
   };
 

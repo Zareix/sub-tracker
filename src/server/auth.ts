@@ -46,7 +46,7 @@ export const auth = betterAuth({
   plugins: [
     passkey({
       rpID:
-        env.NODE_ENV === "production"
+        env.NODE_ENV === "production" && env.BETTER_AUTH_URL
           ? new URL(env.BETTER_AUTH_URL).host
           : "localhost",
       rpName: "Subtracker",
