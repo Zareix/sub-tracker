@@ -36,6 +36,11 @@ export type Filters = z.infer<typeof filtersSchema>;
 export const CURRENCIES = ["USD", "EUR", "GBP"] as const;
 export type Currency = (typeof CURRENCIES)[number];
 export const BASE_CURRENCY = "EUR";
+export const CURRENCY_SYMBOLS = {
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+} as const;
 
 export const UserRoles = ["user", "admin"] as const;
 export type UserRole = (typeof UserRoles)[number];
