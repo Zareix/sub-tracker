@@ -35,7 +35,7 @@ export default function Home() {
                   <h2 className="text-xl font-semibold">
                     <Skeleton className="h-6 w-20 md:w-28" />
                   </h2>
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <div className="text-muted-foreground flex items-center gap-1 text-sm">
                     <Calendar1Icon size={16} />
                     <Skeleton className="h-4 w-16" />
                   </div>

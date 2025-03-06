@@ -42,7 +42,7 @@ export const DeleteUserDialog = ({
       trigger={
         <Button
           variant="ghost"
-          className="w-8 text-destructive"
+          className="text-destructive w-8"
           size="icon"
           disabled={session.data?.user.id === user?.id}
         >
