@@ -4,7 +4,7 @@ import { env } from "~/env";
 import { CURRENCIES, SCHEDULES, UserRoles } from "~/lib/constant";
 import { preprocessStringToDate } from "~/lib/utils";
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
 import { db, runTransaction } from "~/server/db";
 import {
   categories,
@@ -16,7 +16,7 @@ import {
 import { updateExchangeRates } from "~/server/services/exchange-rates";
 
 export const adminRouter = createTRPCRouter({
-  cleanUpFiles: protectedProcedure.mutation(async ({ ctx }) => {
+  cleanUpFiles: adminProcedure.mutation(async ({ ctx }) => {
     let filesInUse = (
       await ctx.db.query.subscriptions.findMany({
         columns: {
@@ -47,10 +47,10 @@ export const adminRouter = createTRPCRouter({
       }
     }
   }),
-  updateExchangeRates: protectedProcedure.mutation(async () => {
+  updateExchangeRates: adminProcedure.mutation(async () => {
     await updateExchangeRates();
   }),
-  exportData: protectedProcedure.mutation(async ({ ctx }) => {
+  exportData: adminProcedure.mutation(async ({ ctx }) => {
     const subscriptions = await ctx.db.query.subscriptions.findMany();
     const paymentMethods = await ctx.db.query.paymentMethods.findMany();
     const categories = await ctx.db.query.categories.findMany();
@@ -66,7 +66,7 @@ export const adminRouter = createTRPCRouter({
       userToSubscriptions,
     };
   }),
-  importData: protectedProcedure
+  importData: adminProcedure
     .input(
       z.object({
         subscriptions: z.array(

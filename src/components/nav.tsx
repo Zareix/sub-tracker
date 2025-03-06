@@ -79,7 +79,7 @@ export function AppSidebar() {
               <Link href="/">
                 <div
                   className="bg-primary text-sidebar-primary-foreground flex aspect-square size-8
-                    items-center justify-center rounded-lg"
+                    items-center justify-center rounded-xs"
                 >
                   <CalendarSyncIcon className="size-4" />
                 </div>

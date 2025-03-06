@@ -16,11 +16,11 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { useState } from "react";
-import { type Filters, filtersSchema } from "~/lib/constant";
+import { type Filters } from "~/lib/constant";
 import { api } from "~/utils/api";
 import { SCHEDULES } from "~/lib/constant";
 import { Label } from "@radix-ui/react-label";
-import { useQueryState, parseAsJson } from "nuqs";
+import { useFilters } from "~/lib/hooks/use-filters";
 
 type Props = {
   filtersDisplayed?: Array<keyof Filters>;
@@ -29,15 +29,7 @@ type Props = {
 export const FiltersButton = ({
   filtersDisplayed = ["paymentMethodId", "schedule", "users", "categoryId"],
 }: Props) => {
-  const [filters, setFilters] = useQueryState("filters", {
-    ...parseAsJson(filtersSchema.parse),
-    defaultValue: {
-      schedule: null,
-      paymentMethodId: null,
-      users: null,
-      categoryId: null,
-    },
-  });
+  const [filters, setFilters] = useFilters();
   const [isOpen, setIsOpen] = useState({
     schedule: false,
     paymentMethod: false,
@@ -98,7 +90,7 @@ export const FiltersButton = ({
                 >
                   <PopoverTrigger asChild>
                     <Button
-                      variant="outline"
+                      variant="outline-t"
                       role="combobox"
                       className={cn(
                         "justify-between from-transparent to-transparent",
@@ -108,7 +100,7 @@ export const FiltersButton = ({
                       {filters.users
                         ? users.find((user) => user.id === filters.users)?.name
                         : "Select..."}
-                      <ChevronsUpDown className="opacity-50" />
+                      <ChevronsUpDown size={20} className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[200px] p-0">
@@ -172,7 +164,7 @@ export const FiltersButton = ({
                 >
                   <PopoverTrigger asChild>
                     <Button
-                      variant="outline"
+                      variant="outline-t"
                       role="combobox"
                       className={cn(
                         "justify-between from-transparent to-transparent",
@@ -180,7 +172,7 @@ export const FiltersButton = ({
                       )}
                     >
                       {filters.schedule ?? "Select..."}
-                      <ChevronsUpDown className="opacity-50" />
+                      <ChevronsUpDown size={20} className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[200px] p-0">
@@ -245,7 +237,7 @@ export const FiltersButton = ({
                 >
                   <PopoverTrigger asChild>
                     <Button
-                      variant="outline"
+                      variant="outline-t"
                       role="combobox"
                       className={cn(
                         "justify-between from-transparent to-transparent",
@@ -258,7 +250,7 @@ export const FiltersButton = ({
                               paymentMethod.id === filters.paymentMethodId,
                           )?.name
                         : "Select..."}
-                      <ChevronsUpDown className="opacity-50" />
+                      <ChevronsUpDown size={20} className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[200px] p-0">
@@ -325,7 +317,7 @@ export const FiltersButton = ({
                 >
                   <PopoverTrigger asChild>
                     <Button
-                      variant="outline"
+                      variant="outline-t"
                       role="combobox"
                       className={cn(
                         "justify-between from-transparent to-transparent",
@@ -337,7 +329,7 @@ export const FiltersButton = ({
                             (category) => category.id === filters.categoryId,
                           )?.name
                         : "Select..."}
-                      <ChevronsUpDown className="opacity-50" />
+                      <ChevronsUpDown size={20} className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[200px] p-0">

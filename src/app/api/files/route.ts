@@ -1,7 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { isAuthenticated } from "~/server/auth";
 import { readFile, saveFile } from "~/server/services/files";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  if (await isAuthenticated(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const formData = await req.formData();
     const url = await saveFile(formData.get("file"));
@@ -22,9 +26,13 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
+  if (!(await isAuthenticated(req))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    const filename = request.nextUrl.searchParams.get("filename");
+    const filename = req.nextUrl.searchParams.get("filename");
     const file = await readFile(filename);
     if (!file) {
       return NextResponse.json({ error: "File not found" }, { status: 404 });

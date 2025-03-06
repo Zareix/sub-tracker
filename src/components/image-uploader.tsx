@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import imageCompression, { type Options } from "browser-image-compression";
 import { ImageIcon, LoaderCircleIcon } from "lucide-react";
 import Image from "next/image";
+import { toast } from "sonner";
 
 const options: Options = {
   maxSizeMB: 1,
@@ -25,19 +26,30 @@ export const ImageFileUploader = ({ setFileUrl, fileUrl }: Props) => {
         method: "POST",
         body: formData,
       });
-      const data = (await response.json()) as { url: string };
+      const data = (await response.json()) as
+        | { url: string }
+        | { error: string };
+      if (!response.ok) {
+        throw new Error(
+          "Failed to upload file" + ("error" in data ? data.error : ""),
+        );
+      }
       return data;
     },
     onSuccess: (data) => {
-      console.log(data);
-      setFileUrl(data.url);
+      if ("url" in data) {
+        setFileUrl(data.url);
+      } else {
+        toast.error(data.error);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    console.log(file);
-
     if (file) {
       uploadFileMutation.mutate(file);
     }

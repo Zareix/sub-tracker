@@ -40,21 +40,14 @@ import {
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { DeleteDialog } from "~/components/subscriptions/delete";
 import { Separator } from "~/components/ui/separator";
+import { useFilters } from "~/lib/hooks/use-filters";
 
 type Props = {
   subscriptions: RouterOutputs["subscription"]["getAll"];
 };
 
 export const SubscriptionList = ({ subscriptions }: Props) => {
-  const [filters] = useQueryState("filters", {
-    ...parseAsJson(filtersSchema.parse),
-    defaultValue: {
-      schedule: null,
-      paymentMethodId: null,
-      users: null,
-      categoryId: null,
-    },
-  });
+  const [filters] = useFilters();
 
   const [sort] = useQueryState(
     "sort",

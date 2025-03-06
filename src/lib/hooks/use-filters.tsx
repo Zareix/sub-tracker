@@ -1,8 +1,8 @@
 import { parseAsJson, useQueryState } from "nuqs";
 import { filtersSchema } from "~/lib/constant";
 
-export const useFilters = () => {
-  return useQueryState("filters", {
+export const useFilters = () =>
+  useQueryState("filters", {
     ...parseAsJson(filtersSchema.parse),
     defaultValue: {
       schedule: null,
@@ -11,4 +11,3 @@ export const useFilters = () => {
       categoryId: null,
     },
   });
-};

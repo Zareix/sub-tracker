@@ -15,9 +15,6 @@ import {
 } from "~/components/ui/chart";
 import { BASE_CURRENCY, CURRENCY_SYMBOLS } from "~/lib/constant";
 
-const catNameToKebabCase = (name: string) =>
-  name.toLowerCase().replaceAll(" ", "-");
-
 export default function Stats() {
   const [filters] = useFilters();
   const subscriptionsQuery = api.subscription.getAll.useQuery();
@@ -129,15 +126,17 @@ const MonthlyStatsCard = ({
   isLoading: boolean;
 }) => {
   const [filters] = useFilters();
-  const totalMonthlySub = useMemo(() => {
-    return subscriptions.reduce(
-      (acc, subscription) =>
-        filters.users
-          ? acc + subscription.price / subscription.users.length
-          : acc + subscription.price,
-      0,
-    );
-  }, [filters.users, subscriptions]);
+  const totalMonthlySub = useMemo(
+    () =>
+      subscriptions.reduce(
+        (acc, subscription) =>
+          filters.users
+            ? acc + subscription.price / subscription.users.length
+            : acc + subscription.price,
+        0,
+      ),
+    [filters.users, subscriptions],
+  );
   const chartData = useMemo(
     () =>
       subscriptions
@@ -162,7 +161,7 @@ const MonthlyStatsCard = ({
               acc.push({
                 category: subscription.category,
                 price: subPrice,
-                fill: `var(--color-${catNameToKebabCase(subscription.category)})`,
+                fill: `var(--chart-${acc.length + 1})`,
               });
             }
             return acc;
@@ -170,22 +169,24 @@ const MonthlyStatsCard = ({
           [] as Array<{
             category: string;
             price: number;
-            fill: `var(--color-${string})`;
+            fill: `var(--chart-${number})`;
           }>,
         ),
     [filters.users, subscriptions],
   );
-  const chartConfig = useMemo(() => {
-    return Array.from(
-      new Set(subscriptions.map((s) => s.category.name)),
-    ).reduce((acc, category, index) => {
-      acc[catNameToKebabCase(category)] = {
-        label: category,
-        color: `hsl(var(--chart-${index + 1}))`,
-      };
-      return acc;
-    }, {} as ChartConfig);
-  }, [subscriptions]);
+  const chartConfig = useMemo(
+    () =>
+      Array.from(new Set(subscriptions.map((s) => s.category.name))).reduce(
+        (acc, category) => {
+          acc[category] = {
+            label: category,
+          };
+          return acc;
+        },
+        {} as ChartConfig,
+      ),
+    [subscriptions],
+  );
 
   if (isLoading) {
     return (

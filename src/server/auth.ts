@@ -10,6 +10,7 @@ import {
 } from "~/server/db/schema";
 import { env } from "~/env";
 import { passkey } from "better-auth/plugins/passkey";
+import type { NextRequest } from "next/server";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -56,3 +57,10 @@ export const auth = betterAuth({
 });
 
 export type Session = typeof auth.$Infer.Session;
+
+export const isAuthenticated = async (req: NextRequest) =>
+  !!(
+    await auth.api.getSession({
+      headers: req.headers,
+    })
+  )?.user;
