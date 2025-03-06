@@ -429,8 +429,8 @@ export const EditCreateForm = ({
                           <Button
                             variant="outline"
                             className={cn(
-                              `w-full justify-start bg-transparent from-transparent to-transparent text-left
-                                font-normal`,
+                              `h-10 w-full justify-start bg-transparent from-transparent to-transparent
+                                text-left font-normal`,
                               !field.value && "text-muted-foreground",
                             )}
                           >

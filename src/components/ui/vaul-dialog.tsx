@@ -17,7 +17,7 @@ export const WrapperDialogVaul = ({
   if (isMobile) {
     return (
       <>
-        <Drawer open={isOpen} onOpenChange={setIsOpen}>
+        <Drawer open={isOpen} onOpenChange={setIsOpen} repositionInputs={false}>
           {trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
           <DrawerContent>{children}</DrawerContent>
         </Drawer>
