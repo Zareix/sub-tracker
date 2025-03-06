@@ -153,7 +153,7 @@ export const FiltersButton = ({
                     size="icon"
                     onClick={() => setFilters({ ...filters, users: null })}
                   >
-                    <TrashIcon className="h-5 w-5" />
+                    <TrashIcon className="size-5" />
                   </Button>
                 )}
               </div>
@@ -226,7 +226,7 @@ export const FiltersButton = ({
                     size="icon"
                     onClick={() => setFilters({ ...filters, schedule: null })}
                   >
-                    <TrashIcon className="h-5 w-5" />
+                    <TrashIcon className="size-5" />
                   </Button>
                 )}
               </div>
@@ -306,7 +306,7 @@ export const FiltersButton = ({
                       setFilters({ ...filters, paymentMethodId: null })
                     }
                   >
-                    <TrashIcon className="h-5 w-5" />
+                    <TrashIcon className="size-5" />
                   </Button>
                 )}
               </div>
@@ -383,7 +383,7 @@ export const FiltersButton = ({
                     size="icon"
                     onClick={() => setFilters({ ...filters, categoryId: null })}
                   >
-                    <TrashIcon className="h-5 w-5" />
+                    <TrashIcon className="size-5" />
                   </Button>
                 )}
               </div>

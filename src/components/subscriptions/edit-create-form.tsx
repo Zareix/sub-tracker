@@ -206,7 +206,7 @@ export const EditCreateForm = ({
       ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-            <div className="grid grid-cols-12 gap-1">
+            <div className="grid grid-cols-12 gap-2">
               <ImageFileUploader
                 setFileUrl={(v) => form.setValue("image", v)}
                 fileUrl={form.watch("image")}
@@ -278,15 +278,20 @@ export const EditCreateForm = ({
                 </FormItem>
               )}
             />
-            <div className="flex gap-2">
+            <div className="flex">
               <FormField
                 control={form.control}
                 name="price"
                 render={({ field }) => (
-                  <FormItem className="flex-grow">
+                  <FormItem className="grow">
                     <FormLabel>Price</FormLabel>
                     <FormControl>
-                      <Input placeholder="10" type="number" {...field} />
+                      <Input
+                        placeholder="10"
+                        type="number"
+                        className="rounded-r-none"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -304,7 +309,7 @@ export const EditCreateForm = ({
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="rounded-l-none border-l-0">
                             <SelectValue placeholder="Select a currency" />
                           </SelectTrigger>
                         </FormControl>
@@ -321,7 +326,10 @@ export const EditCreateForm = ({
                   </FormItem>
                 )}
               />
-              <Separator orientation="vertical" className="my-auto flex h-12" />
+              <Separator
+                orientation="vertical"
+                className="mx-2 my-auto flex h-12"
+              />
               <FormField
                 control={form.control}
                 name="paymentMethod"
@@ -367,7 +375,7 @@ export const EditCreateForm = ({
               control={form.control}
               name="payedBy"
               render={({ field }) => (
-                <FormItem className="flex-grow">
+                <FormItem className="grow">
                   <FormLabel>Payed By</FormLabel>
                   <FormControl>
                     <MultiSelect
@@ -421,20 +429,19 @@ export const EditCreateForm = ({
                 control={form.control}
                 name="firstPaymentDate"
                 render={({ field }) => (
-                  <FormItem className="flex-grow">
+                  <FormItem className="grow">
                     <FormLabel>First Payment Date</FormLabel>
                     <FormControl>
                       <Popover modal>
                         <PopoverTrigger asChild>
                           <Button
-                            variant="outline"
+                            variant="outline-t"
                             className={cn(
-                              `h-10 w-full justify-start bg-transparent from-transparent to-transparent
-                                text-left font-normal`,
+                              "h-10 w-full justify-start text-left font-normal",
                               !field.value && "text-muted-foreground",
                             )}
                           >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            <CalendarIcon className="mr-2 size-4" />
                             {field.value ? (
                               format(field.value, "dd/MM/yyyy")
                             ) : (

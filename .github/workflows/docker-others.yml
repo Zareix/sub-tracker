@@ -1,0 +1,28 @@
+name: "Docker for other branches"
+
+on:
+  push:
+    branches-ignore: ["main"]
+
+jobs:
+  build:
+    name: Build docker image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64 #,linux/arm64

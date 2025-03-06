@@ -61,9 +61,9 @@ const ChartContainer = React.forwardRef<
           [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted
           [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border flex aspect-video
           justify-center text-xs [&_.recharts-dot[stroke='#fff']]:stroke-transparent
-          [&_.recharts-layer]:outline-none
+          [&_.recharts-layer]:outline-none [&_.recharts-sector]:outline-none
           [&_.recharts-sector[stroke='#fff']]:stroke-transparent
-          [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none`,
+          [&_.recharts-surface]:outline-none`,
           className,
         )}
         {...props}

@@ -123,14 +123,14 @@ export const EditCreateForm = ({
                         variant="outline"
                         role="combobox"
                         className={cn(
-                          "flex-grow justify-between",
+                          "grow justify-between",
                           !field.value && "text-muted-foreground",
                         )}
                       >
                         {field.value
                           ? iconNames.find((name) => name === field.value)
                           : "Select icon"}
-                        <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        <ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
