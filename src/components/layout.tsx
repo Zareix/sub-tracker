@@ -16,7 +16,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           <title>Sub Tracker - Login</title>
           <meta name="description" content="Track your subscriptions" />
         </Head>
-        <main className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+        <main className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
           <div className="flex w-full max-w-sm flex-col gap-6">
             <LoginForm />
           </div>
@@ -34,11 +34,11 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       <SidebarProvider>
         <AppSidebar />
         <main
-          className="container relative mx-auto min-h-screen bg-background px-4 pb-20 pt-8
+          className="bg-background relative container mx-auto min-h-screen px-4 pt-8 pb-20
             xl:max-w-5xl"
           data-vaul-drawer-wrapper
         >
-          <SidebarTrigger className="absolute -left-7 top-5 hidden md:block" />
+          <SidebarTrigger className="absolute top-5 -left-7 hidden md:block" />
           {children}
         </main>
         <Navbar />

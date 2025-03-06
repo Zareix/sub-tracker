@@ -78,8 +78,8 @@ export function AppSidebar() {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
                 <div
-                  className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary
-                    text-sidebar-primary-foreground"
+                  className="bg-primary text-sidebar-primary-foreground flex aspect-square size-8
+                    items-center justify-center rounded-lg"
                 >
                   <CalendarSyncIcon className="size-4" />
                 </div>
@@ -120,8 +120,9 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <CreateSubscriptionDialog
                 trigger={
-                  <SidebarMenuButton className="flex h-full items-center justify-center gap-2 text-foreground">
-                    <PlusIcon /> Add subscription
+                  <SidebarMenuButton className="flex">
+                    <PlusIcon />
+                    <span>Add subscription</span>
                   </SidebarMenuButton>
                 }
               />
@@ -131,10 +132,10 @@ export function AppSidebar() {
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton
                     size="lg"
-                    className="border data-[state=open]:bg-sidebar-accent
-                      data-[state=open]:text-sidebar-accent-foreground"
+                    className="data-[state=open]:bg-sidebar-accent
+                      data-[state=open]:text-sidebar-accent-foreground border"
                   >
-                    <Avatar className="h-8 w-8 rounded-lg">
+                    <Avatar className="size-8 rounded-lg">
                       <AvatarImage
                         src={session.data.user.image ?? undefined}
                         alt={session.data.user.name ?? ""}
@@ -155,7 +156,7 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                  className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
                   side="right"
                   align="end"
                   sideOffset={4}
@@ -163,9 +164,9 @@ export function AppSidebar() {
                   <DropdownMenuLabel className="p-0 font-normal">
                     <Link
                       href="/profile"
-                      className="flex items-center gap-2 rounded px-1 py-1.5 text-left text-sm hover:bg-muted"
+                      className="hover:bg-muted flex items-center gap-2 rounded-md px-1 py-1.5 text-left text-sm"
                     >
-                      <Avatar className="h-8 w-8 rounded-lg">
+                      <Avatar className="size-8 rounded-lg">
                         <AvatarImage
                           src={session.data.user.image ?? undefined}
                           alt={session.data.user.name}
@@ -230,8 +231,8 @@ export const Navbar = () => {
   const middleIndex = Math.floor(navBarItems.length / 2);
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-10 flex h-14 items-center justify-between
-        border-t border-border bg-background/80 px-4 backdrop-blur md:hidden md:px-8"
+      className="border-border bg-background/80 fixed right-0 bottom-0 left-0 z-10 flex h-14
+        items-center justify-between border-t px-4 backdrop-blur md:hidden md:px-8"
     >
       <div className="grid h-full w-full grid-cols-5 content-center items-center justify-around gap-2">
         {navBarItems
@@ -243,7 +244,7 @@ export const Navbar = () => {
           trigger={
             <Button
               variant="link"
-              className="flex h-full items-center gap-2 text-foreground"
+              className="text-foreground flex h-full items-center gap-2"
             >
               <PlusIcon />
             </Button>

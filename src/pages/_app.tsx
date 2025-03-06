@@ -20,6 +20,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   //     });
   //   }
   // }, []);
+
   return (
     <>
       <style jsx global>{`

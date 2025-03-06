@@ -83,8 +83,8 @@ export const LoginForm = () => {
           className="flex items-center gap-2 self-center py-4 text-xl font-medium"
         >
           <div
-            className="flex h-9 w-9 items-center justify-center rounded-md bg-primary
-              text-primary-foreground"
+            className="bg-primary text-primary-foreground flex size-9 items-center justify-center
+              rounded-md"
           >
             <CalendarSyncIcon className="size-[22px]" />
           </div>
