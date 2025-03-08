@@ -3,7 +3,7 @@ import { isAuthenticated } from "~/server/auth";
 import { readFile, saveFile } from "~/server/services/files";
 
 export async function POST(req: NextRequest) {
-  if (await isAuthenticated(req)) {
+  if (!(await isAuthenticated(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
