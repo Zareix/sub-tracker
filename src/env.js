@@ -19,6 +19,21 @@ export const env = createEnv({
       .default("development"),
     UPLOADS_FOLDER: z.string(),
     FIXER_API_KEY: z.string().optional(),
+    S3_ENABLED: z.preprocess(
+      (val) =>
+        !!val ||
+        (!!process.env.S3_BUCKET &&
+          !!process.env.S3_ACCESS_KEY_ID &&
+          !!process.env.S3_SECRET_ACCESS_KEY &&
+          !!process.env.S3_REGION &&
+          !!process.env.S3_ENDPOINT),
+      z.boolean().default(false),
+    ),
+    S3_BUCKET: z.string().optional(),
+    S3_ACCESS_KEY_ID: z.string().optional(),
+    S3_SECRET_ACCESS_KEY: z.string().optional(),
+    S3_REGION: z.string().optional(),
+    S3_ENDPOINT: z.string().optional(),
   },
 
   /**
@@ -44,9 +59,14 @@ export const env = createEnv({
     DATABASE_PATH: process.env.DATABASE_PATH,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV,
-    UPLOADS_FOLDER: process.env.UPLOADS_FOLDER,
     FIXER_API_KEY: process.env.FIXER_API_KEY,
-    // NEXT_PUBLIC_AUTH_URL: process.env.NEXT_PUBLIC_AUTH_URL,
+    UPLOADS_FOLDER: process.env.UPLOADS_FOLDER,
+    S3_ENABLED: process.env.S3_ENABLED,
+    S3_BUCKET: process.env.S3_BUCKET,
+    S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
+    S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
+    S3_REGION: process.env.S3_REGION,
+    S3_ENDPOINT: process.env.S3_ENDPOINT,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

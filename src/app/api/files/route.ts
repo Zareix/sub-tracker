@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "~/server/auth";
-import { readFile, saveFile } from "~/server/services/files";
+import { getFileFromStorage, saveFile } from "~/server/services/files";
 
 export async function POST(req: NextRequest) {
   if (!(await isAuthenticated(req))) {
@@ -27,17 +27,21 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (!(await isAuthenticated(req))) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  // if (!(await isAuthenticated(req))) {
+  //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // }
 
   try {
     const filename = req.nextUrl.searchParams.get("filename");
-    const file = await readFile(filename);
+    const file = await getFileFromStorage(filename);
+
     if (!file) {
       return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
-    return new NextResponse(file, {
+    if (typeof file === "string") {
+      return NextResponse.redirect(file);
+    }
+    return new NextResponse(await file.arrayBuffer(), {
       headers: {
         "Content-Type": file.type,
         "Content-Disposition": `attachment; filename="${filename}"`,

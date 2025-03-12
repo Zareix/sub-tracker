@@ -1,6 +1,6 @@
 import React from "react";
-import { parseAsJson, parseAsStringEnum, useQueryState } from "nuqs";
-import { BASE_CURRENCY, filtersSchema } from "~/lib/constant";
+import { parseAsStringEnum, useQueryState } from "nuqs";
+import { BASE_CURRENCY } from "~/lib/constant";
 import { type RouterOutputs } from "~/utils/api";
 import { Button } from "~/components/ui/button";
 import {
