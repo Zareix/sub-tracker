@@ -1,6 +1,6 @@
 ##### DEPENDENCIES
 
-FROM oven/bun:1.2.4-slim AS deps
+FROM oven/bun:1.2.7-slim AS deps
 # RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
@@ -10,7 +10,7 @@ RUN bun install --frozen-lockfile
 
 ##### BUILDER
 
-FROM oven/bun:1.2.4-slim AS builder
+FROM oven/bun:1.2.7-slim AS builder
 
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -22,7 +22,7 @@ RUN SKIP_ENV_VALIDATION=1 bun run build;
 
 ##### RUNNER
 
-FROM oven/bun:1.2.4-slim AS runner
+FROM oven/bun:1.2.7-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
