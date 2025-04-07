@@ -20,7 +20,11 @@ export default function Home() {
       <header className="flex flex-wrap items-center justify-between gap-y-1">
         <h1 className="text-3xl font-bold">Subscriptions</h1>
         <div className="flex items-center gap-2">
-          <CreateSubscriptionDialog />
+          <CreateSubscriptionDialog
+            trigger={
+              <Button className="hidden md:block">Add new subscription</Button>
+            }
+          />
           <FiltersButton />
           <SortButton />
         </div>

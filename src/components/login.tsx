@@ -35,6 +35,11 @@ export const LoginForm = () => {
         password: values.password,
       });
     },
+    onSuccess: (res) => {
+      if (res.error) {
+        toast.error(res.error.message ?? "Could not login, please try again.");
+      }
+    },
     onError: () => {
       toast.error("Could not login, please try again.");
     },
@@ -43,8 +48,12 @@ export const LoginForm = () => {
     mutationFn: async () => {
       return signIn.passkey();
     },
-    onSuccess: () => {
-      router.reload();
+    onSuccess: (res) => {
+      if (res?.error) {
+        toast.error(res?.error.message ?? "Could not login, please try again.");
+      } else {
+        router.reload();
+      }
     },
     onError: () => {
       toast.error("Could not login, please try again.");

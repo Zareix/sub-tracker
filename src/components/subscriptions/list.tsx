@@ -125,114 +125,108 @@ const SubscriptionListItem = ({
   return (
     <Card className="border-none shadow-none">
       <CardContent>
-        <AccordionItem value={subscription.id.toString()}>
-          <AccordionTrigger asChild>
-            <div className="flex items-center gap-2">
-              {subscription.image && (
-                <Image
-                  src={subscription.image}
-                  alt={subscription.name}
-                  width={64}
-                  height={48}
-                  className="max-h-[48px] max-w-[40px] object-contain md:max-w-[64px]"
-                />
-              )}
-              <div className="flex grow flex-col gap-1">
-                <h2 className="text-xl font-semibold">{subscription.name}</h2>
-                <div className="text-muted-foreground flex items-center gap-1 text-sm">
-                  <Calendar1Icon size={16} />
-                  {formatNextPaymentDate(subscription.nextPaymentDate)}
-                </div>
-              </div>
-              <div className="text-lg">{subscription.price}€</div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="text-muted-foreground w-5 md:w-10"
-                  >
-                    <InfoIcon size={20} />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="mr-2 w-32"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <DropdownMenuItem
-                    onClick={() => setIsOpen({ ...isOpen, edit: true })}
-                  >
-                    <EditIcon />
-                    <span>Edit</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="text-destructive"
-                    onClick={() =>
-                      setIsOpen({
-                        ...isOpen,
-                        delete: true,
-                      })
-                    }
-                  >
-                    <TrashIcon />
-                    <span>Delete</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+        <div className="flex items-center gap-2">
+          {subscription.image && (
+            <Image
+              src={subscription.image}
+              alt={subscription.name}
+              width={64}
+              height={48}
+              className="max-h-[48px] max-w-[40px] object-contain md:max-w-[64px]"
+            />
+          )}
+          <div className="flex grow flex-col gap-1">
+            <h2 className="text-xl font-semibold">{subscription.name}</h2>
+            <div className="text-muted-foreground flex items-center gap-1 text-sm">
+              <Calendar1Icon size={16} />
+              {formatNextPaymentDate(subscription.nextPaymentDate)}
             </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <div
-              className="text-foreground/80 flex flex-wrap gap-x-4 gap-y-2 pt-1 pl-12 text-base
-                md:gap-x-6 md:pl-6"
+          </div>
+          <div className="text-lg">{subscription.price}€</div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="text-muted-foreground w-5 md:w-10"
+              >
+                <InfoIcon size={20} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="mr-2 w-32"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center gap-1">
-                <UserIcon size={18} className="text-primary" />
-                <span>{subscription.users.map((u) => u.name).join(", ")}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                {subscription.paymentMethod.image ? (
-                  <Image
-                    src={subscription.paymentMethod.image}
-                    alt={subscription.paymentMethod.name}
-                    width={20}
-                    height={20}
-                    className="max-h-[20px] max-w-[20px] object-contain"
-                  />
-                ) : (
-                  <WalletCardsIcon size={18} className="text-primary" />
-                )}
-                <span>{subscription.paymentMethod.name}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <CategoryIcon
-                  icon={subscription.category.icon}
-                  size={16}
-                  className="text-primary"
-                />
-                {subscription.category.name}
-              </div>
-              <div className="flex items-center gap-1">
-                <RefreshCcwIcon size={16} className="text-primary" />
-                {subscription.schedule}
-              </div>
-              {subscription.currency !== BASE_CURRENCY && (
-                <div className="flex items-center gap-0.5">
-                  <span className="text-primary">
-                    {currencyToSymbol(subscription.currency)}
-                  </span>
-                  {subscription.originalPrice}
-                </div>
-              )}
-              {subscription.description.length > 0 && (
-                <div className="flex items-center gap-1">
-                  <TextIcon size={20} className="text-primary" />
-                  <span>{subscription.description}</span>
-                </div>
-              )}
+              <DropdownMenuItem
+                onClick={() => setIsOpen({ ...isOpen, edit: true })}
+              >
+                <EditIcon />
+                <span>Edit</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() =>
+                  setIsOpen({
+                    ...isOpen,
+                    delete: true,
+                  })
+                }
+              >
+                <TrashIcon />
+                <span>Delete</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div
+          className="text-foreground/80 flex flex-wrap gap-x-4 gap-y-2 pt-1 pl-12 text-base
+            md:gap-x-6 md:pl-0"
+        >
+          <div className="flex items-center gap-1">
+            <UserIcon size={18} className="text-primary" />
+            <span>{subscription.users.map((u) => u.name).join(", ")}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            {subscription.paymentMethod.image ? (
+              <Image
+                src={subscription.paymentMethod.image}
+                alt={subscription.paymentMethod.name}
+                width={20}
+                height={20}
+                className="max-h-[20px] max-w-[20px] object-contain"
+              />
+            ) : (
+              <WalletCardsIcon size={18} className="text-primary" />
+            )}
+            <span>{subscription.paymentMethod.name}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <CategoryIcon
+              icon={subscription.category.icon}
+              size={16}
+              className="text-primary"
+            />
+            {subscription.category.name}
+          </div>
+          <div className="flex items-center gap-1">
+            <RefreshCcwIcon size={16} className="text-primary" />
+            {subscription.schedule}
+          </div>
+          {subscription.currency !== BASE_CURRENCY && (
+            <div className="flex items-center gap-0.5">
+              <span className="text-primary">
+                {currencyToSymbol(subscription.currency)}
+              </span>
+              {subscription.originalPrice}
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          )}
+          {subscription.description.length > 0 && (
+            <div className="flex items-center gap-1">
+              <TextIcon size={20} className="text-primary" />
+              <span>{subscription.description}</span>
+            </div>
+          )}
+        </div>
         <DeleteDialog
           subscription={subscription}
           isOpen={isOpen.delete}

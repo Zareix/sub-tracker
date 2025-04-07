@@ -37,6 +37,15 @@ if (users.length === 0) {
   );
 }
 
+const cat = await db.query.categories.findMany();
+if (cat.length === 0) {
+  console.log("Creating default category...");
+  await db.insert(schema.categories).values({
+    name: "Misc",
+    icon: "circle-ellipsis",
+  });
+}
+
 console.log("Database seeded");
 
 db.$client.close();
