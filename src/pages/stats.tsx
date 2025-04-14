@@ -3,7 +3,7 @@ import { FiltersButton } from "~/components/subscriptions/filters";
 import { getFilteredSubscriptions, rounded } from "~/lib/utils";
 import { Skeleton } from "~/components/ui/skeleton";
 import Head from "next/head";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import { useFilters } from "~/lib/hooks/use-filters";
 import { Label, Pie, PieChart } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";

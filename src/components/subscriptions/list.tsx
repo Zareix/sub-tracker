@@ -31,12 +31,7 @@ import {
 } from "~/lib/utils";
 import Image from "next/image";
 import { EditSubscriptionDialog } from "~/components/subscriptions/edit";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "~/components/ui/accordion";
+import { Accordion } from "~/components/ui/accordion";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { DeleteDialog } from "~/components/subscriptions/delete";
 import { Separator } from "~/components/ui/separator";

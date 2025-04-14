@@ -40,19 +40,19 @@ services:
 
 ## Config
 
-| Name                 | Description                                                              | Default value     |
-| -------------------- | ------------------------------------------------------------------------ | ----------------- |
-| BETTER_AUTH_SECRET   | Secret key for [better-auth](https://github.com/better-auth/better-auth) | -                 |
-| ADMIN_EMAIL          | Admin email for default admin user                                       | -                 |
-| BETTER_AUTH_URL      | URL for [better-auth](https://github.com/better-auth/better-auth)        | -                 |
-| DATABASE_PATH        | Path to the database file                                                | /app/db/db.sqlite |
-| UPLOADS_FOLDER       | Path to the uploads folder                                               | /app/uploads      |
-| FIXER_API_KEY        | API key for [fixer.io](https://fixer.io)                                 | -                 |
-| S3_BUCKET            | S3 bucket name                                                           | -                 |
-| S3_ACCESS_KEY_ID     | S3 access key ID                                                         | -                 |
-| S3_SECRET_ACCESS_KEY | S3 secret access key                                                     | -                 |
-| S3_REGION            | S3 region                                                                | -                 |
-| S3_ENDPOINT          | S3 endpoint                                                              | -                 |
+| Name                 | Description                                                                | Default value     |
+| -------------------- | -------------------------------------------------------------------------- | ----------------- |
+| BETTER_AUTH_SECRET   | Secret key for [better-auth](https://github.com/better-auth/better-auth)   | -                 |
+| ADMIN_EMAIL          | Admin email for default admin user                                         | -                 |
+| BETTER_AUTH_URL      | Your app URL for [better-auth](https://github.com/better-auth/better-auth) | -                 |
+| DATABASE_PATH        | Path to the database file                                                  | /app/db/db.sqlite |
+| UPLOADS_FOLDER       | Path to the uploads folder                                                 | /app/uploads      |
+| FIXER_API_KEY        | API key for [fixer.io](https://fixer.io)                                   | -                 |
+| S3_BUCKET            | S3 bucket name                                                             | -                 |
+| S3_ACCESS_KEY_ID     | S3 access key ID                                                           | -                 |
+| S3_SECRET_ACCESS_KEY | S3 secret access key                                                       | -                 |
+| S3_REGION            | S3 region                                                                  | -                 |
+| S3_ENDPOINT          | S3 endpoint                                                                | -                 |
 
 > [!NOTE]  
 > Default admin password is `password`.

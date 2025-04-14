@@ -28,6 +28,13 @@ const config = {
     "jose",
   ],
   output: "standalone",
+
+  typescript: {
+    ignoreBuildErrors: !!process.env.SKIP_LINT,
+  },
+  eslint: {
+    ignoreDuringBuilds: !!process.env.SKIP_LINT,
+  },
 };
 
 export default withBundleAnalyzer({
