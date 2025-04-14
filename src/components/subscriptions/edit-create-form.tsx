@@ -36,6 +36,7 @@ import { Calendar } from "~/components/ui/calendar";
 import { Separator } from "~/components/ui/separator";
 import Image from "next/image";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
+import { useSession } from "~/lib/auth-client";
 
 const createTempSub = (subscription: RouterInputs["subscription"]["create"]) =>
   ({
@@ -79,6 +80,7 @@ export const EditCreateForm = ({
   subscription?: RouterOutputs["subscription"]["getAll"][number];
   onFinished?: () => void;
 }) => {
+  const session = useSession();
   const apiUtils = api.useUtils();
   const createSubscriptionMutation = api.subscription.create.useMutation({
     onSuccess: () => {
@@ -175,7 +177,9 @@ export const EditCreateForm = ({
       paymentMethod: subscription?.paymentMethod.id,
       schedule: subscription?.schedule ?? "Monthly",
       firstPaymentDate: subscription?.firstPaymentDate,
-      payedBy: subscription?.users.map((u) => u.id) ?? [],
+      payedBy:
+        subscription?.users.map((u) => u.id) ??
+        (session.data?.user.id ? [session.data.user.id] : []),
     },
   });
 

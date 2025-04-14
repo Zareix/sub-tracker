@@ -3,7 +3,7 @@ import { FiltersButton } from "~/components/subscriptions/filters";
 import { getFilteredSubscriptions, rounded } from "~/lib/utils";
 import { Skeleton } from "~/components/ui/skeleton";
 import Head from "next/head";
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { useFilters } from "~/lib/hooks/use-filters";
 import { Label, Pie, PieChart } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -14,6 +14,18 @@ import {
   ChartTooltipContent,
 } from "~/components/ui/chart";
 import { BASE_CURRENCY, CURRENCY_SYMBOLS } from "~/lib/constant";
+
+const sum = (
+  acc: number,
+  price: number,
+  isFiltered: boolean,
+  usersLength: number,
+) => {
+  if (isFiltered) {
+    return acc + price / usersLength;
+  }
+  return acc + price;
+};
 
 export default function Stats() {
   const [filters] = useFilters();
@@ -30,25 +42,51 @@ export default function Stats() {
 
   const totalMonthlySub = subscriptions
     .filter((subscription) => subscription.schedule === "Monthly")
-    .reduce((acc, subscription) => {
-      if (filters.users) {
-        return acc + subscription.price / subscription.users.length;
-      }
-      return acc + subscription.price;
-    }, 0);
+    .reduce(
+      (acc, subscription) =>
+        sum(
+          acc,
+          subscription.price,
+          !!filters.users,
+          subscription.users.length,
+        ),
+      0,
+    );
 
   const totalYearlySub = subscriptions
     .filter((subscription) => subscription.schedule === "Yearly")
-    .reduce((acc, subscription) => {
-      if (filters.users) {
-        return acc + subscription.price / subscription.users.length;
-      }
-      return acc + subscription.price;
-    }, 0);
+    .reduce(
+      (acc, subscription) =>
+        sum(
+          acc,
+          subscription.price,
+          !!filters.users,
+          subscription.users.length,
+        ),
+      0,
+    );
 
   const totalPerMonth = totalMonthlySub + totalYearlySub / 12;
 
   const totalPerYear = totalMonthlySub * 12 + totalYearlySub;
+
+  const endOfMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    0,
+  );
+  const totalForThisMonth = subscriptions
+    .filter((subscription) => subscription.nextPaymentDate < endOfMonth)
+    .reduce(
+      (acc, subscription) =>
+        sum(
+          acc,
+          subscription.price,
+          !!filters.users,
+          subscription.users.length,
+        ),
+      0,
+    );
 
   return (
     <>
@@ -85,6 +123,11 @@ export default function Stats() {
           <StatsCard
             title="Total per year"
             value={totalPerYear}
+            isLoading={subscriptionsQuery.isLoading}
+          />
+          <StatsCard
+            title="Expected this month"
+            value={totalForThisMonth}
             isLoading={subscriptionsQuery.isLoading}
           />
         </div>

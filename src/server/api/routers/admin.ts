@@ -14,6 +14,7 @@ import {
   usersToSubscriptions,
 } from "~/server/db/schema";
 import { updateExchangeRates } from "~/server/services/exchange-rates";
+import { cleanUpFiles } from "~/server/services/files";
 
 export const adminRouter = createTRPCRouter({
   cleanUpFiles: adminProcedure.mutation(async ({ ctx }) => {
@@ -40,12 +41,7 @@ export const adminRouter = createTRPCRouter({
       .filter(Boolean)
       .map((file) => file.replace("/api/files?filename=", ""));
 
-    for (const file of await readdir(env.UPLOADS_FOLDER)) {
-      if (!filesInUse.includes(file)) {
-        console.log("Deleting file", file);
-        await Bun.file(`${env.UPLOADS_FOLDER}/${file}`).delete();
-      }
-    }
+    await cleanUpFiles(filesInUse);
   }),
   updateExchangeRates: adminProcedure.mutation(async () => {
     await updateExchangeRates();

@@ -15,3 +15,44 @@ docker run --name sub-tracker \
   -v ./temp/uploads:/data/uploads \
   -d ghcr.io/zareix/sub-tracker
 ```
+
+```yaml
+services:
+  subtracker:
+    image: ghcr.io/zareix/sub-tracker:v1.0.0
+    environment:
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET} # generate with `openssl rand -hex 32`
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - BETTER_AUTH_URL=https://subtracker.example.com
+      - DATABASE_PATH=/data/db.sqlite
+      - UPLOADS_FOLDER=/data/uploads
+      - FIXER_API_KEY=${FIXER_API_KEY} # get it from fixer.io
+      - S3_BUCKET=${S3_BUCKET} # optional
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID} # optional
+      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY} # optional
+      - S3_REGION=${S3_REGION} # optional
+      - S3_ENDPOINT=${S3_ENDPOINT} # optional
+    ports:
+      - 3000:3000
+    volumes:
+      - /data/apps/subtracker:/data
+```
+
+## Config
+
+| Name                 | Description                                                              | Default value     |
+| -------------------- | ------------------------------------------------------------------------ | ----------------- |
+| BETTER_AUTH_SECRET   | Secret key for [better-auth](https://github.com/better-auth/better-auth) | -                 |
+| ADMIN_EMAIL          | Admin email for default admin user                                       | -                 |
+| BETTER_AUTH_URL      | URL for [better-auth](https://github.com/better-auth/better-auth)        | -                 |
+| DATABASE_PATH        | Path to the database file                                                | /app/db/db.sqlite |
+| UPLOADS_FOLDER       | Path to the uploads folder                                               | /app/uploads      |
+| FIXER_API_KEY        | API key for [fixer.io](https://fixer.io)                                 | -                 |
+| S3_BUCKET            | S3 bucket name                                                           | -                 |
+| S3_ACCESS_KEY_ID     | S3 access key ID                                                         | -                 |
+| S3_SECRET_ACCESS_KEY | S3 secret access key                                                     | -                 |
+| S3_REGION            | S3 region                                                                | -                 |
+| S3_ENDPOINT          | S3 endpoint                                                              | -                 |
+
+> [!NOTE]  
+> Default admin password is `password`.

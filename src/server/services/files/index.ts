@@ -30,3 +30,11 @@ export const getFileFromStorage = async (filename: string | null) => {
 
   return await local.readFile(filename);
 };
+
+export const cleanUpFiles = async (filesInUse: (string | null)[]) => {
+  if (env.S3_ENABLED) {
+    await s3.cleanUpFiles(filesInUse);
+  }
+
+  await local.cleanUpFiles(filesInUse);
+};

@@ -307,7 +307,7 @@ export const MultiSelect = ({
                       : "opacity-50 [&_svg]:invisible",
                   )}
                 >
-                  <CheckIcon className="size-4" />
+                  <CheckIcon className="size-3!" />
                 </div>
                 <span>(Select All)</span>
               </CommandItem>
@@ -327,10 +327,10 @@ export const MultiSelect = ({
                           : "opacity-50 [&_svg]:invisible",
                       )}
                     >
-                      <CheckIcon className="size-4" />
+                      <CheckIcon className="size-3!" />
                     </div>
                     {option.icon && (
-                      <option.icon className="text-muted-foreground mr-2 size-4" />
+                      <option.icon className="text-muted-foreground mr-2 size-3" />
                     )}
                     <span>{option.label}</span>
                   </CommandItem>

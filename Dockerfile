@@ -41,5 +41,6 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 ENV DATABASE_PATH=/app/db/db.sqlite
+ENV UPLOADS_FOLDER=/app/uploads
 
 CMD ["server.js"]

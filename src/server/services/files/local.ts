@@ -1,4 +1,4 @@
-import fs from "node:fs/promises";
+import fs, { readdir } from "node:fs/promises";
 import path from "node:path";
 import { env } from "~/env";
 
@@ -13,4 +13,14 @@ export const saveFile = async (file: File) => {
 
 export const readFile = async (fileName: string) => {
   return Bun.file(path.join(env.UPLOADS_FOLDER, fileName));
+};
+
+export const cleanUpFiles = async (filesInUse: (string | null)[]) => {
+  for (const file of await readdir(env.UPLOADS_FOLDER)) {
+    if (filesInUse.includes(file)) {
+      continue;
+    }
+    console.log("Deleting file", file);
+    await Bun.file(`${env.UPLOADS_FOLDER}/${file}`).delete();
+  }
 };
