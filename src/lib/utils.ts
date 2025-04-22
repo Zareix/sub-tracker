@@ -1,7 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { compareAsc, format } from "date-fns";
 import { twMerge } from "tailwind-merge";
-import type { Filters, Sort } from "~/lib/constant";
+import type { Sort } from "~/lib/constant";
+import type { Filters } from "~/lib/hooks/use-filters";
 import type {
   Category,
   PaymentMethod,
@@ -80,10 +81,10 @@ export const getFilteredSubscriptions = <
       (s) => s.schedule === filters.schedule,
     );
   }
-  if (filters.paymentMethodId) {
+  if (filters.paymentMethods.length > 0) {
     // @ts-expect-error Actually it's working, I just want the function to return the right type
-    filteredSubscriptions = filteredSubscriptions.filter(
-      (s) => s.paymentMethod.id === filters.paymentMethodId,
+    filteredSubscriptions = filteredSubscriptions.filter((s) =>
+      filters.paymentMethods.includes(s.paymentMethod.id),
     );
   }
   if (filters.users) {
@@ -92,10 +93,10 @@ export const getFilteredSubscriptions = <
       s.users.some((u) => u.id === filters.users),
     );
   }
-  if (filters.categoryId) {
+  if (filters.categories.length > 0) {
     // @ts-expect-error Actually it's working, I just want the function to return the right type
-    filteredSubscriptions = filteredSubscriptions.filter(
-      (s) => s.category.id === filters.categoryId,
+    filteredSubscriptions = filteredSubscriptions.filter((s) =>
+      filters.categories.includes(s.category.id),
     );
   }
 

@@ -97,7 +97,7 @@ export default function Stats() {
         <header className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Stats</h1>
           <FiltersButton
-            filtersDisplayed={["users", "paymentMethodId", "categoryId"]}
+            filtersDisplayed={["users", "paymentMethods", "categories"]}
           />
         </header>
         <div className="mt-2 grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -171,12 +171,14 @@ const MonthlyStatsCard = ({
   const [filters] = useFilters();
   const totalMonthlySub = useMemo(
     () =>
-      subscriptions.reduce(
-        (acc, subscription) =>
-          filters.users
-            ? acc + subscription.price / subscription.users.length
-            : acc + subscription.price,
-        0,
+      rounded(
+        subscriptions.reduce(
+          (acc, subscription) =>
+            filters.users
+              ? acc + subscription.price / subscription.users.length
+              : acc + subscription.price,
+          0,
+        ),
       ),
     [filters.users, subscriptions],
   );
@@ -214,7 +216,11 @@ const MonthlyStatsCard = ({
             price: number;
             fill: `var(--chart-${number})`;
           }>,
-        ),
+        )
+        .map((x) => ({
+          ...x,
+          price: rounded(x.price),
+        })),
     [filters.users, subscriptions],
   );
   const chartConfig = useMemo(

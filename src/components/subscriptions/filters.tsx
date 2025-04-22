@@ -1,42 +1,32 @@
 import { Button } from "~/components/ui/button";
-import { ChevronsUpDown, FilterIcon, TrashIcon } from "lucide-react";
+import { FilterIcon, TrashIcon } from "lucide-react";
 import { cn } from "~/lib/utils";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "~/components/ui/command";
-import { Check } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { useState } from "react";
-import { type Filters } from "~/lib/constant";
 import { api } from "~/utils/api";
-import { SCHEDULES } from "~/lib/constant";
+import { type Schedule, SCHEDULES } from "~/lib/constant";
 import { Label } from "@radix-ui/react-label";
-import { useFilters } from "~/lib/hooks/use-filters";
+import { type Filters, useFilters } from "~/lib/hooks/use-filters";
+import { MultiSelect } from "~/components/ui/multi-select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 
 type Props = {
   filtersDisplayed?: Array<keyof Filters>;
 };
 
 export const FiltersButton = ({
-  filtersDisplayed = ["paymentMethodId", "schedule", "users", "categoryId"],
+  filtersDisplayed = ["paymentMethods", "schedule", "users", "categories"],
 }: Props) => {
   const [filters, setFilters] = useFilters();
-  const [isOpen, setIsOpen] = useState({
-    schedule: false,
-    paymentMethod: false,
-    users: false,
-    category: false,
-  });
-
   const usersQuery = api.user.getAll.useQuery();
   const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
   const categoriesQuery = api.category.getAll.useQuery();
@@ -70,9 +60,9 @@ export const FiltersButton = ({
               size={24}
               className={cn(
                 filters.schedule ||
-                  filters.paymentMethodId ||
                   filters.users ||
-                  filters.categoryId
+                  filters.paymentMethods.length > 0 ||
+                  filters.categories.length > 0
                   ? "fill-primary text-primary"
                   : "`text-foreground",
               )}
@@ -84,61 +74,31 @@ export const FiltersButton = ({
             <>
               <Label className="mt-2">Users</Label>
               <div className="flex items-center gap-2">
-                <Popover
-                  open={isOpen.users}
-                  onOpenChange={(open) => setIsOpen({ ...isOpen, users: open })}
+                <Select
+                  onValueChange={(value) =>
+                    setFilters({
+                      ...filters,
+                      users: value,
+                    })
+                  }
+                  value={filters.users ?? ""}
                 >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline-t"
-                      role="combobox"
-                      className={cn(
-                        "justify-between from-transparent to-transparent",
-                        filters.users ? "w-[150px]" : "w-[200px]",
-                      )}
-                    >
-                      {filters.users
-                        ? users.find((user) => user.id === filters.users)?.name
-                        : "Select..."}
-                      <ChevronsUpDown size={20} className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command shouldFilter={false}>
-                      <CommandInput placeholder="Search users..." />
-                      <CommandList>
-                        <CommandEmpty>No users found.</CommandEmpty>
-                        <CommandGroup>
-                          {users.map((user) => (
-                            <CommandItem
-                              key={user.id}
-                              value={user.id.toString()}
-                              onSelect={(currentValue) => {
-                                console.log(currentValue);
-
-                                setFilters({
-                                  ...filters,
-                                  users:
-                                    filters.users === user.id ? null : user.id,
-                                }).catch(console.error);
-                              }}
-                            >
-                              {user.name}
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  filters.users === user.id
-                                    ? "opacity-100"
-                                    : "opacity-0",
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                  <SelectTrigger
+                    className={cn(
+                      "capitalize",
+                      filters.users ? "w-[160px]" : "w-[200px]",
+                    )}
+                  >
+                    <SelectValue placeholder="Select..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {users.map((user) => (
+                      <SelectItem value={user.id} key={user.id}>
+                        {user.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {filters.users && (
                   <Button
                     variant="destructive"
@@ -151,67 +111,35 @@ export const FiltersButton = ({
               </div>
             </>
           )}
-
           {filtersDisplayed.includes("schedule") && (
             <>
               <Label>Schedule</Label>
               <div className="flex items-center gap-2">
-                <Popover
-                  open={isOpen.schedule}
-                  onOpenChange={(open) =>
-                    setIsOpen({ ...isOpen, schedule: open })
+                <Select
+                  onValueChange={(value) =>
+                    setFilters({
+                      ...filters,
+                      schedule: value as Schedule,
+                    })
                   }
+                  value={filters.schedule ?? ""}
                 >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline-t"
-                      role="combobox"
-                      className={cn(
-                        "justify-between from-transparent to-transparent",
-                        filters.schedule ? "w-[150px]" : "w-[200px]",
-                      )}
-                    >
-                      {filters.schedule ?? "Select..."}
-                      <ChevronsUpDown size={20} className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command shouldFilter={false}>
-                      <CommandInput placeholder="Search schedule..." />
-                      <CommandList>
-                        <CommandEmpty>No schedule found.</CommandEmpty>
-                        <CommandGroup>
-                          {SCHEDULES.map((schedule) => (
-                            <CommandItem
-                              key={schedule}
-                              value={schedule}
-                              onSelect={(currentValue) => {
-                                console.log(currentValue);
-                                setFilters({
-                                  ...filters,
-                                  schedule:
-                                    filters.schedule === schedule
-                                      ? null
-                                      : schedule,
-                                }).catch(console.error);
-                              }}
-                            >
-                              {schedule}
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  filters.schedule === schedule
-                                    ? "opacity-100"
-                                    : "opacity-0",
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                  <SelectTrigger
+                    className={cn(
+                      "capitalize",
+                      filters.schedule ? "w-[160px]" : "w-[200px]",
+                    )}
+                  >
+                    <SelectValue placeholder="Select..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SCHEDULES.map((schedule) => (
+                      <SelectItem value={schedule} key={schedule}>
+                        {schedule}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {filters.schedule && (
                   <Button
                     variant="destructive"
@@ -225,160 +153,50 @@ export const FiltersButton = ({
             </>
           )}
 
-          {filtersDisplayed.includes("paymentMethodId") && (
+          {filtersDisplayed.includes("paymentMethods") && (
             <>
-              <Label className="mt-2">Payment Method</Label>
-              <div className="flex items-center gap-2">
-                <Popover
-                  open={isOpen.paymentMethod}
-                  onOpenChange={(open) =>
-                    setIsOpen({ ...isOpen, paymentMethod: open })
-                  }
-                >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline-t"
-                      role="combobox"
-                      className={cn(
-                        "justify-between from-transparent to-transparent",
-                        filters.paymentMethodId ? "w-[150px]" : "w-[200px]",
-                      )}
-                    >
-                      {filters.paymentMethodId
-                        ? paymentMethods.find(
-                            (paymentMethod) =>
-                              paymentMethod.id === filters.paymentMethodId,
-                          )?.name
-                        : "Select..."}
-                      <ChevronsUpDown size={20} className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command shouldFilter={false}>
-                      <CommandInput placeholder="Search payment method..." />
-                      <CommandList>
-                        <CommandEmpty>No payment method found.</CommandEmpty>
-                        <CommandGroup>
-                          {paymentMethods.map((paymentMethod) => (
-                            <CommandItem
-                              key={paymentMethod.id}
-                              value={paymentMethod.id.toString()}
-                              onSelect={(currentValue) => {
-                                console.log(currentValue);
-                                setFilters({
-                                  ...filters,
-                                  paymentMethodId:
-                                    filters.paymentMethodId === paymentMethod.id
-                                      ? null
-                                      : paymentMethod.id,
-                                }).catch(console.error);
-                              }}
-                            >
-                              {paymentMethod.name}
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  filters.paymentMethodId === paymentMethod.id
-                                    ? "opacity-100"
-                                    : "opacity-0",
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                {filters.paymentMethodId && (
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    onClick={() =>
-                      setFilters({ ...filters, paymentMethodId: null })
-                    }
-                  >
-                    <TrashIcon className="size-5" />
-                  </Button>
-                )}
-              </div>
+              <Label className="mt-2">Payment Methods</Label>
+              <MultiSelect
+                options={
+                  paymentMethods.map((pm) => ({
+                    label: pm.name,
+                    value: pm.id.toString(),
+                  })) ?? []
+                }
+                search={false}
+                maxCount={0}
+                onValueChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    paymentMethods: value.map((v) => Number.parseInt(v)),
+                  })
+                }
+                defaultValue={filters.paymentMethods.map((pm) => pm.toString())}
+                placeholder="Select..."
+              />
             </>
           )}
-
-          {filtersDisplayed.includes("categoryId") && (
+          {filtersDisplayed.includes("categories") && (
             <>
-              <Label className="mt-2">Category</Label>
-              <div className="flex items-center gap-2">
-                <Popover
-                  open={isOpen.category}
-                  onOpenChange={(open) =>
-                    setIsOpen({ ...isOpen, category: open })
-                  }
-                >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline-t"
-                      role="combobox"
-                      className={cn(
-                        "justify-between from-transparent to-transparent",
-                        filters.categoryId ? "w-[150px]" : "w-[200px]",
-                      )}
-                    >
-                      {filters.categoryId
-                        ? categories.find(
-                            (category) => category.id === filters.categoryId,
-                          )?.name
-                        : "Select..."}
-                      <ChevronsUpDown size={20} className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command shouldFilter={false}>
-                      <CommandInput placeholder="Search payment method..." />
-                      <CommandList>
-                        <CommandEmpty>No payment method found.</CommandEmpty>
-                        <CommandGroup>
-                          {categories.map((category) => (
-                            <CommandItem
-                              key={category.id}
-                              value={category.id.toString()}
-                              onSelect={(currentValue) => {
-                                console.log(currentValue);
-                                setFilters({
-                                  ...filters,
-                                  categoryId:
-                                    filters.categoryId === category.id
-                                      ? null
-                                      : category.id,
-                                }).catch(console.error);
-                              }}
-                            >
-                              {category.name}
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  filters.categoryId === category.id
-                                    ? "opacity-100"
-                                    : "opacity-0",
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                {filters.categoryId && (
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => setFilters({ ...filters, categoryId: null })}
-                  >
-                    <TrashIcon className="size-5" />
-                  </Button>
-                )}
-              </div>
+              <Label className="mt-2">Categories</Label>
+              <MultiSelect
+                options={
+                  categories.map((pm) => ({
+                    label: pm.name,
+                    value: pm.id.toString(),
+                  })) ?? []
+                }
+                search={false}
+                maxCount={0}
+                onValueChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    categories: value.map((v) => Number.parseInt(v)),
+                  })
+                }
+                defaultValue={filters.categories.map((pm) => pm.toString())}
+                placeholder="Select..."
+              />
             </>
           )}
         </PopoverContent>

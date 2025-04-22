@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export const SCHEDULES = ["Monthly", "Yearly"] as const;
 export type Schedule = (typeof SCHEDULES)[number];
 
@@ -18,20 +16,6 @@ export const SORTS = [
   },
 ] as const;
 export type Sort = (typeof SORTS)[number]["key"];
-
-export const filtersSchema = z
-  .object({
-    schedule: z.string().nullish(),
-    paymentMethodId: z.number().nullish(),
-    users: z.string().nullish(),
-    categoryId: z.number().nullish(),
-  })
-  .default({
-    schedule: null,
-    paymentMethodId: null,
-    users: null,
-  });
-export type Filters = z.infer<typeof filtersSchema>;
 
 export const CURRENCIES = ["USD", "EUR", "GBP"] as const;
 export type Currency = (typeof CURRENCIES)[number];
