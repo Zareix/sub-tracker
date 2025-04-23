@@ -1,5 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
-import { compareAsc, format } from "date-fns";
+import { compareAsc, format, isToday } from "date-fns";
 import { twMerge } from "tailwind-merge";
 import type { Sort } from "~/lib/constant";
 import type { Filters } from "~/lib/hooks/use-filters";
@@ -126,6 +126,9 @@ export const formatNextPaymentDate = (date: Date) => {
 
   //   });
   // }
+  if (isToday(date)) {
+    return "Today";
+  }
   if (new Date().getFullYear() === date.getFullYear()) {
     return format(date, "dd/MM");
   }

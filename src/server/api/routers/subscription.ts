@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { addMonths, addYears } from "date-fns";
+import { addMonths, addYears, endOfDay } from "date-fns";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import {
@@ -73,6 +73,9 @@ const calculateNextPaymentDate = (
       currentDateInfo.year,
       currentDateInfo.month,
       firstPaymentDateDetails.day,
+      23,
+      59,
+      59,
     );
     if (res > currentDateInfo.base) {
       return res;
@@ -85,6 +88,9 @@ const calculateNextPaymentDate = (
       currentDateInfo.year,
       firstPaymentDateDetails.month,
       firstPaymentDateDetails.day,
+      23,
+      59,
+      59,
     );
     if (res > currentDateInfo.base) {
       return res;
@@ -192,7 +198,7 @@ export const subscriptionRouter = createTRPCRouter({
             price: input.price,
             currency: input.currency,
             paymentMethod: input.paymentMethod,
-            firstPaymentDate: input.firstPaymentDate,
+            firstPaymentDate: endOfDay(input.firstPaymentDate),
             schedule: input.schedule,
           })
           .returning({
@@ -248,7 +254,7 @@ export const subscriptionRouter = createTRPCRouter({
             price: input.price,
             currency: input.currency,
             paymentMethod: input.paymentMethod,
-            firstPaymentDate: input.firstPaymentDate,
+            firstPaymentDate: endOfDay(input.firstPaymentDate),
             schedule: input.schedule,
           })
           .where(eq(subscriptions.id, input.id))
