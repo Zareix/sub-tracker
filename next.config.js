@@ -21,11 +21,11 @@ const config = {
   transpilePackages: [
     "geist",
     // This should be temporary
-    "@better-auth",
-    "better-auth",
-    "better-call",
-    "uncrypto",
-    "jose",
+    // "@better-auth",
+    // "better-auth",
+    // "better-call",
+    // "uncrypto",
+    // "jose",
   ],
   output: "standalone",
 
