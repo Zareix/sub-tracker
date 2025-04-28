@@ -7,23 +7,23 @@ import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import type { RouterOutputs } from "~/utils/api";
 
 type Props = {
-  category: RouterOutputs["category"]["getAll"][number];
+	category: RouterOutputs["category"]["getAll"][number];
 };
 
 export const EditCategoryDialog = ({ category }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <WrapperDialogVaul
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      trigger={
-        <Button variant="ghost" className="w-8" size="icon">
-          <EditIcon size={20} />
-        </Button>
-      }
-    >
-      <DialogTitle>Edit Category</DialogTitle>
-      <EditCreateForm onFinished={() => setIsOpen(false)} category={category} />
-    </WrapperDialogVaul>
-  );
+	const [isOpen, setIsOpen] = useState(false);
+	return (
+		<WrapperDialogVaul
+			isOpen={isOpen}
+			setIsOpen={setIsOpen}
+			trigger={
+				<Button variant="ghost" className="w-8" size="icon">
+					<EditIcon size={20} />
+				</Button>
+			}
+		>
+			<DialogTitle>Edit Category</DialogTitle>
+			<EditCreateForm onFinished={() => setIsOpen(false)} category={category} />
+		</WrapperDialogVaul>
+	);
 };

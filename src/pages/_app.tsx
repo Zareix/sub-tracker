@@ -1,10 +1,10 @@
 import { GeistSans } from "geist/font/sans";
-import { type AppType } from "next/app";
+import type { AppType } from "next/app";
 import { NuqsAdapter } from "nuqs/adapters/next/pages";
-import { api } from "~/utils/api";
 import { Layout } from "~/components/layout";
 import { Toaster } from "~/components/ui/sonner";
 import { TooltipProvider } from "~/components/ui/tooltip";
+import { api } from "~/utils/api";
 // import { useEffect } from "react";
 // import { scan } from "react-scan";
 // import { env } from "~/env";
@@ -13,17 +13,17 @@ import { TooltipProvider } from "~/components/ui/tooltip";
 import "~/styles/globals.css";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-  // useEffect(() => {
-  //   if (env.NEXT_PUBLIC_ENV === "development") {
-  //     scan({
-  //       enabled: true,
-  //     });
-  //   }
-  // }, []);
+	// useEffect(() => {
+	//   if (env.NEXT_PUBLIC_ENV === "development") {
+	//     scan({
+	//       enabled: true,
+	//     });
+	//   }
+	// }, []);
 
-  return (
-    <>
-      <style jsx global>{`
+	return (
+		<>
+			<style jsx global>{`
         :root {
           --font-sans: ${GeistSans.variable};
         }
@@ -31,19 +31,19 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           font-family: ${GeistSans.style.fontFamily};
         }
       `}</style>
-      <NuqsAdapter>
-        <TooltipProvider>
-          <div className={GeistSans.className}>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </div>
-          <Toaster />
-          {/* {env.NEXT_PUBLIC_ENV === "development" && <ReactQueryDevtools />} */}
-        </TooltipProvider>
-      </NuqsAdapter>
-    </>
-  );
+			<NuqsAdapter>
+				<TooltipProvider>
+					<div className={GeistSans.className}>
+						<Layout>
+							<Component {...pageProps} />
+						</Layout>
+					</div>
+					<Toaster />
+					{/* {env.NEXT_PUBLIC_ENV === "development" && <ReactQueryDevtools />} */}
+				</TooltipProvider>
+			</NuqsAdapter>
+		</>
+	);
 };
 
 export default api.withTRPC(MyApp);

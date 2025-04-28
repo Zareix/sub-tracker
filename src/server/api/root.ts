@@ -6,11 +6,11 @@ import { userRouter } from "~/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 export const appRouter = createTRPCRouter({
-  subscription: subscriptionRouter,
-  user: userRouter,
-  paymentMethod: paymentMethodRouter,
-  admin: adminRouter,
-  category: categoryRouter,
+	subscription: subscriptionRouter,
+	user: userRouter,
+	paymentMethod: paymentMethodRouter,
+	admin: adminRouter,
+	category: categoryRouter,
 });
 
 export type AppRouter = typeof appRouter;

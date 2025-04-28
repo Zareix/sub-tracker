@@ -7,23 +7,23 @@ import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import type { RouterOutputs } from "~/utils/api";
 
 type Props = {
-  user: RouterOutputs["user"]["getAll"][number];
+	user: RouterOutputs["user"]["getAll"][number];
 };
 
 export const EditUserDialog = ({ user }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <WrapperDialogVaul
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      trigger={
-        <Button variant="ghost" className="w-8" size="icon">
-          <EditIcon size={20} />
-        </Button>
-      }
-    >
-      <DialogTitle>Edit User</DialogTitle>
-      <EditCreateForm onFinished={() => setIsOpen(false)} user={user} />
-    </WrapperDialogVaul>
-  );
+	const [isOpen, setIsOpen] = useState(false);
+	return (
+		<WrapperDialogVaul
+			isOpen={isOpen}
+			setIsOpen={setIsOpen}
+			trigger={
+				<Button variant="ghost" className="w-8" size="icon">
+					<EditIcon size={20} />
+				</Button>
+			}
+		>
+			<DialogTitle>Edit User</DialogTitle>
+			<EditCreateForm onFinished={() => setIsOpen(false)} user={user} />
+		</WrapperDialogVaul>
+	);
 };
