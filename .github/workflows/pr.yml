@@ -1,0 +1,15 @@
+name: Release
+
+on:
+  pull_request:
+
+jobs:
+  docker:
+    name: Docker
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: zareix/gh-actions/.github/workflows/docker.yml@main
+    with:
+      platforms: linux/amd64 #,linux/arm64

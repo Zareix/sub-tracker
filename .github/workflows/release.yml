@@ -19,8 +19,6 @@ jobs:
     uses: zareix/gh-actions/.github/workflows/docker.yml@main
     with:
       tag: ${{ needs.version.outputs.version }}
-      registry: ghcr.io
-      image-name: ${{ github.repository }}
       push-image: true
       platforms: linux/amd64 #,linux/arm64
 
