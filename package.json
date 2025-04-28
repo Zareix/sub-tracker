@@ -10,6 +10,7 @@
 		"db:studio": "drizzle-kit studio",
 		"dev": "bun run --bun next dev --turbo",
 		"start": "next start",
+		"lint": "biome check .",
 		"check": "biome check --write ."
 	},
 	"dependencies": {
