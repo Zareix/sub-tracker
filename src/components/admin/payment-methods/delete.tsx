@@ -38,7 +38,7 @@ export const DeletePaymentMethodDialog = ({
 			isOpen={isOpen}
 			setIsOpen={setIsOpen}
 			trigger={
-				<Button variant="ghost" className="text-destructive w-8" size="icon">
+				<Button variant="ghost" className="w-8 text-destructive" size="icon">
 					<TrashIcon size={20} />
 				</Button>
 			}

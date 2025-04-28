@@ -89,12 +89,9 @@ export const LoginForm = () => {
 			<CardHeader>
 				<Link
 					href="#"
-					className="flex items-center gap-2 self-center py-4 text-xl font-medium"
+					className="flex items-center gap-2 self-center py-4 font-medium text-xl"
 				>
-					<div
-						className="bg-primary text-primary-foreground flex size-9 items-center justify-center
-              rounded-xs"
-					>
+					<div className="flex size-9 items-center justify-center rounded-xs bg-primary text-primary-foreground">
 						<CalendarSyncIcon className="size-[22px]" />
 					</div>
 					Subtracker

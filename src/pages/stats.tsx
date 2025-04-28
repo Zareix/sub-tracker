@@ -95,7 +95,7 @@ export default function Stats() {
 			</Head>
 			<div>
 				<header className="flex items-center justify-between">
-					<h1 className="text-3xl font-bold">Stats</h1>
+					<h1 className="font-bold text-3xl">Stats</h1>
 					<FiltersButton
 						filtersDisplayed={["users", "paymentMethods", "categories"]}
 					/>
@@ -148,11 +148,11 @@ const StatsCard = ({
 	return (
 		<Card className="py-5">
 			<CardHeader className="flex flex-row items-center justify-between space-y-0">
-				<CardTitle className="text-lg font-normal md:text-xl">
+				<CardTitle className="font-normal text-lg md:text-xl">
 					{title}
 				</CardTitle>
 			</CardHeader>
-			<CardContent className="mt-2 flex items-center text-2xl font-bold">
+			<CardContent className="mt-2 flex items-center font-bold text-2xl">
 				{isLoading ? <Skeleton className="mr-1 h-6 w-1/4" /> : rounded(value)}€
 			</CardContent>
 		</Card>
@@ -241,7 +241,7 @@ const MonthlyStatsCard = ({
 		return (
 			<Card className="flex flex-col">
 				<CardHeader className="items-center pb-0">
-					<CardTitle className="text-lg font-normal md:text-xl">
+					<CardTitle className="font-normal text-lg md:text-xl">
 						{title}
 					</CardTitle>
 				</CardHeader>
@@ -257,7 +257,7 @@ const MonthlyStatsCard = ({
 	return (
 		<Card className="flex flex-col">
 			<CardHeader className="items-center pb-0">
-				<CardTitle className="text-lg font-normal md:text-xl">
+				<CardTitle className="font-normal text-lg md:text-xl">
 					{title}
 				</CardTitle>
 			</CardHeader>
@@ -303,7 +303,7 @@ const MonthlyStatsCard = ({
 													<tspan
 														x={viewBox.cx}
 														y={viewBox.cy}
-														className="fill-foreground text-3xl font-bold"
+														className="fill-foreground font-bold text-3xl"
 													>
 														{totalMonthlySub.toLocaleString()}
 													</tspan>

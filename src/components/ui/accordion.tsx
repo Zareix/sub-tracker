@@ -27,8 +27,7 @@ const AccordionTrigger = ({
 		<AccordionPrimitive.Trigger
 			data-slot="accordion-trigger"
 			className={cn(
-				`flex flex-1 items-center justify-between font-medium transition-all
-        [&[data-state=open]>svg]:rotate-180`,
+				"flex flex-1 items-center justify-between font-medium transition-all [&[data-state=open]>svg]:rotate-180",
 				className,
 			)}
 			{...props}
@@ -46,8 +45,7 @@ const AccordionContent = ({
 }: React.ComponentProps<typeof AccordionPrimitive.Content>) => (
 	<AccordionPrimitive.Content
 		data-slot="accordion-content"
-		className="data-[state=closed]:animate-accordion-up
-      data-[state=open]:animate-accordion-down overflow-hidden text-sm transition-all"
+		className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
 		{...props}
 	>
 		<div className={cn(className)}>{children}</div>

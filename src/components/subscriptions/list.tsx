@@ -56,7 +56,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 
 	if (subs.length === 0) {
 		return (
-			<div className="text-muted-foreground text-center">
+			<div className="text-center text-muted-foreground">
 				No subscriptions found
 			</div>
 		);
@@ -101,7 +101,7 @@ const SubscriptionListItem = ({
 								className="max-h-[48px] max-w-[40px] object-contain md:max-w-[64px]"
 							/>
 						)}
-						<h2 className="grow text-xl font-semibold">{subscription.name}</h2>
+						<h2 className="grow font-semibold text-xl">{subscription.name}</h2>
 						<div className="text-lg">{subscription.price}€</div>
 						<Button
 							size="icon"
@@ -131,8 +131,8 @@ const SubscriptionListItem = ({
 						/>
 					)}
 					<div className="flex grow flex-col gap-1">
-						<h2 className="text-xl font-semibold">{subscription.name}</h2>
-						<div className="text-muted-foreground flex items-center gap-1 text-sm">
+						<h2 className="font-semibold text-xl">{subscription.name}</h2>
+						<div className="flex items-center gap-1 text-muted-foreground text-sm">
 							<Calendar1Icon size={16} />
 							{formatNextPaymentDate(subscription.nextPaymentDate)}
 						</div>
@@ -143,7 +143,7 @@ const SubscriptionListItem = ({
 							<Button
 								size="icon"
 								variant="ghost"
-								className="text-muted-foreground w-5 md:w-10"
+								className="w-5 text-muted-foreground md:w-10"
 							>
 								<InfoIcon size={20} />
 							</Button>
@@ -173,10 +173,7 @@ const SubscriptionListItem = ({
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>
-				<div
-					className="text-foreground/80 flex flex-wrap gap-x-4 gap-y-2 pt-1 pl-12 text-base
-            md:gap-x-6 md:pl-0"
-				>
+				<div className="flex flex-wrap gap-x-4 gap-y-2 pt-1 pl-12 text-base text-foreground/80 md:gap-x-6 md:pl-0">
 					<div className="flex items-center gap-1">
 						<UserIcon size={18} className="text-primary" />
 						<span>{subscription.users.map((u) => u.name).join(", ")}</span>

@@ -28,7 +28,7 @@ const TableFooter = ({
 }: React.ComponentProps<"tfoot">) => (
 	<tfoot
 		className={cn(
-			"bg-muted/50 border-t font-medium last:[&>tr]:border-b-0",
+			"border-t bg-muted/50 font-medium last:[&>tr]:border-b-0",
 			className,
 		)}
 		{...props}
@@ -38,7 +38,7 @@ const TableFooter = ({
 const TableRow = ({ className, ...props }: React.ComponentProps<"tr">) => (
 	<tr
 		className={cn(
-			"hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
+			"border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
 			className,
 		)}
 		{...props}
@@ -48,8 +48,7 @@ const TableRow = ({ className, ...props }: React.ComponentProps<"tr">) => (
 const TableHead = ({ className, ...props }: React.ComponentProps<"th">) => (
 	<th
 		className={cn(
-			`text-muted-foreground h-12 px-4 text-left align-middle font-medium
-      [&:has([role=checkbox])]:pr-0`,
+			"h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
 			className,
 		)}
 		{...props}
@@ -59,7 +58,7 @@ const TableHead = ({ className, ...props }: React.ComponentProps<"th">) => (
 const TableCell = ({ className, ...props }: React.ComponentProps<"td">) => (
 	<td
 		className={cn(
-			"overflow-clip p-4 align-middle text-ellipsis [&:has([role=checkbox])]:pr-0",
+			"overflow-clip text-ellipsis p-4 align-middle [&:has([role=checkbox])]:pr-0",
 			className,
 		)}
 		{...props}
@@ -71,7 +70,7 @@ const TableCaption = ({
 	...props
 }: React.ComponentProps<"caption">) => (
 	<caption
-		className={cn("text-muted-foreground mt-4 text-sm", className)}
+		className={cn("mt-4 text-muted-foreground text-sm", className)}
 		{...props}
 	/>
 );

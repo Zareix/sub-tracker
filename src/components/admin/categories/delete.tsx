@@ -40,7 +40,7 @@ export const DeleteCategoryDialog = ({
 			trigger={
 				<Button
 					variant="ghost"
-					className="text-destructive w-8"
+					className="w-8 text-destructive"
 					size="icon"
 					disabled={category.id === 1}
 				>

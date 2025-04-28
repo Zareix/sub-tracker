@@ -199,9 +199,7 @@ export const MultiSelect = ({
 					onClick={handleTogglePopover}
 					variant="outline-t"
 					className={cn(
-						`border-input hover:border-input flex h-auto min-h-10 w-full items-center
-            justify-between rounded-md border bg-inherit p-1 shadow-none hover:bg-inherit
-            hover:brightness-100 [&_svg]:pointer-events-auto`,
+						"flex h-auto min-h-10 w-full items-center justify-between rounded-md border border-input bg-inherit p-1 shadow-none hover:border-input hover:bg-inherit hover:brightness-100 [&_svg]:pointer-events-auto",
 						className,
 					)}
 				>
@@ -237,7 +235,7 @@ export const MultiSelect = ({
 								{selectedValues.length > maxCount && (
 									<Badge
 										className={cn(
-											"border-foreground/1 text-foreground bg-transparent hover:bg-transparent",
+											"border-foreground/1 bg-transparent text-foreground hover:bg-transparent",
 											isAnimating ? "animate-bounce" : "",
 											multiSelectVariants({ variant }),
 										)}
@@ -256,7 +254,7 @@ export const MultiSelect = ({
 							</div>
 							<div className="flex items-center justify-between">
 								<XIcon
-									className="text-muted-foreground mx-2 h-4 cursor-pointer"
+									className="mx-2 h-4 cursor-pointer text-muted-foreground"
 									onClick={(event) => {
 										event.stopPropagation();
 										handleClear();
@@ -266,15 +264,15 @@ export const MultiSelect = ({
 									orientation="vertical"
 									className="flex h-full min-h-6"
 								/>
-								<ChevronDown className="text-muted-foreground mx-2 h-4 cursor-pointer" />
+								<ChevronDown className="mx-2 h-4 cursor-pointer text-muted-foreground" />
 							</div>
 						</div>
 					) : (
 						<div className="mx-auto flex w-full items-center justify-between">
-							<span className="text-muted-foreground mx-3 text-sm font-normal">
+							<span className="mx-3 font-normal text-muted-foreground text-sm">
 								{placeholder}
 							</span>
-							<ChevronDown className="text-muted-foreground mx-2 h-4 cursor-pointer" />
+							<ChevronDown className="mx-2 h-4 cursor-pointer text-muted-foreground" />
 						</div>
 					)}
 				</Button>
@@ -301,7 +299,7 @@ export const MultiSelect = ({
 							>
 								<div
 									className={cn(
-										"border-primary mr-2 flex size-4 items-center justify-center rounded-sm border",
+										"mr-2 flex size-4 items-center justify-center rounded-sm border border-primary",
 										selectedValues.length === options.length
 											? "bg-primary text-primary-foreground"
 											: "opacity-50 [&_svg]:invisible",
@@ -321,7 +319,7 @@ export const MultiSelect = ({
 									>
 										<div
 											className={cn(
-												"border-primary mr-2 flex size-4 items-center justify-center rounded-sm border",
+												"mr-2 flex size-4 items-center justify-center rounded-sm border border-primary",
 												isSelected
 													? "bg-primary text-primary-foreground"
 													: "opacity-50 [&_svg]:invisible",
@@ -330,7 +328,7 @@ export const MultiSelect = ({
 											<CheckIcon className="size-3!" />
 										</div>
 										{option.icon && (
-											<option.icon className="text-muted-foreground mr-2 size-3" />
+											<option.icon className="mr-2 size-3 text-muted-foreground" />
 										)}
 										<span>{option.label}</span>
 									</CommandItem>
@@ -368,7 +366,7 @@ export const MultiSelect = ({
 			{animation > 0 && selectedValues.length > 0 && (
 				<WandSparkles
 					className={cn(
-						"bg-background text-foreground my-2 size-3 cursor-pointer",
+						"my-2 size-3 cursor-pointer bg-background text-foreground",
 						isAnimating ? "" : "text-muted-foreground",
 					)}
 					onClick={() => setIsAnimating(!isAnimating)}

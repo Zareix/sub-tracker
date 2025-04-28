@@ -18,7 +18,7 @@ export default function Home() {
 	return (
 		<div>
 			<header className="flex flex-wrap items-center justify-between gap-y-1">
-				<h1 className="text-3xl font-bold">Subscriptions</h1>
+				<h1 className="font-bold text-3xl">Subscriptions</h1>
 				<div className="flex items-center gap-2">
 					<CreateSubscriptionDialog
 						trigger={
@@ -36,10 +36,10 @@ export default function Home() {
 							<div className="flex items-center gap-2">
 								<Skeleton className="h-10 w-14" />
 								<div className="flex grow flex-col gap-1">
-									<h2 className="text-xl font-semibold">
+									<h2 className="font-semibold text-xl">
 										<Skeleton className="h-6 w-20 md:w-28" />
 									</h2>
-									<div className="text-muted-foreground flex items-center gap-1 text-sm">
+									<div className="flex items-center gap-1 text-muted-foreground text-sm">
 										<Calendar1Icon size={16} />
 										<Skeleton className="h-4 w-16" />
 									</div>

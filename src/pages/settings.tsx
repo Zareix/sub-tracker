@@ -34,7 +34,7 @@ export default function SettingsPage() {
 		<div className="grid max-w-[100vw] items-start gap-4">
 			<section>
 				<header className="flex flex-wrap items-center justify-between">
-					<h1 className="text-3xl font-bold">Payment Methods</h1>
+					<h1 className="font-bold text-3xl">Payment Methods</h1>
 					<CreatePaymentMethodDialog />
 				</header>
 				<div className="mt-2 max-w-[calc(100vw-2rem)]">
@@ -86,7 +86,7 @@ export default function SettingsPage() {
 			</section>
 			<section>
 				<header className="flex flex-wrap items-center justify-between">
-					<h1 className="text-3xl font-bold">Categories</h1>
+					<h1 className="font-bold text-3xl">Categories</h1>
 					<CreateCategoryDialog />
 				</header>
 				<div className="mt-2 max-w-[calc(100vw-2rem)]">

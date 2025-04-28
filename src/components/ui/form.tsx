@@ -145,7 +145,7 @@ const FormMessage = ({
 	return (
 		<p
 			id={formMessageId}
-			className={cn("text-destructive text-sm font-medium", className)}
+			className={cn("font-medium text-destructive text-sm", className)}
 			{...props}
 		>
 			{body}

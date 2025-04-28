@@ -40,13 +40,12 @@ const DrawerContent = ({
 		<DrawerOverlay />
 		<DrawerPrimitive.Content
 			className={cn(
-				`bg-background fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto max-h-[82vh]
-        flex-col rounded-t-md border`,
+				"fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto max-h-[82vh] flex-col rounded-t-md border bg-background",
 				className,
 			)}
 			{...props}
 		>
-			<div className="bg-muted mx-auto mt-4 h-2 w-[100px] rounded-full" />
+			<div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
 			<div className="grid gap-4 p-4">{children}</div>
 		</DrawerPrimitive.Content>
 	</DrawerPortal>
@@ -78,7 +77,7 @@ const DrawerTitle = ({
 }: React.ComponentProps<typeof DrawerPrimitive.Title>) => (
 	<DrawerPrimitive.Title
 		className={cn(
-			"text-lg leading-none font-semibold tracking-tight",
+			"font-semibold text-lg leading-none tracking-tight",
 			className,
 		)}
 		{...props}

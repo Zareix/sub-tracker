@@ -68,7 +68,7 @@ export const ImageFileUploader = ({ setFileUrl, fileUrl }: Props) => {
 					className="max-h-[70px] object-contain"
 				/>
 			) : (
-				<ImageIcon className="group-hover:text-primary size-8" />
+				<ImageIcon className="size-8 group-hover:text-primary" />
 			)}
 			<input
 				type="file"

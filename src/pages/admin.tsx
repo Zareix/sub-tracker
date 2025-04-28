@@ -91,7 +91,7 @@ export default function AdminPage() {
 			<div className="grid max-w-[100vw] items-start gap-4">
 				<section>
 					<header className="flex flex-wrap items-center justify-between">
-						<h1 className="text-3xl font-bold">Users</h1>
+						<h1 className="font-bold text-3xl">Users</h1>
 						<CreateUserDialog />
 					</header>
 					<div className="mt-2 max-w-[calc(100vw-2rem)]">
@@ -152,7 +152,7 @@ export default function AdminPage() {
 
 				<section>
 					<header className="flex items-center justify-between">
-						<h1 className="text-3xl font-bold">Misc</h1>
+						<h1 className="font-bold text-3xl">Misc</h1>
 					</header>
 					<div className="mt-2 flex flex-wrap items-center gap-2">
 						<Button
@@ -182,8 +182,7 @@ export default function AdminPage() {
 						<div className="relative">
 							<Button>Import data</Button>
 							<Input
-								className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer opacity-0
-                  disabled:opacity-0"
+								className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer opacity-0 disabled:opacity-0"
 								disabled={importDataMutation.isPending}
 								placeholder="Import data"
 								onChange={async (e) => {

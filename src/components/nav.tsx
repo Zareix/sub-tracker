@@ -77,10 +77,7 @@ export function AppSidebar() {
 					<SidebarMenuItem>
 						<SidebarMenuButton size="lg" asChild>
 							<Link href="/">
-								<div
-									className="bg-primary text-sidebar-primary-foreground flex aspect-square size-8
-                    items-center justify-center rounded-xs"
-								>
+								<div className="flex aspect-square size-8 items-center justify-center rounded-xs bg-primary text-sidebar-primary-foreground">
 									<CalendarSyncIcon className="size-4" />
 								</div>
 								<div className="flex flex-col gap-0.5 leading-none">
@@ -132,8 +129,7 @@ export function AppSidebar() {
 								<DropdownMenuTrigger asChild>
 									<SidebarMenuButton
 										size="lg"
-										className="data-[state=open]:bg-sidebar-accent
-                      data-[state=open]:text-sidebar-accent-foreground border"
+										className="border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 									>
 										<Avatar className="size-8 rounded-lg">
 											<AvatarImage
@@ -164,7 +160,7 @@ export function AppSidebar() {
 									<DropdownMenuLabel className="p-0 font-normal">
 										<Link
 											href="/profile"
-											className="hover:bg-muted flex items-center gap-2 rounded-md px-1 py-1.5 text-left text-sm"
+											className="flex items-center gap-2 rounded-md px-1 py-1.5 text-left text-sm hover:bg-muted"
 										>
 											<Avatar className="size-8 rounded-lg">
 												<AvatarImage
@@ -215,7 +211,7 @@ const NavbarItem = ({
 	>
 		<Link
 			href={item.url}
-			className="flex h-full items-center justify-center gap-2 text-xl font-bold"
+			className="flex h-full items-center justify-center gap-2 font-bold text-xl"
 		>
 			<item.icon size={26} />
 		</Link>
@@ -230,10 +226,7 @@ export const Navbar = () => {
 	);
 	const middleIndex = Math.floor(navBarItems.length / 2);
 	return (
-		<nav
-			className="border-border bg-background/80 fixed right-0 bottom-0 left-0 z-10 flex h-14
-        items-center justify-between border-t px-4 backdrop-blur md:hidden md:px-8"
-		>
+		<nav className="fixed right-0 bottom-0 left-0 z-10 flex h-14 items-center justify-between border-border border-t bg-background/80 px-4 backdrop-blur md:hidden md:px-8">
 			<div className="grid h-full w-full grid-cols-5 content-center items-center justify-around gap-2">
 				{navBarItems
 					.filter((_, i) => i < middleIndex)
@@ -244,7 +237,7 @@ export const Navbar = () => {
 					trigger={
 						<Button
 							variant="link"
-							className="text-foreground flex h-full items-center gap-2"
+							className="flex h-full items-center gap-2 text-foreground"
 						>
 							<PlusIcon />
 						</Button>
