@@ -10,50 +10,19 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  tag:
-    name: Create Tag
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    outputs:
-      tag: v${{ steps.get_version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: "0"
-
-      - name: Configure git identity
-        run: |
-          git config --global user.email "contact@raphael-catarino.fr"
-          git config --global user.name "[bot] zareix"
-
-      - name: Get version from package.json
-        id: get_version
-        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-
-      - name: Remove existing tag if exists
-        run: |
-          if git rev-parse v${{ steps.get_version.outputs.version }} >/dev/null 2>&1; then
-            echo "Tag v${{ steps.get_version.outputs.version }} already exists"
-            git push --delete origin v${{ steps.get_version.outputs.version }}
-            git tag -d v${{ steps.get_version.outputs.version }}
-          fi
-
-      - name: Create tag
-        run: |
-          git tag -a v${{ steps.get_version.outputs.version }} -m "Version ${{ steps.get_version.outputs.version }}"
-          git push origin v${{ steps.get_version.outputs.version }}
+  version:
+    uses: zareix/gh-actions/.github/workflows/get-version.yml@main
 
   docker:
     name: Docker
-    needs: tag
+    needs: version
     permissions:
       contents: read
       packages: write
       id-token: write
     uses: zareix/gh-actions/.github/workflows/docker.yml@main
     with:
-      tag: ${{ needs.tag.outputs.tag }}
+      tag: ${{ needs.version.outputs.version }}
       registry: ghcr.io
       image-name: ${{ github.repository }}
       push-image: true
@@ -61,16 +30,9 @@ jobs:
 
   release:
     name: Create release
-    runs-on: ubuntu-latest
     needs:
-      - tag
+      - version
       - docker
-    permissions:
-      contents: write
-    env:
-      TAG: ${{ needs.tag.outputs.tag }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ env.TAG }}
+    uses: zareix/gh-actions/.github/workflows/release.yml@main
+    with:
+      tag: ${{ needs.version.outputs.version }}
