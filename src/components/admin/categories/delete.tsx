@@ -2,11 +2,7 @@ import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
-import {
-	DialogDescription,
-	DialogFooter,
-	DialogTitle,
-} from "~/components/ui/dialog";
+import { DialogDescription, DialogFooter } from "~/components/ui/dialog";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import type { Category } from "~/server/db/schema";
 import { api } from "~/utils/api";
@@ -47,11 +43,13 @@ export const DeleteCategoryDialog = ({
 					<TrashIcon size={20} />
 				</Button>
 			}
+			title={
+				<>
+					Delete category:{" "}
+					<span className="font-medium italic">{category.name}</span>{" "}
+				</>
+			}
 		>
-			<DialogTitle>
-				Delete category:{" "}
-				<span className="font-medium italic">{category.name}</span>{" "}
-			</DialogTitle>
 			<DialogDescription>
 				Are you sure you want to delete this category?
 			</DialogDescription>

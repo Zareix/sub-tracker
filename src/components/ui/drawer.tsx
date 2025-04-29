@@ -45,7 +45,7 @@ const DrawerContent = ({
 			)}
 			{...props}
 		>
-			<div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+			<div className="mx-auto mt-3 h-1.5 w-[60px] rounded-full bg-muted-foreground/20" />
 			<div className="grid gap-4 p-4">{children}</div>
 		</DrawerPrimitive.Content>
 	</DrawerPortal>
@@ -77,7 +77,7 @@ const DrawerTitle = ({
 }: React.ComponentProps<typeof DrawerPrimitive.Title>) => (
 	<DrawerPrimitive.Title
 		className={cn(
-			"font-semibold text-lg leading-none tracking-tight",
+			"font-semibold text-xl leading-none tracking-tight",
 			className,
 		)}
 		{...props}

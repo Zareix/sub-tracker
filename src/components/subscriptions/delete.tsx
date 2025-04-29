@@ -1,10 +1,6 @@
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
-import {
-	DialogDescription,
-	DialogFooter,
-	DialogTitle,
-} from "~/components/ui/dialog";
+import { DialogDescription, DialogFooter } from "~/components/ui/dialog";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import { type RouterOutputs, api } from "~/utils/api";
 
@@ -37,11 +33,16 @@ export const DeleteDialog = ({
 	}
 
 	return (
-		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
-			<DialogTitle>
-				Delete subscription:{" "}
-				<span className="font-medium italic">{subscription.name}</span>{" "}
-			</DialogTitle>
+		<WrapperDialogVaul
+			isOpen={isOpen}
+			setIsOpen={setIsOpen}
+			title={
+				<>
+					Delete subscription:{" "}
+					<span className="font-medium italic">{subscription.name}</span>{" "}
+				</>
+			}
+		>
 			<DialogDescription>
 				Are you sure you want to delete subscription this subscription?
 			</DialogDescription>

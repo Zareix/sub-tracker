@@ -2,7 +2,6 @@ import { EditIcon } from "lucide-react";
 import { useState } from "react";
 import { EditCreateForm } from "~/components/admin/payment-methods/edit-create-form";
 import { Button } from "~/components/ui/button";
-import { DialogTitle } from "~/components/ui/dialog";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import type { RouterOutputs } from "~/utils/api";
 
@@ -21,8 +20,8 @@ export const EditPaymentMethodDialog = ({ paymentMethod }: Props) => {
 					<EditIcon size={20} />
 				</Button>
 			}
+			title="Edit Payment method"
 		>
-			<DialogTitle>Edit Payment method</DialogTitle>
 			<EditCreateForm
 				onFinished={() => setIsOpen(false)}
 				paymentMethod={paymentMethod}

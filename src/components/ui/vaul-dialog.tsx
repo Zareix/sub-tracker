@@ -1,5 +1,15 @@
-import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerTrigger } from "~/components/ui/drawer";
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger,
+} from "~/components/ui/dialog";
+import {
+	Drawer,
+	DrawerContent,
+	DrawerTitle,
+	DrawerTrigger,
+} from "~/components/ui/drawer";
 import { useIsMobile } from "~/lib/hooks/use-mobile";
 
 export const WrapperDialogVaul = ({
@@ -7,9 +17,11 @@ export const WrapperDialogVaul = ({
 	children,
 	isOpen,
 	setIsOpen,
+	title,
 }: {
 	trigger?: React.ReactNode;
 	children: React.ReactNode;
+	title: React.ReactNode;
 	isOpen: boolean;
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
@@ -19,7 +31,10 @@ export const WrapperDialogVaul = ({
 			<>
 				<Drawer open={isOpen} onOpenChange={setIsOpen} repositionInputs={false}>
 					{trigger && <DrawerTrigger asChild>{trigger}</DrawerTrigger>}
-					<DrawerContent>{children}</DrawerContent>
+					<DrawerContent>
+						<DrawerTitle>{title}</DrawerTitle>
+						{children}
+					</DrawerContent>
 				</Drawer>
 			</>
 		);
@@ -27,7 +42,10 @@ export const WrapperDialogVaul = ({
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			{trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-			<DialogContent>{children}</DialogContent>
+			<DialogContent>
+				<DialogTitle>{title}</DialogTitle>
+				{children}
+			</DialogContent>
 		</Dialog>
 	);
 };

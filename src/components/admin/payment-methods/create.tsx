@@ -2,7 +2,6 @@ import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { EditCreateForm } from "~/components/admin/payment-methods/edit-create-form";
 import { Button } from "~/components/ui/button";
-import { DialogTitle } from "~/components/ui/dialog";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 
 export const CreatePaymentMethodDialog = () => {
@@ -17,8 +16,8 @@ export const CreatePaymentMethodDialog = () => {
 					<span>Add new</span>
 				</Button>
 			}
+			title="Add Payment method"
 		>
-			<DialogTitle>Add Payment method</DialogTitle>
 			<EditCreateForm onFinished={() => setIsOpen(false)} />
 		</WrapperDialogVaul>
 	);

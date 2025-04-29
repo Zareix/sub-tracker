@@ -2,7 +2,6 @@ import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { EditCreateForm } from "~/components/admin/categories/edit-create-form";
 import { Button } from "~/components/ui/button";
-import { DialogTitle } from "~/components/ui/dialog";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 
 export const CreateCategoryDialog = () => {
@@ -18,8 +17,8 @@ export const CreateCategoryDialog = () => {
 					<span>Add new</span>
 				</Button>
 			}
+			title="Create Category"
 		>
-			<DialogTitle>Create Category</DialogTitle>
 			<EditCreateForm onFinished={() => setIsOpen(false)} />
 		</WrapperDialogVaul>
 	);

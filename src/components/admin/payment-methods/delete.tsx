@@ -2,11 +2,7 @@ import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
-import {
-	DialogDescription,
-	DialogFooter,
-	DialogTitle,
-} from "~/components/ui/dialog";
+import { DialogDescription, DialogFooter } from "~/components/ui/dialog";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import type { PaymentMethod } from "~/server/db/schema";
 import { api } from "~/utils/api";
@@ -42,11 +38,13 @@ export const DeletePaymentMethodDialog = ({
 					<TrashIcon size={20} />
 				</Button>
 			}
+			title={
+				<>
+					Delete payment method:{" "}
+					<span className="font-medium italic">{paymentMethod.name}</span>{" "}
+				</>
+			}
 		>
-			<DialogTitle>
-				Delete payment method:{" "}
-				<span className="font-medium italic">{paymentMethod.name}</span>{" "}
-			</DialogTitle>
 			<DialogDescription>
 				Are you sure you want to delete paymentMethod this payment method?
 			</DialogDescription>

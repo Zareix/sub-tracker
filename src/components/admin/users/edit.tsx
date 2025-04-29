@@ -2,7 +2,6 @@ import { EditIcon } from "lucide-react";
 import { useState } from "react";
 import { EditCreateForm } from "~/components/admin/users/edit-create-form";
 import { Button } from "~/components/ui/button";
-import { DialogTitle } from "~/components/ui/dialog";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import type { RouterOutputs } from "~/utils/api";
 
@@ -21,8 +20,8 @@ export const EditUserDialog = ({ user }: Props) => {
 					<EditIcon size={20} />
 				</Button>
 			}
+			title="Edit User"
 		>
-			<DialogTitle>Edit User</DialogTitle>
 			<EditCreateForm onFinished={() => setIsOpen(false)} user={user} />
 		</WrapperDialogVaul>
 	);
