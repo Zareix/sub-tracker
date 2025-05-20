@@ -1,11 +1,11 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { defaultFilter } from "cmdk";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { iconNames } from "lucide-react/dynamic";
 import { useMemo, useState } from "react";
-import { defaultFilter } from "cmdk";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { Button } from "~/components/ui/button";
 import {
@@ -37,8 +37,16 @@ import { cn } from "~/lib/utils";
 import { type RouterOutputs, api } from "~/utils/api";
 
 const categoryCreateSchema = z.object({
-	name: z.string().min(1),
-	icon: z.string().min(1),
+	name: z.string().check(
+		z.minLength(1, {
+			error: "Name is required",
+		}),
+	),
+	icon: z.string().check(
+		z.minLength(1, {
+			error: "Icon is required",
+		}),
+	),
 });
 
 export const EditCreateForm = ({
@@ -88,7 +96,7 @@ export const EditCreateForm = ({
 	);
 
 	const form = useForm<z.infer<typeof categoryCreateSchema>>({
-		resolver: zodResolver(categoryCreateSchema),
+		resolver: standardSchemaResolver(categoryCreateSchema),
 		defaultValues: {
 			name: category?.name ?? "",
 			icon: category?.icon ?? "",

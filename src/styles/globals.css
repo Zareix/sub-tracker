@@ -178,3 +178,8 @@
 		@apply bg-background text-foreground overflow-y-scroll;
 	}
 }
+
+/* Temporary fix for Vaul see https://github.com/emilkowalski/vaul/issues/492 */
+body {
+	pointer-events: all !important;
+}

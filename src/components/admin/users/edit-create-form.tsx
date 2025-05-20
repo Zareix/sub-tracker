@@ -1,9 +1,9 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Select } from "@radix-ui/react-select";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 import { ImageFileUploader } from "~/components/image-uploader";
 import { Button } from "~/components/ui/button";
 import { DialogFooter } from "~/components/ui/dialog";
@@ -27,10 +27,10 @@ import { UserRoles } from "~/lib/constant";
 import { type RouterOutputs, api } from "~/utils/api";
 
 const userCreateSchema = z.object({
-	image: z.string().optional(),
+	image: z.optional(z.string()),
 	name: z.string(),
 	email: z.string(),
-	password: z.string().optional(),
+	password: z.optional(z.string()),
 	role: z.enum(UserRoles),
 });
 
@@ -78,7 +78,7 @@ export const EditCreateForm = ({
 	});
 
 	const form = useForm<z.infer<typeof userCreateSchema>>({
-		resolver: zodResolver(userCreateSchema),
+		resolver: standardSchemaResolver(userCreateSchema),
 		defaultValues: {
 			name: user?.name ?? "",
 			email: user?.email ?? "",

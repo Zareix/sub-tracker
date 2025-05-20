@@ -1,10 +1,10 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 import { ImageFileUploader } from "~/components/image-uploader";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { Button } from "~/components/ui/button";
@@ -61,16 +61,38 @@ const createTempSub = (subscription: RouterInputs["subscription"]["create"]) =>
 	}) satisfies RouterOutputs["subscription"]["getAll"][number];
 
 const subscriptionCreateSchema = z.object({
-	name: z.string(),
+	name: z.string().check(z.minLength(1, { error: "Name is required" })),
 	description: z.string(),
-	category: z.preprocess(preprocessStringToNumber, z.number()),
-	image: z.string().optional(),
-	price: z.preprocess(preprocessStringToNumber, z.number().min(0)),
+	category: z
+		.transform((val) => Number(val))
+		.check(
+			z.positive({
+				error: "Category is required",
+			}),
+		),
+	image: z.optional(z.string()),
+	price: z
+		.transform((val) => Number(val))
+		.check(
+			z.positive({
+				error: "Price must be greater than 0",
+			}),
+		),
 	currency: z.enum(CURRENCIES),
-	paymentMethod: z.preprocess(preprocessStringToNumber, z.number()),
+	paymentMethod: z
+		.transform((val) => Number(val))
+		.check(
+			z.positive({
+				error: "Category is required",
+			}),
+		),
 	firstPaymentDate: z.date(),
 	schedule: z.enum(SCHEDULES),
-	payedBy: z.array(z.string()).min(1),
+	payedBy: z.array(z.string()).check(
+		z.minLength(1, {
+			error: "At least one user must be selected",
+		}),
+	),
 });
 
 export const EditCreateForm = ({
@@ -166,7 +188,7 @@ export const EditCreateForm = ({
 	const categoriesQuery = api.category.getAll.useQuery();
 
 	const form = useForm<z.infer<typeof subscriptionCreateSchema>>({
-		resolver: zodResolver(subscriptionCreateSchema),
+		resolver: standardSchemaResolver(subscriptionCreateSchema),
 		defaultValues: {
 			name: subscription?.name ?? "",
 			description: subscription?.description ?? "",

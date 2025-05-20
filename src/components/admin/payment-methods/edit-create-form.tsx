@@ -1,7 +1,7 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
+import { z } from "zod/v4-mini";
 import { ImageFileUploader } from "~/components/image-uploader";
 import { Button } from "~/components/ui/button";
 import { DialogFooter } from "~/components/ui/dialog";
@@ -18,7 +18,7 @@ import { type RouterOutputs, api } from "~/utils/api";
 
 const paymentMethodCreateSchema = z.object({
 	name: z.string(),
-	image: z.string().optional(),
+	image: z.optional(z.string()),
 });
 
 export const EditCreateForm = ({
@@ -57,7 +57,7 @@ export const EditCreateForm = ({
 	});
 
 	const form = useForm<z.infer<typeof paymentMethodCreateSchema>>({
-		resolver: zodResolver(paymentMethodCreateSchema),
+		resolver: standardSchemaResolver(paymentMethodCreateSchema),
 		defaultValues: {
 			name: paymentMethod?.name ?? "",
 			image: paymentMethod?.image ?? undefined,

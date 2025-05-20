@@ -1,5 +1,5 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { _default, z } from "zod/v4-mini";
 
 export const env = createEnv({
 	/**
@@ -10,30 +10,30 @@ export const env = createEnv({
 		BETTER_AUTH_SECRET:
 			process.env.NODE_ENV === "production"
 				? z.string()
-				: z.string().optional(),
-		BETTER_AUTH_URL: z.string().url(),
+				: z.optional(z.string()),
+		BETTER_AUTH_URL: z.url(),
 		ADMIN_EMAIL: z.string(),
 		DATABASE_PATH: z.string(),
-		NODE_ENV: z
-			.enum(["development", "test", "production"])
-			.default("development"),
-		UPLOADS_FOLDER: z.string(),
-		FIXER_API_KEY: z.string().optional(),
-		S3_ENABLED: z.preprocess(
-			(val) =>
-				!!val ||
-				(!!process.env.S3_BUCKET &&
-					!!process.env.S3_ACCESS_KEY_ID &&
-					!!process.env.S3_SECRET_ACCESS_KEY &&
-					!!process.env.S3_REGION &&
-					!!process.env.S3_ENDPOINT),
-			z.boolean().default(false),
+		NODE_ENV: z._default(
+			z.enum(["development", "test", "production"]),
+			"development",
 		),
-		S3_BUCKET: z.string().optional(),
-		S3_ACCESS_KEY_ID: z.string().optional(),
-		S3_SECRET_ACCESS_KEY: z.string().optional(),
-		S3_REGION: z.string().optional(),
-		S3_ENDPOINT: z.string().optional(),
+		UPLOADS_FOLDER: z.string(),
+		FIXER_API_KEY: z.optional(z.string()),
+		S3_ENABLED: z._default(
+			z.boolean(),
+			!!process.env.S3_BUCKET &&
+				!!process.env.S3_ACCESS_KEY_ID &&
+				!!process.env.S3_SECRET_ACCESS_KEY &&
+				!!process.env.S3_REGION &&
+				!!process.env.S3_ENDPOINT,
+		),
+
+		S3_BUCKET: z.optional(z.string()),
+		S3_ACCESS_KEY_ID: z.optional(z.string()),
+		S3_SECRET_ACCESS_KEY: z.optional(z.string()),
+		S3_REGION: z.optional(z.string()),
+		S3_ENDPOINT: z.optional(z.string()),
 	},
 
 	/**
@@ -42,9 +42,10 @@ export const env = createEnv({
 	 * `NEXT_PUBLIC_`.
 	 */
 	client: {
-		NEXT_PUBLIC_ENV: z
-			.enum(["development", "test", "production"])
-			.default("development"),
+		NEXT_PUBLIC_ENV: z._default(
+			z.enum(["development", "test", "production"]),
+			"development",
+		),
 		// NEXT_PUBLIC_AUTH_URL: z.string().url(),
 	},
 
