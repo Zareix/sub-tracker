@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { iconNames } from "lucide-react/dynamic";
+import { useMemo, useState } from "react";
+import { defaultFilter } from "cmdk";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -30,6 +32,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "~/components/ui/popover";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import { cn } from "~/lib/utils";
 import { type RouterOutputs, api } from "~/utils/api";
 
@@ -72,6 +75,17 @@ export const EditCreateForm = ({
 			toast.error(error.message);
 		},
 	});
+	const [search, setSearch] = useState("");
+	const filteredIconNames = useMemo(
+		() =>
+			iconNames
+				.filter((name) => {
+					if (!search || search === "") return false;
+					return defaultFilter(name, search);
+				})
+				.slice(0, 100),
+		[search],
+	);
 
 	const form = useForm<z.infer<typeof categoryCreateSchema>>({
 		resolver: zodResolver(categoryCreateSchema),
@@ -116,13 +130,13 @@ export const EditCreateForm = ({
 							<FormLabel>Icon</FormLabel>
 							<div className="flex items-center gap-2">
 								{field.value && <CategoryIcon icon={field.value} />}
-								<Popover>
+								<Popover modal>
 									<PopoverTrigger asChild>
 										<FormControl>
 											<Button
-												variant="outline"
+												variant="outline-t"
 												className={cn(
-													"grow justify-between",
+													"h-10 grow justify-between",
 													!field.value && "text-muted-foreground",
 												)}
 											>
@@ -134,12 +148,19 @@ export const EditCreateForm = ({
 										</FormControl>
 									</PopoverTrigger>
 									<PopoverContent className="w-[200px] p-0">
-										<Command>
-											<CommandInput placeholder="Search icon..." />
+										<Command shouldFilter={false}>
+											<CommandInput
+												placeholder="Search icon..."
+												onValueChange={setSearch}
+											/>
 											<CommandList>
-												<CommandEmpty>No icon found.</CommandEmpty>
+												<CommandEmpty>
+													{!search || search === ""
+														? "Search for an icon"
+														: "No results found."}
+												</CommandEmpty>
 												<CommandGroup>
-													{iconNames.map((name) => (
+													{filteredIconNames.map((name) => (
 														<CommandItem
 															value={name}
 															key={name}
