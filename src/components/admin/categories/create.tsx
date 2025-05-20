@@ -8,17 +8,14 @@ export const CreateCategoryDialog = () => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
-		<WrapperDialogVaul
-			isOpen={isOpen}
-			setIsOpen={setIsOpen}
-			trigger={
+		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
+			<WrapperDialogVaul.Trigger>
 				<Button>
 					<PlusIcon size={20} />
 					<span>Add new</span>
 				</Button>
-			}
-			title="Create Category"
-		>
+			</WrapperDialogVaul.Trigger>
+			<WrapperDialogVaul.Title>Create Category</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} />
 		</WrapperDialogVaul>
 	);

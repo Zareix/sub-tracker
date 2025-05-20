@@ -1,6 +1,5 @@
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
-import { DialogDescription, DialogFooter } from "~/components/ui/dialog";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import { type RouterOutputs, api } from "~/utils/api";
 
@@ -33,27 +32,15 @@ export const DeleteDialog = ({
 	}
 
 	return (
-		<WrapperDialogVaul
-			isOpen={isOpen}
-			setIsOpen={setIsOpen}
-			title={
-				<>
-					Delete subscription:{" "}
-					<span className="font-medium italic">{subscription.name}</span>{" "}
-				</>
-			}
-		>
-			<DialogDescription>
+		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
+			<WrapperDialogVaul.Title>
+				Delete subscription:{" "}
+				<span className="font-medium italic">{subscription.name}</span>
+			</WrapperDialogVaul.Title>
+			<WrapperDialogVaul.Description>
 				Are you sure you want to delete subscription this subscription?
-			</DialogDescription>
-			<DialogFooter>
-				<Button
-					variant="secondary"
-					onClick={() => setIsOpen(false)}
-					disabled={deleteSubscriptionMutation.isPending}
-				>
-					Cancel
-				</Button>
+			</WrapperDialogVaul.Description>
+			<WrapperDialogVaul.Footer>
 				<Button
 					variant="destructive"
 					onClick={onDelete}
@@ -61,7 +48,14 @@ export const DeleteDialog = ({
 				>
 					Delete
 				</Button>
-			</DialogFooter>
+				<Button
+					variant="outline"
+					onClick={() => setIsOpen(false)}
+					disabled={deleteSubscriptionMutation.isPending}
+				>
+					Cancel
+				</Button>
+			</WrapperDialogVaul.Footer>
 		</WrapperDialogVaul>
 	);
 };

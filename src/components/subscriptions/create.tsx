@@ -10,12 +10,9 @@ export const CreateSubscriptionDialog = ({
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
-		<WrapperDialogVaul
-			isOpen={isOpen}
-			setIsOpen={setIsOpen}
-			trigger={trigger}
-			title="Create Subscription"
-		>
+		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
+			<WrapperDialogVaul.Trigger>{trigger}</WrapperDialogVaul.Trigger>
+			<WrapperDialogVaul.Title>Create Subscription</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} />
 		</WrapperDialogVaul>
 	);

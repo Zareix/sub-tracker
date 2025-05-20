@@ -12,16 +12,13 @@ type Props = {
 export const EditCategoryDialog = ({ category }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
 	return (
-		<WrapperDialogVaul
-			isOpen={isOpen}
-			setIsOpen={setIsOpen}
-			trigger={
+		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
+			<WrapperDialogVaul.Trigger>
 				<Button variant="ghost" className="w-8" size="icon">
 					<EditIcon size={20} />
 				</Button>
-			}
-			title="Edit Category"
-		>
+			</WrapperDialogVaul.Trigger>
+			<WrapperDialogVaul.Title>Edit Category</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} category={category} />
 		</WrapperDialogVaul>
 	);

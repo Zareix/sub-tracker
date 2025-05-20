@@ -12,16 +12,13 @@ type Props = {
 export const EditUserDialog = ({ user }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
 	return (
-		<WrapperDialogVaul
-			isOpen={isOpen}
-			setIsOpen={setIsOpen}
-			trigger={
+		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
+			<WrapperDialogVaul.Trigger>
 				<Button variant="ghost" className="w-8" size="icon">
 					<EditIcon size={20} />
 				</Button>
-			}
-			title="Edit User"
-		>
+			</WrapperDialogVaul.Trigger>
+			<WrapperDialogVaul.Title>Edit User</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} user={user} />
 		</WrapperDialogVaul>
 	);

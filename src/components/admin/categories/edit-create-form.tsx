@@ -34,8 +34,8 @@ import { cn } from "~/lib/utils";
 import { type RouterOutputs, api } from "~/utils/api";
 
 const categoryCreateSchema = z.object({
-	name: z.string(),
-	icon: z.string(),
+	name: z.string().min(1),
+	icon: z.string().min(1),
 });
 
 export const EditCreateForm = ({

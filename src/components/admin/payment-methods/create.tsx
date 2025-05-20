@@ -7,17 +7,14 @@ import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 export const CreatePaymentMethodDialog = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	return (
-		<WrapperDialogVaul
-			isOpen={isOpen}
-			setIsOpen={setIsOpen}
-			trigger={
+		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
+			<WrapperDialogVaul.Trigger>
 				<Button>
 					<PlusIcon size={20} />
 					<span>Add new</span>
 				</Button>
-			}
-			title="Add Payment method"
-		>
+			</WrapperDialogVaul.Trigger>
+			<WrapperDialogVaul.Title>Add Payment method</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} />
 		</WrapperDialogVaul>
 	);

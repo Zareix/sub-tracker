@@ -2,7 +2,6 @@ import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
-import { DialogDescription, DialogFooter } from "~/components/ui/dialog";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import { useSession } from "~/lib/auth-client";
 import type { User } from "~/server/db/schema";
@@ -32,10 +31,8 @@ export const DeleteUserDialog = ({
 	}
 
 	return (
-		<WrapperDialogVaul
-			isOpen={isOpen}
-			setIsOpen={setIsOpen}
-			trigger={
+		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
+			<WrapperDialogVaul.Trigger>
 				<Button
 					variant="ghost"
 					className="w-8 text-destructive"
@@ -44,26 +41,21 @@ export const DeleteUserDialog = ({
 				>
 					<TrashIcon size={20} />
 				</Button>
-			}
-			title={
-				<>
-					Delete user: <span className="font-medium italic">
-						{user.name}
-					</span>{" "}
-				</>
-			}
-		>
-			<DialogDescription>
+			</WrapperDialogVaul.Trigger>
+			<WrapperDialogVaul.Title>
+				Delete user: <span className="font-medium italic">{user.name}</span>
+			</WrapperDialogVaul.Title>
+			<WrapperDialogVaul.Description>
 				Are you sure you want to delete user this user?
-			</DialogDescription>
-			<DialogFooter>
+			</WrapperDialogVaul.Description>
+			<WrapperDialogVaul.Footer>
 				<Button variant="outline" onClick={() => setIsOpen(false)}>
 					Cancel
 				</Button>
 				<Button variant="destructive" onClick={onDelete}>
 					Delete
 				</Button>
-			</DialogFooter>
+			</WrapperDialogVaul.Footer>
 		</WrapperDialogVaul>
 	);
 };
