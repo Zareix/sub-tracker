@@ -1,3 +1,11 @@
+import {
+	addMonths,
+	endOfMonth,
+	isBefore,
+	isSameMonth,
+	isThisMonth,
+} from "date-fns";
+import { InfoIcon } from "lucide-react";
 import Head from "next/head";
 import { useMemo } from "react";
 import { Label, Pie, PieChart } from "recharts";
@@ -9,19 +17,19 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "~/components/ui/chart";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "~/components/ui/popover";
 import { Skeleton } from "~/components/ui/skeleton";
 import { BASE_CURRENCY, CURRENCY_SYMBOLS } from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
 import { getFilteredSubscriptions, rounded } from "~/lib/utils";
 import { type RouterOutputs, api } from "~/utils/api";
 
-const sum = (
-	acc: number,
-	price: number,
-	isFiltered: boolean,
-	usersLength: number,
-) => {
-	if (isFiltered) {
+const sum = (acc: number, price: number, usersLength?: number) => {
+	if (usersLength && usersLength > 0) {
 		return acc + price / usersLength;
 	}
 	return acc + price;
@@ -40,53 +48,97 @@ export default function Stats() {
 		filters,
 	);
 
-	const totalMonthlySub = subscriptions
-		.filter((subscription) => subscription.schedule === "Monthly")
-		.reduce(
-			(acc, subscription) =>
-				sum(
-					acc,
-					subscription.price,
-					!!filters.users,
-					subscription.users.length,
-				),
-			0,
-		);
+	const {
+		expectedNextMonth,
+		totalPerMonth,
+		totalPerYear,
+		remainingThisMonth,
+		totalThisMonth,
+	} = useMemo(() => {
+		const totalMonthlySub = subscriptions
+			.filter((subscription) => subscription.schedule === "Monthly")
+			.reduce(
+				(acc, subscription) =>
+					sum(
+						acc,
+						subscription.price,
+						filters.users ? subscription.users.length : undefined,
+					),
+				0,
+			);
 
-	const totalYearlySub = subscriptions
-		.filter((subscription) => subscription.schedule === "Yearly")
-		.reduce(
-			(acc, subscription) =>
-				sum(
-					acc,
-					subscription.price,
-					!!filters.users,
-					subscription.users.length,
-				),
-			0,
-		);
+		const totalYearlySub = subscriptions
+			.filter((subscription) => subscription.schedule === "Yearly")
+			.reduce(
+				(acc, subscription) =>
+					sum(
+						acc,
+						subscription.price,
+						filters.users ? subscription.users.length : undefined,
+					),
+				0,
+			);
 
-	const totalPerMonth = totalMonthlySub + totalYearlySub / 12;
+		const totalPerMonth = totalMonthlySub + totalYearlySub / 12;
 
-	const totalPerYear = totalMonthlySub * 12 + totalYearlySub;
+		const totalPerYear = totalMonthlySub * 12 + totalYearlySub;
 
-	const endOfMonth = new Date(
-		new Date().getFullYear(),
-		new Date().getMonth() + 1,
-		0,
-	);
-	const totalForThisMonth = subscriptions
-		.filter((subscription) => subscription.nextPaymentDate < endOfMonth)
-		.reduce(
-			(acc, subscription) =>
-				sum(
-					acc,
-					subscription.price,
-					!!filters.users,
-					subscription.users.length,
-				),
-			0,
-		);
+		const endOfMonthDate = endOfMonth(new Date());
+		const remainingThisMonth = subscriptions
+			.filter((subscription) =>
+				isBefore(subscription.nextPaymentDate, endOfMonthDate),
+			)
+			.reduce(
+				(acc, subscription) =>
+					sum(
+						acc,
+						subscription.price,
+						filters.users ? subscription.users.length : undefined,
+					),
+				0,
+			);
+
+		const nextMonthDate = addMonths(new Date(), 1);
+		const expectedNextMonth = subscriptions
+			.filter(
+				(subscription) =>
+					isSameMonth(subscription.nextPaymentDate, nextMonthDate) ||
+					isSameMonth(subscription.secondNextPaymentDate, nextMonthDate),
+			)
+			.reduce(
+				(acc, subscription) =>
+					sum(
+						acc,
+						subscription.price,
+						filters.users ? subscription.users.length : undefined,
+					),
+				0,
+			);
+
+		const totalThisMonth = subscriptions
+			.filter(
+				(subscription) =>
+					isThisMonth(subscription.nextPaymentDate) ||
+					isThisMonth(subscription.previousPaymentDate),
+			)
+			.reduce(
+				(acc, subscription) =>
+					sum(
+						acc,
+						subscription.price,
+						filters.users ? subscription.users.length : undefined,
+					),
+				0,
+			);
+
+		return {
+			totalPerMonth,
+			totalPerYear,
+			remainingThisMonth,
+			expectedNextMonth,
+			totalThisMonth,
+		};
+	}, [subscriptions, filters.users]);
 
 	return (
 		<>
@@ -100,34 +152,49 @@ export default function Stats() {
 						filtersDisplayed={["users", "paymentMethods", "categories"]}
 					/>
 				</header>
-				<div className="mt-2 grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+				<div className="mt-2 grid gap-2 md:auto-rows-auto md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 					<MonthlyStatsCard
-						title="Total monthly sub"
+						title="Monthly sub"
 						subscriptions={subscriptions.filter(
 							(subscription) => subscription.schedule === "Monthly",
 						)}
 						isLoading={subscriptionsQuery.isLoading}
 					/>
 					<MonthlyStatsCard
-						title="Total yearly sub"
+						title="Yearly sub"
 						subscriptions={subscriptions.filter(
 							(subscription) => subscription.schedule === "Yearly",
 						)}
 						isLoading={subscriptionsQuery.isLoading}
 					/>
 					<StatsCard
-						title="Total per month"
+						title="Smoothed over a month"
+						description="Monthly + (yearly / 12)"
 						value={totalPerMonth}
 						isLoading={subscriptionsQuery.isLoading}
 					/>
 					<StatsCard
-						title="Total per year"
+						title="Smoothed over a year"
+						description="(Monthly * 12) + yearly"
 						value={totalPerYear}
 						isLoading={subscriptionsQuery.isLoading}
 					/>
 					<StatsCard
-						title="Expected this month"
-						value={totalForThisMonth}
+						title="This month"
+						description="Subscriptions that were or will be paid this month"
+						value={totalThisMonth}
+						isLoading={subscriptionsQuery.isLoading}
+					/>
+					<StatsCard
+						title="Remaining this month"
+						description="Subscriptions that will be paid from today to the end of this month"
+						value={remainingThisMonth}
+						isLoading={subscriptionsQuery.isLoading}
+					/>
+					<StatsCard
+						title="Expected next month"
+						description="Subscriptions that will be paid next month"
+						value={expectedNextMonth}
 						isLoading={subscriptionsQuery.isLoading}
 					/>
 				</div>
@@ -138,10 +205,12 @@ export default function Stats() {
 
 const StatsCard = ({
 	title,
+	description,
 	value,
 	isLoading,
 }: {
 	title: string;
+	description?: string;
 	value: number;
 	isLoading: boolean;
 }) => {
@@ -151,6 +220,19 @@ const StatsCard = ({
 				<CardTitle className="font-normal text-lg md:text-xl">
 					{title}
 				</CardTitle>
+				{description && (
+					<Popover>
+						<PopoverTrigger className="mb-auto">
+							<InfoIcon size={20} className="text-muted-foreground" />
+						</PopoverTrigger>
+						<PopoverContent
+							className="w-max max-w-[300px] px-2 py-2 "
+							side="top"
+						>
+							<p>{description}</p>
+						</PopoverContent>
+					</Popover>
+				)}
 			</CardHeader>
 			<CardContent className="mt-2 flex items-center font-bold text-2xl">
 				{isLoading ? <Skeleton className="mr-1 h-6 w-1/4" /> : rounded(value)}€
@@ -239,7 +321,7 @@ const MonthlyStatsCard = ({
 
 	if (isLoading) {
 		return (
-			<Card className="flex flex-col">
+			<Card className="flex flex-col md:row-span-2">
 				<CardHeader className="items-center pb-0">
 					<CardTitle className="font-normal text-lg md:text-xl">
 						{title}
@@ -255,7 +337,7 @@ const MonthlyStatsCard = ({
 	}
 
 	return (
-		<Card className="flex flex-col">
+		<Card className="flex flex-col md:row-span-2">
 			<CardHeader className="items-center pb-0">
 				<CardTitle className="font-normal text-lg md:text-xl">
 					{title}

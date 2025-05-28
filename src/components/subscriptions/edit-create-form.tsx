@@ -46,6 +46,8 @@ const createTempSub = (subscription: RouterInputs["subscription"]["create"]) =>
 		updatedAt: new Date(),
 		originalPrice: subscription.price,
 		nextPaymentDate: new Date(),
+		secondNextPaymentDate: new Date(),
+		previousPaymentDate: new Date(),
 		image: null,
 		users: [],
 		paymentMethod: {

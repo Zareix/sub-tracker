@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { addMonths, addYears, endOfDay } from "date-fns";
+import { addMonths, addYears, endOfDay, isBefore } from "date-fns";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import {
@@ -68,37 +68,71 @@ const calculateNextPaymentDate = (
 		return firstPaymentDate;
 	}
 
-	if (schedule === "Monthly") {
-		const res = new Date(
-			currentDateInfo.year,
-			currentDateInfo.month,
-			firstPaymentDateDetails.day,
-			23,
-			59,
-			59,
-		);
-		if (res > currentDateInfo.base) {
-			return res;
+	switch (schedule) {
+		case "Monthly": {
+			const res = new Date(
+				currentDateInfo.year,
+				currentDateInfo.month,
+				firstPaymentDateDetails.day,
+				23,
+				59,
+				59,
+			);
+			if (res > currentDateInfo.base) {
+				return res;
+			}
+			return addMonths(res, 1);
 		}
-		return addMonths(res, 1);
-	}
-
-	if (schedule === "Yearly") {
-		const res = new Date(
-			currentDateInfo.year,
-			firstPaymentDateDetails.month,
-			firstPaymentDateDetails.day,
-			23,
-			59,
-			59,
-		);
-		if (res > currentDateInfo.base) {
-			return res;
+		case "Yearly": {
+			const res = new Date(
+				currentDateInfo.year,
+				firstPaymentDateDetails.month,
+				firstPaymentDateDetails.day,
+				23,
+				59,
+				59,
+			);
+			if (res > currentDateInfo.base) {
+				return res;
+			}
+			return addYears(res, 1);
 		}
-		return addYears(res, 1);
 	}
+};
 
-	return new Date();
+const calculateSecondNextPaymentDate = (
+	schedule: Subscription["schedule"],
+	nextPaymentDate: Date,
+) => {
+	switch (schedule) {
+		case "Monthly":
+			return addMonths(nextPaymentDate, 1);
+		case "Yearly":
+			return addYears(nextPaymentDate, 1);
+	}
+};
+
+const calculatePreviousPaymentDate = (
+	schedule: Subscription["schedule"],
+	firstPaymentDate: Subscription["firstPaymentDate"],
+	nextPaymentDate: Date,
+) => {
+	switch (schedule) {
+		case "Yearly": {
+			const previousPayment = addYears(nextPaymentDate, -1);
+			if (isBefore(previousPayment, firstPaymentDate)) {
+				return firstPaymentDate;
+			}
+			return previousPayment;
+		}
+		case "Monthly": {
+			const previousPayment = addMonths(nextPaymentDate, -1);
+			if (isBefore(previousPayment, firstPaymentDate)) {
+				return firstPaymentDate;
+			}
+			return previousPayment;
+		}
+	}
 };
 
 export const subscriptionRouter = createTRPCRouter({
@@ -151,22 +185,36 @@ export const subscriptionRouter = createTRPCRouter({
 				});
 				return acc;
 			}, [])
-			.map((subscription) => ({
-				...subscription,
-				originalPrice: subscription.price,
-				price: rounded(
-					convertToDefaultCurrency(
-						exchangeRates,
-						subscription.price,
-						subscription.currency,
-						BASE_CURRENCY,
-					),
-				),
-				nextPaymentDate: calculateNextPaymentDate(
+			.map((subscription) => {
+				const nextPaymentDate = calculateNextPaymentDate(
 					subscription.schedule,
 					subscription.firstPaymentDate,
-				),
-			}));
+				);
+				const secondNextPaymentDate = calculateSecondNextPaymentDate(
+					subscription.schedule,
+					nextPaymentDate,
+				);
+				const previousPaymentDate = calculatePreviousPaymentDate(
+					subscription.schedule,
+					subscription.firstPaymentDate,
+					nextPaymentDate,
+				);
+				return {
+					...subscription,
+					originalPrice: subscription.price,
+					price: rounded(
+						convertToDefaultCurrency(
+							exchangeRates,
+							subscription.price,
+							subscription.currency,
+							BASE_CURRENCY,
+						),
+					),
+					nextPaymentDate,
+					secondNextPaymentDate,
+					previousPaymentDate,
+				};
+			});
 	}),
 	create: protectedProcedure
 		.input(

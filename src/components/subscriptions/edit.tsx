@@ -14,11 +14,10 @@ export const EditSubscriptionDialog = ({
 	setIsOpen,
 }: Props) => {
 	return (
-		<WrapperDialogVaul
-			isOpen={isOpen}
-			setIsOpen={setIsOpen}
-			title="Edit Subscription"
-		>
+		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
+			<WrapperDialogVaul.Title>
+				Edit Subscription: {subscription.name}
+			</WrapperDialogVaul.Title>
 			<EditCreateForm
 				onFinished={() => {
 					setIsOpen(false);
