@@ -34,12 +34,12 @@ import { cn } from "~/lib/utils";
  * Uses class-variance-authority (cva) to define different styles based on "variant" prop.
  */
 const multiSelectVariants = cva(
-	"m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
+	"hover:-translate-y-1 m-1 transition delay-150 duration-300 ease-in-out hover:scale-110",
 	{
 		variants: {
 			variant: {
 				default:
-					"border-foreground/10 text-foreground bg-card hover:bg-card/80",
+					"border-foreground/10 bg-card text-foreground hover:bg-card/80",
 				secondary:
 					"border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
 				destructive:

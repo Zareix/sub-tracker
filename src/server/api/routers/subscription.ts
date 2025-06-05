@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { addMonths, addYears, endOfDay, isBefore } from "date-fns";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
+import { env } from "~/env";
 import {
 	BASE_CURRENCY,
 	CURRENCIES,
@@ -24,6 +25,7 @@ import {
 	users,
 	usersToSubscriptions,
 } from "~/server/db/schema";
+import { searchImages } from "~/server/services/google-search";
 
 const convertToDefaultCurrency = (
 	exchangeRates: Array<ExchangeRate>,
@@ -341,4 +343,9 @@ export const subscriptionRouter = createTRPCRouter({
 			await db.delete(subscriptions).where(eq(subscriptions.id, input));
 		});
 	}),
+	searchImages: protectedProcedure
+		.input(z.object({ query: z.string() }))
+		.query(({ input }) => {
+			return searchImages(input.query);
+		}),
 });

@@ -6,21 +6,21 @@ import { LoaderCircleIcon } from "lucide-react";
 import { cn } from "~/lib/utils";
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 	{
 		variants: {
 			variant: {
 				//default: "bg-primary text-primary-foreground hover:bg-primary/90",
 				default:
-					"from-primary to-primary/85 text-primary-foreground border border-zinc-900/25 bg-linear-to-t shadow-md shadow-zinc-900/20 ring-1 ring-inset ring-white/20 transition-[filter] duration-200 hover:brightness-110 active:brightness-90 dark:border-white/20 dark:ring-transparent",
+					"border border-zinc-900/25 bg-linear-to-t from-primary to-primary/85 text-primary-foreground shadow-md shadow-zinc-900/20 ring-1 ring-white/20 ring-inset transition-[filter] duration-200 hover:brightness-110 active:brightness-90 dark:border-white/20 dark:ring-transparent",
 				// destructive:
 				//   "bg-destructive text-destructive-foreground hover:bg-destructive/90",
 				destructive:
-					"from-destructive to-destructive/85 text-destructive-foreground border border-zinc-900/25 bg-linear-to-t shadow-md shadow-zinc-900/20 ring-1 ring-inset ring-white/20 transition-[filter] duration-200 hover:brightness-110 active:brightness-90 dark:border-white/15 dark:ring-transparent",
+					"border border-zinc-900/25 bg-linear-to-t from-destructive to-destructive/85 text-destructive-foreground shadow-md shadow-zinc-900/20 ring-1 ring-white/20 ring-inset transition-[filter] duration-200 hover:brightness-110 active:brightness-90 dark:border-white/15 dark:ring-transparent",
 				"outline-t":
 					"border border-input bg-background hover:bg-accent hover:text-accent-foreground",
 				outline:
-					"shadow-2xs bg-linear-to-t hover:to-muted to-background from-muted dark:from-muted/50 dark:border-border border border-border shadow-zinc-900/10 duration-200",
+					"border border-border bg-linear-to-t from-muted to-background shadow-2xs shadow-zinc-900/10 duration-200 hover:to-muted dark:border-border dark:from-muted/50",
 				secondary:
 					"bg-secondary text-secondary-foreground hover:bg-secondary/80",
 				ghost: "hover:bg-accent hover:text-accent-foreground",

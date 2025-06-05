@@ -1,12 +1,13 @@
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, SearchIcon } from "lucide-react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
 import { ImageFileUploader } from "~/components/image-uploader";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
+import { ImageSearch } from "~/components/subscriptions/image-search";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
 import { DialogFooter } from "~/components/ui/dialog";
@@ -35,7 +36,7 @@ import {
 import { Separator } from "~/components/ui/separator";
 import { useSession } from "~/lib/auth-client";
 import { CURRENCIES, SCHEDULES } from "~/lib/constant";
-import { cn, preprocessStringToNumber } from "~/lib/utils";
+import { cn } from "~/lib/utils";
 import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
 
 const createTempSub = (subscription: RouterInputs["subscription"]["create"]) =>
@@ -188,7 +189,6 @@ export const EditCreateForm = ({
 	const usersQuery = api.user.getAll.useQuery();
 	const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
 	const categoriesQuery = api.category.getAll.useQuery();
-
 	const form = useForm<z.infer<typeof subscriptionCreateSchema>>({
 		resolver: standardSchemaResolver(subscriptionCreateSchema),
 		defaultValues: {
@@ -234,16 +234,12 @@ export const EditCreateForm = ({
 			) : (
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-						<div className="grid grid-cols-12 gap-2">
-							<ImageFileUploader
-								setFileUrl={(v) => form.setValue("image", v)}
-								fileUrl={form.watch("image")}
-							/>
+						<div className="grid grid-cols-12 items-center gap-2">
 							<FormField
 								control={form.control}
 								name="name"
 								render={({ field }) => (
-									<FormItem className="col-span-10">
+									<FormItem className="col-span-8">
 										<FormLabel>Name</FormLabel>
 										<FormControl>
 											<Input placeholder="Netflix" {...field} />
@@ -251,6 +247,14 @@ export const EditCreateForm = ({
 										<FormMessage />
 									</FormItem>
 								)}
+							/>
+							<ImageFileUploader
+								setFileUrl={(v) => form.setValue("image", v)}
+								fileUrl={form.watch("image")}
+							/>
+							<ImageSearch
+								query={form.watch("name")}
+								setFileUrl={(v) => form.setValue("image", v)}
 							/>
 						</div>
 						<FormField
