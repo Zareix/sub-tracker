@@ -45,7 +45,10 @@ export default function Stats() {
 
 	const subscriptions = getFilteredSubscriptions(
 		subscriptionsQuery.data ?? [],
-		filters,
+		{
+			...filters,
+			schedule: null,
+		},
 	);
 
 	const {

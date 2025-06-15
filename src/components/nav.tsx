@@ -41,28 +41,33 @@ export const NAV_ITEMS = [
 		title: "Home",
 		url: "/",
 		icon: HomeIcon,
+		keepParams: true,
 	},
 	{
 		title: "Stats",
 		url: "/stats",
 		icon: ChartColumnIcon,
+		keepParams: true,
 	},
 	{
 		title: "Settings",
 		url: "/settings",
 		icon: WrenchIcon,
+		keepParams: false,
 	},
 	{
 		title: "Admin",
 		url: "/admin",
 		icon: ShieldIcon,
 		role: "admin",
+		keepParams: false,
 	},
 	{
 		title: "Profile",
 		url: "/profile",
 		icon: UserCircle2Icon,
 		role: "user",
+		keepParams: false,
 	},
 ] as const;
 
@@ -76,7 +81,12 @@ export function AppSidebar() {
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton size="lg" asChild>
-							<Link href="/">
+							<Link
+								href={{
+									pathname: "/",
+									query: router.query,
+								}}
+							>
 								<div className="flex aspect-square size-8 items-center justify-center rounded-xs bg-primary text-sidebar-primary-foreground">
 									<CalendarSyncIcon className="size-4" />
 								</div>
@@ -100,7 +110,12 @@ export function AppSidebar() {
 										asChild
 										isActive={router.pathname === item.url}
 									>
-										<Link href={item.url}>
+										<Link
+											href={{
+												pathname: item.url,
+												query: item.keepParams ? router.query : null,
+											}}
+										>
 											<item.icon />
 											<span>{item.title}</span>
 										</Link>

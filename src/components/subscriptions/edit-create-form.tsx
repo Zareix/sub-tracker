@@ -1,6 +1,6 @@
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { format } from "date-fns";
-import { CalendarIcon, SearchIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
