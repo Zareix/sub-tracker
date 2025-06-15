@@ -9,7 +9,6 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "~/components/ui/popover";
-import { cn } from "~/lib/utils";
 import { api } from "~/utils/api";
 
 export const ImageSearch = ({
@@ -73,8 +72,14 @@ export const ImageSearch = ({
 	return (
 		<Popover open={isOpen} onOpenChange={setIsOpen}>
 			<PopoverTrigger asChild>
-				<Button type="button" size="icon" variant="ghost" onClick={searchImage}>
-					<SearchIcon />
+				<Button
+					type="button"
+					size="icon"
+					variant="ghost"
+					className="group hover:bg-transparent"
+					onClick={searchImage}
+				>
+					<SearchIcon className="size-8 group-hover:text-primary" />
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent align="start" className="relative grid grid-cols-4 gap-2">

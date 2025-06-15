@@ -2,7 +2,6 @@ import { TRPCError } from "@trpc/server";
 import { addMonths, addYears, endOfDay, isBefore } from "date-fns";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
-import { env } from "~/env";
 import {
 	BASE_CURRENCY,
 	CURRENCIES,
@@ -231,6 +230,7 @@ export const subscriptionRouter = createTRPCRouter({
 				firstPaymentDate: z.date(),
 				schedule: z.enum(SCHEDULES),
 				payedBy: z.array(z.string()),
+				url: z.string().url().optional(),
 			}),
 		)
 		.mutation(async ({ input }) => {
@@ -247,6 +247,7 @@ export const subscriptionRouter = createTRPCRouter({
 						paymentMethod: input.paymentMethod,
 						firstPaymentDate: endOfDay(input.firstPaymentDate),
 						schedule: input.schedule,
+						url: input.url,
 					})
 					.returning({
 						id: subscriptions.id,
@@ -287,6 +288,7 @@ export const subscriptionRouter = createTRPCRouter({
 				firstPaymentDate: z.date(),
 				schedule: z.enum(SCHEDULES),
 				payedBy: z.array(z.string()),
+				url: z.string().url().optional(),
 			}),
 		)
 		.mutation(async ({ input }) => {
@@ -303,6 +305,7 @@ export const subscriptionRouter = createTRPCRouter({
 						paymentMethod: input.paymentMethod,
 						firstPaymentDate: endOfDay(input.firstPaymentDate),
 						schedule: input.schedule,
+						url: input.url,
 					})
 					.where(eq(subscriptions.id, input.id))
 					.returning({

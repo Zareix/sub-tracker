@@ -3,6 +3,7 @@ import {
 	EditIcon,
 	EllipsisVertical,
 	InfoIcon,
+	LinkIcon,
 	RefreshCcwIcon,
 	TextIcon,
 	TrashIcon,
@@ -217,6 +218,18 @@ const SubscriptionListItem = ({
 							<TextIcon size={20} className="text-primary" />
 							<span>{subscription.description}</span>
 						</div>
+					)}
+					{subscription.url && (
+						<a
+							href={subscription.url}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<div className="flex items-center gap-1">
+								<LinkIcon size={16} className="text-primary" />
+								{new URL(subscription.url).hostname}
+							</div>
+						</a>
 					)}
 				</div>
 				<DeleteDialog

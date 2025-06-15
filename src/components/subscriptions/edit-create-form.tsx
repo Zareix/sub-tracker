@@ -61,6 +61,7 @@ const createTempSub = (subscription: RouterInputs["subscription"]["create"]) =>
 			name: "temp",
 			icon: "temp",
 		},
+		url: null,
 	}) satisfies RouterOutputs["subscription"]["getAll"][number];
 
 const subscriptionCreateSchema = z.object({
@@ -96,6 +97,7 @@ const subscriptionCreateSchema = z.object({
 			error: "At least one user must be selected",
 		}),
 	),
+	url: z.optional(z.url()),
 });
 
 export const EditCreateForm = ({
@@ -204,6 +206,7 @@ export const EditCreateForm = ({
 			payedBy:
 				subscription?.users.map((u) => u.id) ??
 				(session.data?.user.id ? [session.data.user.id] : []),
+			url: subscription?.url ?? undefined,
 		},
 	});
 
@@ -305,6 +308,20 @@ export const EditCreateForm = ({
 											placeholder="Something about the subscription"
 											{...field}
 										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="url"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>URL</FormLabel>
+									<FormControl>
+										<Input placeholder="https://www.netflix.com" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
