@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
 import { ImageFileUploader } from "~/components/image-uploader";
+import { ImageSearch } from "~/components/subscriptions/image-search";
 import { Button } from "~/components/ui/button";
 import { DialogFooter } from "~/components/ui/dialog";
 import {
@@ -78,16 +79,12 @@ export const EditCreateForm = ({
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8">
-				<div className="grid grid-cols-12 gap-2">
-					<ImageFileUploader
-						setFileUrl={(v) => form.setValue("image", v)}
-						fileUrl={form.watch("image")}
-					/>
+				<div className="grid grid-cols-12 items-center gap-2">
 					<FormField
 						control={form.control}
 						name="name"
 						render={({ field }) => (
-							<FormItem className="col-span-10">
+							<FormItem className="col-span-8">
 								<FormLabel>Name</FormLabel>
 								<FormControl>
 									<Input placeholder="PayPal" {...field} />
@@ -95,6 +92,14 @@ export const EditCreateForm = ({
 								<FormMessage />
 							</FormItem>
 						)}
+					/>
+					<ImageFileUploader
+						setFileUrl={(v) => form.setValue("image", v)}
+						fileUrl={form.watch("image")}
+					/>
+					<ImageSearch
+						query={form.watch("name")}
+						setFileUrl={(imageUrl) => form.setValue("image", imageUrl)}
 					/>
 				</div>
 				<DialogFooter>
