@@ -1,3 +1,4 @@
+import { ParsedUrlQuery } from "node:querystring";
 import {
 	CalendarSyncIcon,
 	ChartColumnIcon,
@@ -214,9 +215,11 @@ export function AppSidebar() {
 
 const NavbarItem = ({
 	pathname,
+	query,
 	...item
 }: (typeof NAV_ITEMS)[number] & {
 	pathname: string;
+	query: ReturnType<typeof useRouter>["query"];
 }) => (
 	<Button
 		key={item.title}
@@ -225,7 +228,10 @@ const NavbarItem = ({
 		className={cn(pathname === item.url ? "text-primary" : "text-foreground")}
 	>
 		<Link
-			href={item.url}
+			href={{
+				pathname: item.url,
+				query: item.keepParams ? query : null,
+			}}
 			className="flex h-full items-center justify-center gap-2 font-bold text-xl"
 		>
 			<item.icon size={26} />
@@ -246,7 +252,12 @@ export const Navbar = () => {
 				{navBarItems
 					.filter((_, i) => i < middleIndex)
 					.map((item) => (
-						<NavbarItem key={item.title} {...item} pathname={router.pathname} />
+						<NavbarItem
+							key={item.title}
+							{...item}
+							pathname={router.pathname}
+							query={router.query}
+						/>
 					))}
 				<CreateSubscriptionDialog
 					trigger={
@@ -261,7 +272,12 @@ export const Navbar = () => {
 				{navBarItems
 					.filter((_, i) => i >= middleIndex)
 					.map((item) => (
-						<NavbarItem key={item.title} {...item} pathname={router.pathname} />
+						<NavbarItem
+							key={item.title}
+							{...item}
+							pathname={router.pathname}
+							query={router.query}
+						/>
 					))}
 			</div>
 		</nav>
