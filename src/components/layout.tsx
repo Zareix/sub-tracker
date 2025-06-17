@@ -2,10 +2,10 @@ import Head from "next/head";
 import { LoginForm } from "~/components/login";
 import { AppSidebar, Navbar } from "~/components/nav";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
-import { useSession } from "~/lib/auth-client";
+import { authClient } from "~/lib/auth-client";
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
-	const session = useSession();
+	const session = authClient.useSession();
 
 	if (session.isPending) return <></>;
 

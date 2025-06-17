@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { admin } from "better-auth/plugins/admin";
 import { passkey } from "better-auth/plugins/passkey";
 import type { NextRequest } from "next/server";
 import { env } from "~/env";
@@ -33,13 +34,17 @@ export const auth = betterAuth({
 		},
 	},
 	advanced: {
-		generateId: false,
+		database: { generateId: false },
 	},
 	user: {
+		changeEmail: {
+			enabled: true,
+		},
 		additionalFields: {
 			role: {
 				type: "string",
 				required: true,
+				input: false,
 			},
 		},
 	},
@@ -53,6 +58,7 @@ export const auth = betterAuth({
 			rpName: "Subtracker",
 			origin: env.BETTER_AUTH_URL,
 		}),
+		admin(),
 	],
 });
 

@@ -1,5 +1,6 @@
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Select } from "@radix-ui/react-select";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -22,12 +23,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
-import { useSession } from "~/lib/auth-client";
+import { authClient } from "~/lib/auth-client";
 import { UserRoles } from "~/lib/constant";
-import { type RouterOutputs, api } from "~/utils/api";
+import { api } from "~/utils/api";
 
 const userCreateSchema = z.object({
-	image: z.optional(z.string()),
+	image: z.nullish(z.string()),
 	name: z.string(),
 	email: z.string(),
 	password: z.optional(z.string()),
@@ -38,16 +39,26 @@ export const EditCreateForm = ({
 	user,
 	onFinished,
 }: {
-	user?: Pick<
-		RouterOutputs["user"]["getAll"][number],
-		"id" | "name" | "email" | "role" | "image"
-	>;
+	user?: z.infer<typeof userCreateSchema> & { id: string };
 	onFinished?: () => void;
 }) => {
-	const session = useSession();
-	const router = useRouter();
+	const session = authClient.useSession();
 	const apiUtils = api.useUtils();
-	const createUserMutation = api.user.create.useMutation({
+	const createUserMutation = useMutation({
+		mutationFn: (data: z.infer<typeof userCreateSchema>) => {
+			if (!data.password || data.password.length < 8) {
+				throw new Error("Password must be at least 8 characters long");
+			}
+			return authClient.admin.createUser({
+				name: data.name,
+				email: data.email,
+				password: data.password ?? "",
+				role: data.role,
+				data: {
+					image: data.image,
+				},
+			});
+		},
 		onSuccess: () => {
 			toast.success("User created!");
 			apiUtils.user.getAll.invalidate().catch(console.error);
@@ -60,7 +71,29 @@ export const EditCreateForm = ({
 			toast.error(error.message);
 		},
 	});
-	const editUserMutation = api.user.edit.useMutation({
+	const editUserApiMutation = api.user.edit.useMutation();
+	const editUserMutation = useMutation({
+		mutationFn: (data: z.infer<typeof userCreateSchema> & { id: string }) => {
+			if (data.password && data.password.length > 0) {
+				authClient.admin.setUserPassword({
+					userId: data.id,
+					newPassword: data.password,
+				});
+			}
+			if (data.role !== user?.role) {
+				authClient.admin.setRole({
+					userId: data.id,
+					role: data.role,
+				});
+			}
+			// TODO Remove this when https://github.com/better-auth/better-auth/issues/2394 is addressed
+			return editUserApiMutation.mutateAsync({
+				id: data.id,
+				name: data.name,
+				email: data.email,
+				image: data.image,
+			});
+		},
 		onSuccess: (data) => {
 			toast.success("User edited!");
 			apiUtils.user.getAll.invalidate().catch(console.error);
@@ -68,9 +101,6 @@ export const EditCreateForm = ({
 			setTimeout(() => {
 				form.reset();
 			}, 300);
-			if (session.data?.user.id === data.id) {
-				router.reload();
-			}
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -94,7 +124,7 @@ export const EditCreateForm = ({
 				id: user.id,
 			});
 		} else {
-			createUserMutation.mutate({ ...values, password: values.password ?? "" });
+			createUserMutation.mutate(values);
 		}
 	}
 

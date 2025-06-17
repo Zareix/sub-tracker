@@ -19,7 +19,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
-import { signIn } from "~/lib/auth-client";
+import { authClient } from "~/lib/auth-client";
 
 const loginSchema = z.object({
 	email: z.string(),
@@ -30,8 +30,8 @@ export const LoginForm = () => {
 	const router = useRouter();
 	const signInMutation = useMutation({
 		mutationFn: async (values: z.infer<typeof loginSchema>) => {
-			return signIn.email({
-				email: values.email,
+			return authClient.signIn.email({
+				email: values.email.trim(),
 				password: values.password,
 			});
 		},
@@ -46,7 +46,7 @@ export const LoginForm = () => {
 	});
 	const signInPassKeyMutation = useMutation({
 		mutationFn: async () => {
-			return signIn.passkey();
+			return authClient.signIn.passkey();
 		},
 		onSuccess: (res) => {
 			if (res?.error) {
@@ -74,7 +74,7 @@ export const LoginForm = () => {
 		PublicKeyCredential.isConditionalMediationAvailable()
 			.then((available) => {
 				if (available) {
-					void signIn.passkey({ autoFill: true });
+					void authClient.signIn.passkey({ autoFill: true });
 				}
 			})
 			.catch(console.error);

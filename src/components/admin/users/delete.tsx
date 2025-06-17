@@ -3,7 +3,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
-import { useSession } from "~/lib/auth-client";
+import { authClient } from "~/lib/auth-client";
 import type { User } from "~/server/db/schema";
 import { api } from "~/utils/api";
 
@@ -13,7 +13,7 @@ export const DeleteUserDialog = ({
 	user: Pick<User, "id" | "name">;
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const session = useSession();
+	const session = authClient.useSession();
 	const apiUtils = api.useUtils();
 	const deleteUserMutation = api.user.delete.useMutation({
 		onSuccess: () => {

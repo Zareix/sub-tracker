@@ -231,4 +231,5 @@ export const passkey = sqliteTable("passkey", {
 	backedUp: integer("backed_up", { mode: "boolean" }).notNull(),
 	transports: text("transports"),
 	createdAt: integer("created_at", { mode: "timestamp" }),
+	aaguid: text("aaguid"),
 });

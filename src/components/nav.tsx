@@ -33,7 +33,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "~/components/ui/sidebar";
-import { signOut, useSession } from "~/lib/auth-client";
+import { authClient } from "~/lib/auth-client";
 import { cn } from "~/lib/utils";
 
 export const NAV_ITEMS = [
@@ -73,7 +73,7 @@ export const NAV_ITEMS = [
 
 export function AppSidebar() {
 	const router = useRouter();
-	const session = useSession();
+	const session = authClient.useSession();
 
 	return (
 		<Sidebar side="left" collapsible="icon">
@@ -197,7 +197,7 @@ export function AppSidebar() {
 										</Link>
 									</DropdownMenuLabel>
 									<DropdownMenuSeparator />
-									<DropdownMenuItem onClick={() => signOut()}>
+									<DropdownMenuItem onClick={() => authClient.signOut()}>
 										<LogOutIcon />
 										Log out
 									</DropdownMenuItem>

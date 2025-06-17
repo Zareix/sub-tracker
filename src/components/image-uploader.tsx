@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 type Props = {
 	setFileUrl: (url: string) => void;
-	fileUrl?: string;
+	fileUrl?: string | null;
 };
 
 export const ImageFileUploader = ({ setFileUrl, fileUrl }: Props) => {

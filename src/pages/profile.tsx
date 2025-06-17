@@ -1,39 +1,29 @@
 import { useRouter } from "next/router";
+import { CredentialsForm } from "~/components/profile/credentials";
+import { UserInfoForm } from "~/components/profile/user-info";
 import { Button } from "~/components/ui/button";
-import { EditUserProfile } from "~/components/users/edit";
-import { passkey, useSession } from "~/lib/auth-client";
-import type { UserRole } from "~/lib/constant";
+import { Separator } from "~/components/ui/separator";
+import { authClient } from "~/lib/auth-client";
 
 export default function ProfilePage() {
-	const session = useSession();
-	const router = useRouter();
-
-	const registerPasskey = () => {
-		passkey
-			.addPasskey()
-			.then((data) => {
-				console.log(data);
-				router.reload();
-			})
-			.catch((error) => {
-				console.error(error);
-			});
-	};
-
+	const session = authClient.useSession();
 	const user = session.data?.user;
+
+	if (!user) {
+		return <></>;
+	}
+
 	return (
-		<div className="grid max-w-[100vw] items-start gap-4">
-			<h1>Profile</h1>
-			<Button onClick={registerPasskey}>Register passkey</Button>
-			{user && (
-				<EditUserProfile
-					user={{
-						...user,
-						image: user.image ?? null,
-						role: user.role as UserRole,
-					}}
-				/>
-			)}
+		<div className="grid w-full max-w-[100vw] items-start gap-4 lg:grid-cols-2 lg:gap-x-8">
+			<header className="flex flex-wrap items-center justify-between lg:col-span-2">
+				<h1 className="font-bold text-3xl">
+					Welcome <span className="italic">{user.name}</span> !
+				</h1>
+			</header>
+
+			<UserInfoForm user={user} />
+			<Separator className="my-4 lg:hidden" />
+			<CredentialsForm userId={user.id} />
 		</div>
 	);
 }

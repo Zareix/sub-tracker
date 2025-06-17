@@ -34,7 +34,7 @@ import {
 	SelectValue,
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
-import { useSession } from "~/lib/auth-client";
+import { authClient } from "~/lib/auth-client";
 import { CURRENCIES, SCHEDULES } from "~/lib/constant";
 import { cn } from "~/lib/utils";
 import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
@@ -107,7 +107,7 @@ export const EditCreateForm = ({
 	subscription?: RouterOutputs["subscription"]["getAll"][number];
 	onFinished?: () => void;
 }) => {
-	const session = useSession();
+	const session = authClient.useSession();
 	const apiUtils = api.useUtils();
 	const createSubscriptionMutation = api.subscription.create.useMutation({
 		onSuccess: () => {

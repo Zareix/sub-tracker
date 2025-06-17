@@ -26,6 +26,11 @@ if (users.length === 0) {
 			name: "Admin",
 			email: env.ADMIN_EMAIL,
 			password: "password",
+		},
+	});
+	await auth.api.setRole({
+		body: {
+			userId: res.user.id,
 			role: "admin" satisfies UserRole,
 		},
 	});
@@ -34,6 +39,7 @@ if (users.length === 0) {
 		res.user.id,
 		"and email",
 		res.user.email,
+		"and default password is 'password'. Please change the password after logging in.",
 	);
 }
 

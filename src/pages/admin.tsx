@@ -15,6 +15,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
+import type { UserRole } from "~/lib/constant";
 import { type RouterInputs, api } from "~/utils/api";
 
 export default function AdminPage() {
@@ -141,7 +142,12 @@ export default function AdminPage() {
 										<TableCell className="capitalize">{user.role}</TableCell>
 										<TableCell className="flex items-center justify-end gap-2">
 											<DeleteUserDialog user={user} />
-											<EditUserDialog user={user} />
+											<EditUserDialog
+												user={{
+													...user,
+													role: user.role as UserRole,
+												}}
+											/>
 										</TableCell>
 									</TableRow>
 								))}

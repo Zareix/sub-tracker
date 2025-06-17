@@ -28,3 +28,7 @@ export const CURRENCY_SYMBOLS = {
 
 export const UserRoles = ["user", "admin"] as const;
 export type UserRole = (typeof UserRoles)[number];
+export const USER_ROLES: Record<UserRole, UserRole> = {
+	user: "user",
+	admin: "admin",
+};
