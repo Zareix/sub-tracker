@@ -7,12 +7,12 @@
  * need to use are documented accordingly near the end.
  */
 
-import { TRPCError, initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { USER_ROLES, UserRoles } from "~/lib/constant";
-import { type Session, auth } from "~/server/auth";
+import { USER_ROLES } from "~/lib/constant";
+import { auth, type Session } from "~/server/auth";
 import { db } from "~/server/db";
 
 /**

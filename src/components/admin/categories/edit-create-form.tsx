@@ -32,9 +32,8 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "~/components/ui/popover";
-import { ScrollArea } from "~/components/ui/scroll-area";
 import { cn } from "~/lib/utils";
-import { type RouterOutputs, api } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 
 const categoryCreateSchema = z.object({
 	name: z.string().check(

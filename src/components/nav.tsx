@@ -1,4 +1,3 @@
-import { ParsedUrlQuery } from "node:querystring";
 import {
 	CalendarSyncIcon,
 	ChartColumnIcon,

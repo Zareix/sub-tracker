@@ -1,7 +1,6 @@
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Select } from "@radix-ui/react-select";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
@@ -94,7 +93,7 @@ export const EditCreateForm = ({
 				image: data.image,
 			});
 		},
-		onSuccess: (data) => {
+		onSuccess: () => {
 			toast.success("User edited!");
 			apiUtils.user.getAll.invalidate().catch(console.error);
 			onFinished?.();

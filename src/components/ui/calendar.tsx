@@ -52,9 +52,11 @@ export const Calendar = ({
 				...classNames,
 			}}
 			components={{
+				// biome-ignore lint/nursery/noNestedComponentDefinitions: shadcn/ui
 				IconLeft: ({ className, ...props }) => (
 					<ChevronLeft className={cn("size-4", className)} {...props} />
 				),
+				// biome-ignore lint/nursery/noNestedComponentDefinitions: shadcn/ui
 				IconRight: ({ className, ...props }) => (
 					<ChevronRight className={cn("size-4", className)} {...props} />
 				),

@@ -26,7 +26,7 @@ import { Skeleton } from "~/components/ui/skeleton";
 import { BASE_CURRENCY, CURRENCY_SYMBOLS } from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
 import { getFilteredSubscriptions, rounded } from "~/lib/utils";
-import { type RouterOutputs, api } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 
 const sum = (acc: number, price: number, usersLength?: number) => {
 	if (usersLength && usersLength > 0) {
@@ -38,10 +38,6 @@ const sum = (acc: number, price: number, usersLength?: number) => {
 export default function Stats() {
 	const [filters] = useFilters();
 	const subscriptionsQuery = api.subscription.getAll.useQuery();
-
-	if (subscriptionsQuery.isError) {
-		return <div>Error: {subscriptionsQuery.error?.message}</div>;
-	}
 
 	const subscriptions = getFilteredSubscriptions(
 		subscriptionsQuery.data ?? [],
@@ -142,6 +138,10 @@ export default function Stats() {
 			totalThisMonth,
 		};
 	}, [subscriptions, filters.users]);
+
+	if (subscriptionsQuery.isError) {
+		return <div>Error: {subscriptionsQuery.error?.message}</div>;
+	}
 
 	return (
 		<>

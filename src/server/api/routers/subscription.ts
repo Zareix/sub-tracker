@@ -14,13 +14,13 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db, runTransaction } from "~/server/db";
 import {
 	type Category,
+	categories,
 	type ExchangeRate,
 	type PaymentMethod,
-	type Subscription,
-	type User,
-	categories,
 	paymentMethods,
+	type Subscription,
 	subscriptions,
+	type User,
 	users,
 	usersToSubscriptions,
 } from "~/server/db/schema";

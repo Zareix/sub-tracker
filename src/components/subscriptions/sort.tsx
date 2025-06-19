@@ -1,5 +1,4 @@
 import { SortAscIcon, SortDescIcon } from "lucide-react";
-import { parseAsStringEnum, useQueryState } from "nuqs";
 import { Button } from "~/components/ui/button";
 import {
 	DropdownMenu,
@@ -11,13 +10,11 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { SORTS, type Sort } from "~/lib/constant";
+import { useSort } from "~/lib/hooks/use-sort";
 import { cn } from "~/lib/utils";
 
 export const SortButton = () => {
-	const [sort, setSort] = useQueryState(
-		"sort",
-		parseAsStringEnum(SORTS.map((s) => s.key)),
-	);
+	const [sort, setSort] = useSort();
 
 	return (
 		<DropdownMenu>

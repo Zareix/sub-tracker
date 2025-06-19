@@ -16,7 +16,7 @@ import {
 	TableRow,
 } from "~/components/ui/table";
 import type { UserRole } from "~/lib/constant";
-import { type RouterInputs, api } from "~/utils/api";
+import { api, type RouterInputs } from "~/utils/api";
 
 export default function AdminPage() {
 	const apiUtils = api.useUtils();

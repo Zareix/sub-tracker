@@ -1,7 +1,5 @@
-import { useRouter } from "next/router";
 import { CredentialsForm } from "~/components/profile/credentials";
 import { UserInfoForm } from "~/components/profile/user-info";
-import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { authClient } from "~/lib/auth-client";
 

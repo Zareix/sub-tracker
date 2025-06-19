@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
-import { type RouterOutputs, api } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 
 export const DeleteDialog = ({
 	subscription,

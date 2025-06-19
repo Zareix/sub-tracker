@@ -2,10 +2,7 @@ import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
-import {
-	WrapperDialogVaul,
-	WrapperDialogVaulDescription,
-} from "~/components/ui/vaul-dialog";
+import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import type { Category } from "~/server/db/schema";
 import { api } from "~/utils/api";
 

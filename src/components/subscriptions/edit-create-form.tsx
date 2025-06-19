@@ -37,7 +37,7 @@ import { Separator } from "~/components/ui/separator";
 import { authClient } from "~/lib/auth-client";
 import { CURRENCIES, SCHEDULES } from "~/lib/constant";
 import { cn } from "~/lib/utils";
-import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
+import { api, type RouterInputs, type RouterOutputs } from "~/utils/api";
 
 const createTempSub = (subscription: RouterInputs["subscription"]["create"]) =>
 	({

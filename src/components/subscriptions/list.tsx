@@ -2,8 +2,8 @@ import {
 	Calendar1Icon,
 	EditIcon,
 	EllipsisVertical,
+	ExternalLinkIcon,
 	InfoIcon,
-	LinkIcon,
 	RefreshCcwIcon,
 	TextIcon,
 	TrashIcon,
@@ -11,9 +11,7 @@ import {
 	WalletCardsIcon,
 } from "lucide-react";
 import Image from "next/image";
-import { parseAsStringEnum, useQueryState } from "nuqs";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { DeleteDialog } from "~/components/subscriptions/delete";
 import { EditSubscriptionDialog } from "~/components/subscriptions/edit";
@@ -28,8 +26,8 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Separator } from "~/components/ui/separator";
 import { BASE_CURRENCY } from "~/lib/constant";
-import { SORTS } from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
+import { useSort } from "~/lib/hooks/use-sort";
 import {
 	currencyToSymbol,
 	formatNextPaymentDate,
@@ -44,11 +42,7 @@ type Props = {
 
 export const SubscriptionList = ({ subscriptions }: Props) => {
 	const [filters] = useFilters();
-
-	const [sort] = useQueryState(
-		"sort",
-		parseAsStringEnum(SORTS.map((s) => s.key)),
-	);
+	const [sort] = useSort();
 
 	const subs = getFilteredSubscriptions(
 		getSortedSubscriptions(subscriptions, sort),
@@ -71,7 +65,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 						key={subscription.id}
 						subscription={subscription}
 					/>
-					<Separator className="ml-auto w-[calc(100%-1rem-40px)] md:w-full" />
+					<Separator className="w-full" />
 				</React.Fragment>
 			))}
 		</Accordion>
@@ -83,6 +77,7 @@ const SubscriptionListItem = ({
 }: {
 	subscription: RouterOutputs["subscription"]["getAll"][number];
 }) => {
+	const [filters, setFilters] = useFilters();
 	const [isOpen, setIsOpen] = useState({
 		delete: false,
 		edit: false,
@@ -174,12 +169,27 @@ const SubscriptionListItem = ({
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>
-				<div className="flex flex-wrap gap-x-4 gap-y-2 pt-1 pl-12 text-base text-foreground/80 md:gap-x-6 md:pl-0">
+				<div className="flex flex-wrap gap-x-4 gap-y-2 pt-1 text-base text-foreground/80 md:gap-x-6">
 					<div className="flex items-center gap-1">
 						<UserIcon size={18} className="text-primary" />
 						<span>{subscription.users.map((u) => u.name).join(", ")}</span>
 					</div>
-					<div className="flex items-center gap-1">
+					<button
+						type="button"
+						className="flex items-center gap-1"
+						onClick={() =>
+							setFilters({
+								...filters,
+								paymentMethods:
+									filters.paymentMethods.length > 1
+										? filters.paymentMethods
+										: filters.paymentMethods[0] ===
+												subscription.paymentMethod.id
+											? []
+											: [subscription.paymentMethod.id],
+							})
+						}
+					>
 						{subscription.paymentMethod.image ? (
 							<Image
 								src={subscription.paymentMethod.image}
@@ -192,19 +202,45 @@ const SubscriptionListItem = ({
 							<WalletCardsIcon size={18} className="text-primary" />
 						)}
 						<span>{subscription.paymentMethod.name}</span>
-					</div>
-					<div className="flex items-center gap-1">
+					</button>
+					<button
+						type="button"
+						className="flex items-center gap-1"
+						onClick={() =>
+							setFilters({
+								...filters,
+								categories:
+									filters.categories.length > 1
+										? filters.categories
+										: filters.categories[0] === subscription.category.id
+											? []
+											: [subscription.category.id],
+							})
+						}
+					>
 						<CategoryIcon
 							icon={subscription.category.icon}
 							size={16}
 							className="text-primary"
 						/>
 						{subscription.category.name}
-					</div>
-					<div className="flex items-center gap-1">
+					</button>
+					<button
+						type="button"
+						className="flex items-center gap-1"
+						onClick={() =>
+							setFilters({
+								...filters,
+								schedule:
+									filters.schedule === subscription.schedule
+										? null
+										: subscription.schedule,
+							})
+						}
+					>
 						<RefreshCcwIcon size={16} className="text-primary" />
 						{subscription.schedule}
-					</div>
+					</button>
 					{subscription.currency !== BASE_CURRENCY && (
 						<div className="flex items-center gap-0.5">
 							<span className="text-primary">
@@ -226,7 +262,7 @@ const SubscriptionListItem = ({
 							rel="noopener noreferrer"
 						>
 							<div className="flex items-center gap-1">
-								<LinkIcon size={16} className="text-primary" />
+								<ExternalLinkIcon size={16} className="text-primary" />
 								{new URL(subscription.url).hostname}
 							</div>
 						</a>
