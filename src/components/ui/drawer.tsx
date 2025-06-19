@@ -40,13 +40,13 @@ const DrawerContent = ({
 		<DrawerOverlay />
 		<DrawerPrimitive.Content
 			className={cn(
-				"fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto max-h-[82vh] flex-col rounded-t-md border bg-background",
+				"fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto max-h-[96dvh] flex-col rounded-t-md border bg-background",
 				className,
 			)}
 			{...props}
 		>
 			<div className="mx-auto mt-3 h-1.5 w-[60px] rounded-full bg-muted-foreground/20" />
-			<div className="grid gap-4 p-4">{children}</div>
+			<div className="grid gap-4 overflow-y-auto p-4">{children}</div>
 		</DrawerPrimitive.Content>
 	</DrawerPortal>
 );

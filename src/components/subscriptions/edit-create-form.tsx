@@ -260,43 +260,62 @@ export const EditCreateForm = ({
 								setFileUrl={(v) => form.setValue("image", v)}
 							/>
 						</div>
-						<FormField
-							control={form.control}
-							name="category"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Category</FormLabel>
-									<FormControl>
-										<Select
-											onValueChange={field.onChange}
-											defaultValue={field.value?.toString()}
-										>
-											<FormControl>
-												<SelectTrigger className="min-w-[170px]">
-													<SelectValue placeholder="Select category" />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{categoriesQuery.data?.map((p) => (
-													<SelectItem value={p.id.toString()} key={p.id}>
-														<div className="flex items-center gap-1">
-															{p.icon && (
-																<CategoryIcon
-																	icon={p.icon}
-																	className="max-h-[20px] max-w-[20px] object-contain"
-																/>
-															)}
-															{p.name}
-														</div>
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						<div className="flex">
+							<FormField
+								control={form.control}
+								name="category"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Category</FormLabel>
+										<FormControl>
+											<Select
+												onValueChange={field.onChange}
+												defaultValue={field.value?.toString()}
+											>
+												<FormControl>
+													<SelectTrigger className="min-w-[170px]">
+														<SelectValue placeholder="Select category" />
+													</SelectTrigger>
+												</FormControl>
+												<SelectContent>
+													{categoriesQuery.data?.map((p) => (
+														<SelectItem value={p.id.toString()} key={p.id}>
+															<div className="flex items-center gap-1">
+																{p.icon && (
+																	<CategoryIcon
+																		icon={p.icon}
+																		className="max-h-[20px] max-w-[20px] object-contain"
+																	/>
+																)}
+																{p.name}
+															</div>
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<Separator
+								orientation="vertical"
+								className="mx-2 my-auto flex h-12"
+							/>
+							<FormField
+								control={form.control}
+								name="url"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>URL</FormLabel>
+										<FormControl>
+											<Input placeholder="https://www.netflix.com" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
 						<FormField
 							control={form.control}
 							name="description"
@@ -308,20 +327,6 @@ export const EditCreateForm = ({
 											placeholder="Something about the subscription"
 											{...field}
 										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="url"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>URL</FormLabel>
-									<FormControl>
-										<Input placeholder="https://www.netflix.com" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
