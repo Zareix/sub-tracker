@@ -1,10 +1,10 @@
 import Image from "next/image";
-import { CreateCategoryDialog } from "~/components/admin/categories/create";
-import { DeleteCategoryDialog } from "~/components/admin/categories/delete";
-import { EditCategoryDialog } from "~/components/admin/categories/edit";
-import { CreatePaymentMethodDialog } from "~/components/admin/payment-methods/create";
-import { DeletePaymentMethodDialog } from "~/components/admin/payment-methods/delete";
-import { EditPaymentMethodDialog } from "~/components/admin/payment-methods/edit";
+import { CreateCategoryDialog } from "~/components/settings/categories/create";
+import { DeleteCategoryDialog } from "~/components/settings/categories/delete";
+import { EditCategoryDialog } from "~/components/settings/categories/edit";
+import { CreatePaymentMethodDialog } from "~/components/settings/payment-methods/create";
+import { DeletePaymentMethodDialog } from "~/components/settings/payment-methods/delete";
+import { EditPaymentMethodDialog } from "~/components/settings/payment-methods/edit";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { Skeleton } from "~/components/ui/skeleton";
 import {

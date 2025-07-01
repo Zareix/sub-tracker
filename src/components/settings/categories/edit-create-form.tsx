@@ -175,6 +175,7 @@ export const EditCreateForm = ({
 																form.setValue("icon", name);
 															}}
 														>
+															{name && <CategoryIcon icon={name} />}
 															{name}
 															<CheckIcon
 																className={cn(

@@ -1,6 +1,6 @@
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
-import { EditCreateForm } from "~/components/admin/payment-methods/edit-create-form";
+import { EditCreateForm } from "~/components/settings/payment-methods/edit-create-form";
 import { Button } from "~/components/ui/button";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 

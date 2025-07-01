@@ -138,7 +138,7 @@ export const CredentialsForm = ({ userId }: Props) => {
 						{passKeysQuery.data.map((passkey) => (
 							<li key={passkey.id} className="flex items-center gap-3 py-2">
 								<Button
-									variant="outline-t"
+									variant="ghost"
 									size="icon"
 									onClick={() => removePasskeyMutation.mutate(passkey.id)}
 									disabled={removePasskeyMutation.isPending}
@@ -168,10 +168,7 @@ export const CredentialsForm = ({ userId }: Props) => {
 							render={({ field }) => (
 								<FormItem>
 									<FormControl className="w-full">
-										<Input
-											placeholder="Enter a name for your passkey"
-											{...field}
-										/>
+										<Input placeholder="Name for your new passkey" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -183,7 +180,7 @@ export const CredentialsForm = ({ userId }: Props) => {
 					</form>
 				</Form>
 			</div>
-			<Separator className="my-4" />
+			<Separator className="my-8" />
 			<h3 className="font-semibold text-lg">Change Password</h3>
 			<Form {...passwordForm}>
 				<form

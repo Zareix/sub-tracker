@@ -1,15 +1,15 @@
 import { EditIcon } from "lucide-react";
 import { useState } from "react";
-import { EditCreateForm } from "~/components/admin/categories/edit-create-form";
+import { EditCreateForm } from "~/components/settings/payment-methods/edit-create-form";
 import { Button } from "~/components/ui/button";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import type { RouterOutputs } from "~/utils/api";
 
 type Props = {
-	category: RouterOutputs["category"]["getAll"][number];
+	paymentMethod: RouterOutputs["paymentMethod"]["getAll"][number];
 };
 
-export const EditCategoryDialog = ({ category }: Props) => {
+export const EditPaymentMethodDialog = ({ paymentMethod }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
 	return (
 		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -18,8 +18,11 @@ export const EditCategoryDialog = ({ category }: Props) => {
 					<EditIcon size={20} />
 				</Button>
 			</WrapperDialogVaul.Trigger>
-			<WrapperDialogVaul.Title>Edit Category</WrapperDialogVaul.Title>
-			<EditCreateForm onFinished={() => setIsOpen(false)} category={category} />
+			<WrapperDialogVaul.Title>Edit Payment method</WrapperDialogVaul.Title>
+			<EditCreateForm
+				onFinished={() => setIsOpen(false)}
+				paymentMethod={paymentMethod}
+			/>
 		</WrapperDialogVaul>
 	);
 };
