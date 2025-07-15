@@ -1,4 +1,4 @@
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Select } from "@radix-ui/react-select";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -106,8 +106,8 @@ export const EditCreateForm = ({
 		},
 	});
 
-	const form = useForm<z.infer<typeof userCreateSchema>>({
-		resolver: standardSchemaResolver(userCreateSchema),
+	const form = useForm({
+		resolver: zodResolver(userCreateSchema),
 		defaultValues: {
 			name: user?.name ?? "",
 			email: user?.email ?? "",

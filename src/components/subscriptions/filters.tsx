@@ -36,7 +36,7 @@ export const FiltersButton = ({
 		paymentMethodsQuery.isError ||
 		categoriesQuery.isError
 	) {
-		return <></>;
+		return null;
 	}
 
 	const paymentMethods = paymentMethodsQuery.data ?? [];
@@ -171,6 +171,7 @@ export const FiltersButton = ({
 										paymentMethods: value.map((v) => Number.parseInt(v)),
 									})
 								}
+								className="bg-background"
 								defaultValue={filters.paymentMethods.map((pm) => pm.toString())}
 								placeholder="Select..."
 							/>
@@ -186,6 +187,7 @@ export const FiltersButton = ({
 										value: pm.id.toString(),
 									})) ?? []
 								}
+								className="bg-background"
 								search={false}
 								maxCount={0}
 								onValueChange={(value) =>

@@ -93,25 +93,23 @@ export const WrapperDialogVaul = ({
 
 	if (isMobile) {
 		return (
-			<>
-				<Drawer open={isOpen} onOpenChange={setIsOpen} repositionInputs={false}>
-					{trigger && (
-						<DrawerTrigger asChild {...trigger.props}>
-							{trigger}
-						</DrawerTrigger>
+			<Drawer open={isOpen} onOpenChange={setIsOpen} repositionInputs={false}>
+				{trigger && (
+					<DrawerTrigger asChild {...trigger.props}>
+						{trigger}
+					</DrawerTrigger>
+				)}
+				<DrawerContent>
+					{title && <DrawerTitle {...title.props}>{title}</DrawerTitle>}
+					{content}
+					{description && (
+						<DrawerDescription {...description.props}>
+							{description}
+						</DrawerDescription>
 					)}
-					<DrawerContent>
-						{title && <DrawerTitle {...title.props}>{title}</DrawerTitle>}
-						{content}
-						{description && (
-							<DrawerDescription {...description.props}>
-								{description}
-							</DrawerDescription>
-						)}
-						{footer && <DrawerFooter {...footer.props}>{footer}</DrawerFooter>}
-					</DrawerContent>
-				</Drawer>
-			</>
+					{footer && <DrawerFooter {...footer.props}>{footer}</DrawerFooter>}
+				</DrawerContent>
+			</Drawer>
 		);
 	}
 	return (

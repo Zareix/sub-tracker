@@ -1,4 +1,4 @@
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { defaultFilter } from "cmdk";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { iconNames } from "lucide-react/dynamic";
@@ -94,8 +94,8 @@ export const EditCreateForm = ({
 		[search],
 	);
 
-	const form = useForm<z.infer<typeof categoryCreateSchema>>({
-		resolver: standardSchemaResolver(categoryCreateSchema),
+	const form = useForm({
+		resolver: zodResolver(categoryCreateSchema),
 		defaultValues: {
 			name: category?.name ?? "",
 			icon: category?.icon ?? "",

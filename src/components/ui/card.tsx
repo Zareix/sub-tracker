@@ -43,9 +43,9 @@ const CardFooter = ({ className, ...props }: React.ComponentProps<"div">) => (
 
 export {
 	Card,
-	CardHeader,
-	CardFooter,
-	CardTitle,
-	CardDescription,
 	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
 };

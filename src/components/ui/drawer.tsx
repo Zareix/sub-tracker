@@ -26,7 +26,10 @@ const DrawerOverlay = ({
 	...props
 }: React.ComponentProps<typeof DrawerPrimitive.Overlay>) => (
 	<DrawerPrimitive.Overlay
-		className={cn("fixed inset-0 z-50 bg-black/80", className)}
+		className={cn(
+			"fixed inset-0 z-50 bg-black/80 backdrop-blur-xs backdrop-saturate-150",
+			className,
+		)}
 		{...props}
 	/>
 );
@@ -93,13 +96,13 @@ const DrawerDescription = ({
 
 export {
 	Drawer,
-	DrawerPortal,
-	DrawerOverlay,
-	DrawerTrigger,
 	DrawerClose,
 	DrawerContent,
-	DrawerHeader,
-	DrawerFooter,
-	DrawerTitle,
 	DrawerDescription,
+	DrawerFooter,
+	DrawerHeader,
+	DrawerOverlay,
+	DrawerPortal,
+	DrawerTitle,
+	DrawerTrigger,
 };

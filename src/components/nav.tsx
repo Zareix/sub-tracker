@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -19,7 +20,13 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuPortal,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import {
@@ -33,6 +40,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "~/components/ui/sidebar";
+import { ThemeIcon } from "~/components/ui/theme-provider";
 import { authClient } from "~/lib/auth-client";
 import { cn } from "~/lib/utils";
 
@@ -74,6 +82,7 @@ export const NAV_ITEMS = [
 export function AppSidebar() {
 	const router = useRouter();
 	const session = authClient.useSession();
+	const { setTheme, theme } = useTheme();
 
 	return (
 		<Sidebar side="left" collapsible="icon">
@@ -197,6 +206,33 @@ export function AppSidebar() {
 										</Link>
 									</DropdownMenuLabel>
 									<DropdownMenuSeparator />
+									<DropdownMenuSub>
+										<DropdownMenuSubTrigger>
+											<ThemeIcon theme={theme} />
+											Theme
+										</DropdownMenuSubTrigger>
+										<DropdownMenuPortal>
+											<DropdownMenuSubContent>
+												<DropdownMenuRadioGroup
+													value={theme}
+													onValueChange={(value) => setTheme(value)}
+												>
+													<DropdownMenuRadioItem value="light">
+														<ThemeIcon theme="light" />
+														Light
+													</DropdownMenuRadioItem>
+													<DropdownMenuRadioItem value="dark">
+														<ThemeIcon theme="dark" />
+														Dark
+													</DropdownMenuRadioItem>
+													<DropdownMenuRadioItem value="system">
+														<ThemeIcon theme="system" />
+														System
+													</DropdownMenuRadioItem>
+												</DropdownMenuRadioGroup>
+											</DropdownMenuSubContent>
+										</DropdownMenuPortal>
+									</DropdownMenuSub>
 									<DropdownMenuItem onClick={() => authClient.signOut()}>
 										<LogOutIcon />
 										Log out

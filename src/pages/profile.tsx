@@ -1,3 +1,4 @@
+import { AppearanceSettings } from "~/components/profile/appearance";
 import { CredentialsForm } from "~/components/profile/credentials";
 import { UserInfoForm } from "~/components/profile/user-info";
 import { Separator } from "~/components/ui/separator";
@@ -8,7 +9,7 @@ export default function ProfilePage() {
 	const user = session.data?.user;
 
 	if (!user) {
-		return <></>;
+		return null;
 	}
 
 	return (
@@ -22,6 +23,7 @@ export default function ProfilePage() {
 			<UserInfoForm user={user} />
 			<Separator className="my-4 lg:hidden" />
 			<CredentialsForm userId={user.id} />
+			<AppearanceSettings />
 		</div>
 	);
 }

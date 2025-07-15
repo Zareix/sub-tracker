@@ -7,7 +7,7 @@ import { authClient } from "~/lib/auth-client";
 export const Layout = ({ children }: { children: React.ReactNode }) => {
 	const session = authClient.useSession();
 
-	if (session.isPending) return <></>;
+	if (session.isPending) return null;
 
 	if (!session.data) {
 		return (

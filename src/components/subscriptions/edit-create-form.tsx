@@ -1,4 +1,4 @@
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import Image from "next/image";
@@ -67,29 +67,23 @@ const createTempSub = (subscription: RouterInputs["subscription"]["create"]) =>
 const subscriptionCreateSchema = z.object({
 	name: z.string().check(z.minLength(1, { error: "Name is required" })),
 	description: z.string(),
-	category: z
-		.transform((val) => Number(val))
-		.check(
-			z.positive({
-				error: "Category is required",
-			}),
-		),
+	category: z.coerce.number<number>().check(
+		z.positive({
+			error: "Category is required",
+		}),
+	),
 	image: z.optional(z.string()),
-	price: z
-		.transform((val) => Number(val))
-		.check(
-			z.positive({
-				error: "Price must be greater than 0",
-			}),
-		),
+	price: z.coerce.number<number>().check(
+		z.positive({
+			error: "Price must be greater than 0",
+		}),
+	),
 	currency: z.enum(CURRENCIES),
-	paymentMethod: z
-		.transform((val) => Number(val))
-		.check(
-			z.positive({
-				error: "Category is required",
-			}),
-		),
+	paymentMethod: z.coerce.number<number>().check(
+		z.positive({
+			error: "Category is required",
+		}),
+	),
 	firstPaymentDate: z.date(),
 	schedule: z.enum(SCHEDULES),
 	payedBy: z.array(z.string()).check(
@@ -191,8 +185,8 @@ export const EditCreateForm = ({
 	const usersQuery = api.user.getAll.useQuery();
 	const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
 	const categoriesQuery = api.category.getAll.useQuery();
-	const form = useForm<z.infer<typeof subscriptionCreateSchema>>({
-		resolver: standardSchemaResolver(subscriptionCreateSchema),
+	const form = useForm({
+		resolver: zodResolver(subscriptionCreateSchema),
 		defaultValues: {
 			name: subscription?.name ?? "",
 			description: subscription?.description ?? "",

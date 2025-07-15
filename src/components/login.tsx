@@ -1,4 +1,4 @@
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { CalendarSyncIcon } from "lucide-react";
 import Link from "next/link";
@@ -59,8 +59,8 @@ export const LoginForm = () => {
 			toast.error("Could not login, please try again.");
 		},
 	});
-	const form = useForm<z.infer<typeof loginSchema>>({
-		resolver: standardSchemaResolver(loginSchema),
+	const form = useForm({
+		resolver: zodResolver(loginSchema),
 		defaultValues: {
 			email: "",
 			password: "",

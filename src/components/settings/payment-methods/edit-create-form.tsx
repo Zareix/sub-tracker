@@ -1,4 +1,4 @@
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
@@ -57,8 +57,8 @@ export const EditCreateForm = ({
 		},
 	});
 
-	const form = useForm<z.infer<typeof paymentMethodCreateSchema>>({
-		resolver: standardSchemaResolver(paymentMethodCreateSchema),
+	const form = useForm({
+		resolver: zodResolver(paymentMethodCreateSchema),
 		defaultValues: {
 			name: paymentMethod?.name ?? "",
 			image: paymentMethod?.image ?? undefined,
