@@ -48,18 +48,21 @@ export const getSortedSubscriptions = <
 	subscriptions: T,
 	sort: Sort | null,
 ): NoInfer<T> => {
+	const sortedSubscriptions = subscriptions.sort((a, b) =>
+		a.name.localeCompare(b.name),
+	);
 	if (sort === "PRICE_DESC") {
-		return subscriptions.sort((a, b) => b.price - a.price);
+		return sortedSubscriptions.sort((a, b) => b.price - a.price);
 	}
 	if (sort === "PRICE_ASC") {
-		return subscriptions.sort((a, b) => a.price - b.price);
+		return sortedSubscriptions.sort((a, b) => a.price - b.price);
 	}
 	if (sort === "NEXT_PAYMENT_DATE") {
-		return subscriptions.sort((a, b) =>
+		return sortedSubscriptions.sort((a, b) =>
 			compareAsc(a.nextPaymentDate, b.nextPaymentDate),
 		);
 	}
-	return subscriptions.sort((a, b) => a.name.localeCompare(b.name));
+	return sortedSubscriptions;
 };
 
 export const getFilteredSubscriptions = <
