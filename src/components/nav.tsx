@@ -9,9 +9,9 @@ import {
 	UserCircle2Icon,
 	WrenchIcon,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -217,15 +217,24 @@ export function AppSidebar() {
 													value={theme}
 													onValueChange={(value) => setTheme(value)}
 												>
-													<DropdownMenuRadioItem value="light">
+													<DropdownMenuRadioItem
+														value="light"
+														className="flex items-center gap-2"
+													>
 														<ThemeIcon theme="light" />
 														Light
 													</DropdownMenuRadioItem>
-													<DropdownMenuRadioItem value="dark">
+													<DropdownMenuRadioItem
+														value="dark"
+														className="flex items-center gap-2"
+													>
 														<ThemeIcon theme="dark" />
 														Dark
 													</DropdownMenuRadioItem>
-													<DropdownMenuRadioItem value="system">
+													<DropdownMenuRadioItem
+														value="system"
+														className="flex items-center gap-2"
+													>
 														<ThemeIcon theme="system" />
 														System
 													</DropdownMenuRadioItem>
