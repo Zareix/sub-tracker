@@ -249,12 +249,6 @@ const SubscriptionListItem = ({
 							{subscription.originalPrice}
 						</div>
 					)}
-					{subscription.description.length > 0 && (
-						<div className="flex items-center gap-1">
-							<TextIcon size={20} className="text-primary" />
-							<span>{subscription.description}</span>
-						</div>
-					)}
 					{subscription.url && (
 						<a
 							href={subscription.url}
@@ -266,6 +260,14 @@ const SubscriptionListItem = ({
 								{new URL(subscription.url).hostname}
 							</div>
 						</a>
+					)}
+					{subscription.description.length > 0 && (
+						<div className="flex items-center gap-1">
+							<TextIcon size={20} className="text-primary" />
+							<span className="max-w-[80vw] overflow-x-clip overflow-ellipsis whitespace-nowrap md:whitespace-pre-wrap">
+								{subscription.description}
+							</span>
+						</div>
 					)}
 				</div>
 				<DeleteDialog
