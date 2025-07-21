@@ -9,9 +9,9 @@ import {
 	UserCircle2Icon,
 	WrenchIcon,
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
