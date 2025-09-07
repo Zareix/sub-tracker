@@ -154,6 +154,9 @@ export const users = sqliteTable(
 		updatedAt: integer("updated_at", { mode: "timestamp" })
 			.notNull()
 			.default(sql`(unixepoch())`),
+		banned: integer("banned", { mode: "boolean" }).default(false),
+		banReason: text("ban_reason"),
+		banExpires: integer("ban_expires", { mode: "timestamp" }),
 	},
 	(table) => [index("user_name_idx").on(table.name)],
 );

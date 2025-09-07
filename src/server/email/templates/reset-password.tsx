@@ -4,8 +4,8 @@ import {
 	Container,
 	Head,
 	Html,
-	Preview,
 	pixelBasedPreset,
+	Preview,
 	Section,
 	Tailwind,
 	Text,
@@ -60,7 +60,7 @@ const ResetPasswordEmail = ({ url }: ResetPasswordEmailProps) => {
 	);
 };
 ResetPasswordEmail.PreviewProps = {
-	resetPasswordLink: "http://localhost:3000/?token=abcd1234",
+	url: "http://localhost:3000/?token=abcd1234",
 } satisfies ResetPasswordEmailProps;
 
 export default ResetPasswordEmail;

@@ -50,3 +50,5 @@ temp
 db.sqlite-shm
 
 db.sqlite-wal
+
+auth-schema.ts
