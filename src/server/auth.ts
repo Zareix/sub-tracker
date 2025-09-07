@@ -12,7 +12,7 @@ import {
 	users,
 	verification,
 } from "~/server/db/schema";
-import { sendEmail } from "~/server/email";
+import { sendResetPasswordEmail } from "~/server/email";
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -28,10 +28,9 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true,
 		sendResetPassword: async ({ user, url }) => {
-			await sendEmail({
+			await sendResetPasswordEmail({
 				to: user.email,
-				subject: "Subtracker - Reset your password",
-				text: `Click the link to reset your password: ${url}`,
+				url,
 			});
 		},
 		resetPasswordTokenExpiresIn: 6 * 60 * 60, // 6 hour
