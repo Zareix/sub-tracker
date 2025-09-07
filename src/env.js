@@ -7,6 +7,10 @@ export const env = createEnv({
 	 * isn't built with invalid env vars.
 	 */
 	server: {
+		NODE_ENV: z._default(
+			z.enum(["development", "test", "production"]),
+			"development",
+		),
 		BETTER_AUTH_SECRET:
 			process.env.NODE_ENV === "production"
 				? z.string()
@@ -14,12 +18,9 @@ export const env = createEnv({
 		BETTER_AUTH_URL: z.url(),
 		ADMIN_EMAIL: z.string(),
 		DATABASE_PATH: z.string(),
-		NODE_ENV: z._default(
-			z.enum(["development", "test", "production"]),
-			"development",
-		),
 		UPLOADS_FOLDER: z.string(),
 		FIXER_API_KEY: z.optional(z.string()),
+
 		S3_ENABLED: z._default(
 			z.boolean(),
 			!!process.env.S3_BUCKET &&
@@ -28,7 +29,6 @@ export const env = createEnv({
 				!!process.env.S3_REGION &&
 				!!process.env.S3_ENDPOINT,
 		),
-
 		S3_BUCKET: z.optional(z.string()),
 		S3_ACCESS_KEY_ID: z.optional(z.string()),
 		S3_SECRET_ACCESS_KEY: z.optional(z.string()),
@@ -37,6 +37,9 @@ export const env = createEnv({
 
 		GOOGLE_SEARCH_ID: z.optional(z.string()),
 		GOOGLE_SEARCH_KEY: z.optional(z.string()),
+
+		EMAIL_SERVER: z.optional(z.string()),
+		EMAIL_FROM: z.optional(z.email()),
 	},
 
 	/**
@@ -73,6 +76,8 @@ export const env = createEnv({
 		S3_ENDPOINT: process.env.S3_ENDPOINT,
 		GOOGLE_SEARCH_ID: process.env.GOOGLE_SEARCH_ID,
 		GOOGLE_SEARCH_KEY: process.env.GOOGLE_SEARCH_KEY,
+		EMAIL_SERVER: process.env.EMAIL_SERVER,
+		EMAIL_FROM: process.env.EMAIL_FROM,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

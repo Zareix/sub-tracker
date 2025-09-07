@@ -20,10 +20,12 @@ export default function ProfilePage() {
 				</h1>
 			</header>
 
-			<UserInfoForm user={user} />
+			<div className="grid gap-4">
+				<UserInfoForm user={user} />
+				<AppearanceSettings />
+			</div>
 			<Separator className="my-4 lg:hidden" />
 			<CredentialsForm userId={user.id} />
-			<AppearanceSettings />
 		</div>
 	);
 }

@@ -73,15 +73,41 @@ export const LoginForm = () => {
 		}
 		PublicKeyCredential.isConditionalMediationAvailable()
 			.then((available) => {
-				if (available) {
-					void authClient.signIn.passkey({ autoFill: true });
+				if (!available) return;
+				return authClient.signIn.passkey({ autoFill: true });
+			})
+			.then((res) => {
+				if (!res?.error) {
+					router.reload();
 				}
 			})
 			.catch(console.error);
-	}, []);
+	}, [router]);
 
 	function onSubmit(values: z.infer<typeof loginSchema>) {
 		signInMutation.mutate(values);
+	}
+
+	function resetPassword() {
+		const email = form.getValues("email");
+		if (!email) {
+			toast.error("Please enter your email first.");
+			return;
+		}
+		authClient
+			.requestPasswordReset({
+				email: email.trim(),
+				redirectTo: "/",
+			})
+			.then((res) => {
+				if (res.error) {
+					throw new Error(res.error.message);
+				}
+				toast.success("If that email exists, a reset link has been sent.");
+			})
+			.catch(() => {
+				toast.error("Could not request password reset, please try again.");
+			});
 	}
 
 	return (
@@ -127,7 +153,17 @@ export const LoginForm = () => {
 								name="password"
 								render={({ field }) => (
 									<FormItem className="grid gap-2">
-										<FormLabel>Password</FormLabel>
+										<div className="flex items-end">
+											<FormLabel>Password</FormLabel>
+											<Button
+												variant="link"
+												className="m-0 ml-auto h-4 p-0"
+												onClick={resetPassword}
+												type="button"
+											>
+												Forgot password?
+											</Button>
+										</div>
 										<FormControl>
 											<Input
 												type="password"
