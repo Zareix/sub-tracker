@@ -19,7 +19,7 @@ export type Sort = (typeof SORTS)[number]["key"];
 
 export const Currencies = ["USD", "EUR", "GBP"] as const;
 export type Currency = (typeof Currencies)[number];
-export const DEFAULT_BASE_CURRENCY: Currency = "EUR";
+export const DEFAULT_BASE_CURRENCY = "EUR" as const;
 export const CURRENCY_SYMBOLS = {
 	USD: "$",
 	EUR: "€",
