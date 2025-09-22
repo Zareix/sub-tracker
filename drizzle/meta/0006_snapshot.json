@@ -1,8 +1,8 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "44c3e2f6-2fc7-444f-b9f3-179dd6d77f2d",
-	"prevId": "463d7eb2-2476-40b8-a1ea-f3dd7dcb0ebb",
+	"id": "2c594640-b5f1-4f15-8d78-0346272df46c",
+	"prevId": "44c3e2f6-2fc7-444f-b9f3-179dd6d77f2d",
 	"tables": {
 		"account": {
 			"name": "account",
@@ -595,6 +595,14 @@
 					"notNull": true,
 					"autoincrement": false,
 					"default": "(unixepoch())"
+				},
+				"base_currency": {
+					"name": "base_currency",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false,
+					"default": "'EUR'"
 				},
 				"banned": {
 					"name": "banned",

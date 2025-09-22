@@ -38,6 +38,10 @@ const sum = (acc: number, price: number, usersLength?: number) => {
 export default function Stats() {
 	const [filters] = useFilters();
 	const subscriptionsQuery = api.subscription.getAll.useQuery();
+	const userProfileQuery = api.user.getProfile.useQuery();
+
+	const userBaseCurrency = userProfileQuery.data?.baseCurrency ?? BASE_CURRENCY;
+	const isLoading = subscriptionsQuery.isLoading || userProfileQuery.isLoading;
 
 	const subscriptions = getFilteredSubscriptions(
 		subscriptionsQuery.data ?? [],
@@ -161,44 +165,46 @@ export default function Stats() {
 						subscriptions={subscriptions.filter(
 							(subscription) => subscription.schedule === "Monthly",
 						)}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
+						userBaseCurrency={userBaseCurrency}
 					/>
 					<MonthlyStatsCard
 						title="Yearly sub"
 						subscriptions={subscriptions.filter(
 							(subscription) => subscription.schedule === "Yearly",
 						)}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
+						userBaseCurrency={userBaseCurrency}
 					/>
 					<StatsCard
 						title="Smoothed over a month"
 						description="Monthly + (yearly / 12)"
 						value={totalPerMonth}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
 					/>
 					<StatsCard
 						title="Smoothed over a year"
 						description="(Monthly * 12) + yearly"
 						value={totalPerYear}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
 					/>
 					<StatsCard
 						title="This month"
 						description="Subscriptions that were or will be paid this month"
 						value={totalThisMonth}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
 					/>
 					<StatsCard
 						title="Remaining this month"
 						description="Subscriptions that will be paid from today to the end of this month"
 						value={remainingThisMonth}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
 					/>
 					<StatsCard
 						title="Expected next month"
 						description="Subscriptions that will be paid next month"
 						value={expectedNextMonth}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
 					/>
 				</div>
 			</div>
@@ -248,10 +254,12 @@ const MonthlyStatsCard = ({
 	title,
 	subscriptions,
 	isLoading,
+	userBaseCurrency,
 }: {
 	title: string;
 	subscriptions: RouterOutputs["subscription"]["getAll"];
 	isLoading: boolean;
+	userBaseCurrency: string;
 }) => {
 	const [filters] = useFilters();
 	const totalMonthlySub = useMemo(
@@ -363,7 +371,10 @@ const MonthlyStatsCard = ({
 									<ChartTooltipContent
 										hideLabel
 										valueFormatter={(value) =>
-											value.toLocaleString() + CURRENCY_SYMBOLS[BASE_CURRENCY]
+											value.toLocaleString() +
+											CURRENCY_SYMBOLS[
+												userBaseCurrency as keyof typeof CURRENCY_SYMBOLS
+											]
 										}
 									/>
 								}
@@ -397,7 +408,7 @@ const MonthlyStatsCard = ({
 														y={(viewBox.cy ?? 0) + 24}
 														className="fill-muted-foreground"
 													>
-														{BASE_CURRENCY}
+														{userBaseCurrency}
 													</tspan>
 												</text>
 											);

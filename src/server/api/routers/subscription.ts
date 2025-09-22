@@ -138,7 +138,7 @@ const calculatePreviousPaymentDate = (
 
 export const subscriptionRouter = createTRPCRouter({
 	getAll: protectedProcedure.query(async ({ ctx }) => {
-		const [rows, exchangeRates] = await Promise.all([
+		const [rows, exchangeRates, currentUser] = await Promise.all([
 			ctx.db
 				.select()
 				.from(subscriptions)
@@ -155,7 +155,15 @@ export const subscriptionRouter = createTRPCRouter({
 				.orderBy(asc(subscriptions.name))
 				.all(),
 			ctx.db.query.exchangeRates.findMany(),
+			ctx.db.query.users.findFirst({
+				where: (tb, { eq }) => eq(tb.id, ctx.session.user.id),
+				columns: {
+					baseCurrency: true,
+				},
+			}),
 		]);
+
+		const userBaseCurrency = currentUser?.baseCurrency ?? BASE_CURRENCY;
 
 		return rows
 			.reduce<
@@ -208,7 +216,7 @@ export const subscriptionRouter = createTRPCRouter({
 							exchangeRates,
 							subscription.price,
 							subscription.currency,
-							BASE_CURRENCY,
+							userBaseCurrency,
 						),
 					),
 					nextPaymentDate,

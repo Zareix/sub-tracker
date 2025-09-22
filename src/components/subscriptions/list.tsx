@@ -35,6 +35,7 @@ import {
 	getSortedSubscriptions,
 } from "~/lib/utils";
 import type { RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 
 type Props = {
 	subscriptions: RouterOutputs["subscription"]["getAll"];
@@ -43,6 +44,9 @@ type Props = {
 export const SubscriptionList = ({ subscriptions }: Props) => {
 	const [filters] = useFilters();
 	const [sort] = useSort();
+	const userProfileQuery = api.user.getProfile.useQuery();
+
+	const userBaseCurrency = userProfileQuery.data?.baseCurrency ?? BASE_CURRENCY;
 
 	const subs = getFilteredSubscriptions(
 		getSortedSubscriptions(subscriptions, sort),
@@ -64,6 +68,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 					<SubscriptionListItem
 						key={subscription.id}
 						subscription={subscription}
+						userBaseCurrency={userBaseCurrency}
 					/>
 					<Separator className="w-full" />
 				</React.Fragment>
@@ -74,8 +79,10 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 
 const SubscriptionListItem = ({
 	subscription,
+	userBaseCurrency,
 }: {
 	subscription: RouterOutputs["subscription"]["getAll"][number];
+	userBaseCurrency: string;
 }) => {
 	const [filters, setFilters] = useFilters();
 	const [isOpen, setIsOpen] = useState({
@@ -241,7 +248,7 @@ const SubscriptionListItem = ({
 						<RefreshCcwIcon size={16} className="text-primary" />
 						{subscription.schedule}
 					</button>
-					{subscription.currency !== BASE_CURRENCY && (
+					{subscription.currency !== userBaseCurrency && (
 						<div className="flex items-center gap-0.5">
 							<span className="text-primary">
 								{currencyToSymbol(subscription.currency)}

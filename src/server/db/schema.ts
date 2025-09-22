@@ -154,6 +154,10 @@ export const users = sqliteTable(
 		updatedAt: integer("updated_at", { mode: "timestamp" })
 			.notNull()
 			.default(sql`(unixepoch())`),
+		baseCurrency: text("base_currency", { length: 255 })
+			.notNull()
+			.$type<Currency>()
+			.default("EUR"),
 		banned: integer("banned", { mode: "boolean" }).default(false),
 		banReason: text("ban_reason"),
 		banExpires: integer("ban_expires", { mode: "timestamp" }),

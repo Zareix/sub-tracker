@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
+import { CURRENCIES } from "~/lib/constant";
 
 import {
 	adminProcedure,
@@ -22,6 +23,53 @@ export const userRouter = createTRPCRouter({
 			},
 			orderBy: [asc(users.name)],
 		});
+	}),
+	updateBaseCurrency: protectedProcedure
+		.input(
+			z.object({
+				baseCurrency: z.enum(CURRENCIES),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const usersReturned = await ctx.db
+				.update(users)
+				.set({
+					baseCurrency: input.baseCurrency,
+				})
+				.where(eq(users.id, ctx.session.user.id))
+				.returning({
+					id: users.id,
+				});
+			const user = usersReturned[0];
+			if (!user) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Error updating base currency",
+				});
+			}
+			return {
+				id: user.id,
+			};
+		}),
+	getProfile: protectedProcedure.query(async ({ ctx }) => {
+		const user = await ctx.db.query.users.findFirst({
+			where: (tb, { eq }) => eq(tb.id, ctx.session.user.id),
+			columns: {
+				id: true,
+				name: true,
+				email: true,
+				image: true,
+				role: true,
+				baseCurrency: true,
+			},
+		});
+		if (!user) {
+			throw new TRPCError({
+				code: "NOT_FOUND",
+				message: "User not found",
+			});
+		}
+		return user;
 	}),
 	edit: adminProcedure
 		.input(
