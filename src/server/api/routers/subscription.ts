@@ -13,8 +13,8 @@ import { rounded } from "~/lib/utils";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db, runTransaction } from "~/server/db";
 import {
-	categories,
 	type Category,
+	categories,
 	type ExchangeRate,
 	type PaymentMethod,
 	paymentMethods,

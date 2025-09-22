@@ -107,7 +107,10 @@ const SubscriptionListItem = ({
 							/>
 						)}
 						<h2 className="grow font-semibold text-xl">{subscription.name}</h2>
-						<div className="text-lg">{subscription.price}€</div>
+						<div className="text-lg">
+							{subscription.price}
+							{currencyToSymbol(subscription.currency)}
+						</div>
 						<Button
 							size="icon"
 							variant="ghost"
@@ -142,7 +145,10 @@ const SubscriptionListItem = ({
 							{formatNextPaymentDate(subscription.nextPaymentDate)}
 						</div>
 					</div>
-					<div className="text-lg">{subscription.price}€</div>
+					<div className="text-lg">
+						{subscription.price}
+						{currencyToSymbol(userBaseCurrency)}
+					</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button

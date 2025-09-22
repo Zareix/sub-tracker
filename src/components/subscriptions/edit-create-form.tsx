@@ -193,7 +193,8 @@ export const EditCreateForm = ({
 			category: subscription?.category.id ?? 1,
 			image: subscription?.image ?? undefined,
 			price: subscription?.originalPrice ?? 0,
-			currency: subscription?.currency ?? "EUR",
+			currency:
+				subscription?.currency ?? session.data?.user.baseCurrency ?? "EUR",
 			paymentMethod: subscription?.paymentMethod.id,
 			schedule: subscription?.schedule ?? "Monthly",
 			firstPaymentDate: subscription?.firstPaymentDate,

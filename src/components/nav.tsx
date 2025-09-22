@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query";
 import {
 	CalendarSyncIcon,
 	ChartColumnIcon,
@@ -9,9 +10,10 @@ import {
 	UserCircle2Icon,
 	WrenchIcon,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTheme } from "next-themes";
+import { toast } from "sonner";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -42,7 +44,9 @@ import {
 } from "~/components/ui/sidebar";
 import { ThemeIcon } from "~/components/ui/theme-provider";
 import { authClient } from "~/lib/auth-client";
-import { cn } from "~/lib/utils";
+import { Currencies, type Currency } from "~/lib/constant";
+import { cn, currencyToSymbol } from "~/lib/utils";
+import { api } from "~/utils/api";
 
 export const NAV_ITEMS = [
 	{
@@ -83,6 +87,25 @@ export function AppSidebar() {
 	const router = useRouter();
 	const session = authClient.useSession();
 	const { setTheme, theme } = useTheme();
+	const apiUtils = api.useUtils();
+
+	const updateBaseCurrencyMutation = useMutation({
+		mutationFn: (newCurrency: string) =>
+			authClient.updateUser({ baseCurrency: newCurrency as Currency }),
+		onSuccess: (res) => {
+			if (res.error) {
+				toast.error(res.error.message);
+				return;
+			}
+			toast.success("Currency updated successfully!");
+			apiUtils.subscription.getAll.invalidate();
+		},
+		onError: (error) => {
+			toast.error(
+				error instanceof Error ? error.message : "Failed to update currency",
+			);
+		},
+	});
 
 	return (
 		<Sidebar side="left" collapsible="icon">
@@ -238,6 +261,37 @@ export function AppSidebar() {
 														<ThemeIcon theme="system" />
 														System
 													</DropdownMenuRadioItem>
+												</DropdownMenuRadioGroup>
+											</DropdownMenuSubContent>
+										</DropdownMenuPortal>
+									</DropdownMenuSub>
+									{/* Currency submenu */}
+									<DropdownMenuSub>
+										<DropdownMenuSubTrigger>
+											<span className="mr-2">
+												{currencyToSymbol(session.data.user.baseCurrency)}
+											</span>
+											Currency
+										</DropdownMenuSubTrigger>
+										<DropdownMenuPortal>
+											<DropdownMenuSubContent className="max-h-64 overflow-auto">
+												<DropdownMenuRadioGroup
+													value={
+														(session.data.user.baseCurrency as string) ?? "USD"
+													}
+													onValueChange={(value) =>
+														updateBaseCurrencyMutation.mutate(value as Currency)
+													}
+												>
+													{Currencies.map((currency) => (
+														<DropdownMenuRadioItem
+															key={currency}
+															value={currency}
+															className="flex items-center gap-2 capitalize"
+														>
+															{currencyToSymbol(currency)} {currency}
+														</DropdownMenuRadioItem>
+													))}
 												</DropdownMenuRadioGroup>
 											</DropdownMenuSubContent>
 										</DropdownMenuPortal>
