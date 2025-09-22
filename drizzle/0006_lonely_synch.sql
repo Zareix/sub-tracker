@@ -1,1 +1,0 @@
-ALTER TABLE `user` ADD `base_currency` text(255) DEFAULT 'EUR' NOT NULL;

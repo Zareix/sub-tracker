@@ -25,7 +25,8 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Separator } from "~/components/ui/separator";
-import { BASE_CURRENCY } from "~/lib/constant";
+import { authClient } from "~/lib/auth-client";
+import { BASE_CURRENCY, type CURRENCIES } from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
 import { useSort } from "~/lib/hooks/use-sort";
 import {
@@ -35,7 +36,6 @@ import {
 	getSortedSubscriptions,
 } from "~/lib/utils";
 import type { RouterOutputs } from "~/utils/api";
-import { api } from "~/utils/api";
 
 type Props = {
 	subscriptions: RouterOutputs["subscription"]["getAll"];
@@ -44,9 +44,11 @@ type Props = {
 export const SubscriptionList = ({ subscriptions }: Props) => {
 	const [filters] = useFilters();
 	const [sort] = useSort();
-	const userProfileQuery = api.user.getProfile.useQuery();
+	const { data: session } = authClient.useSession();
 
-	const userBaseCurrency = userProfileQuery.data?.baseCurrency ?? BASE_CURRENCY;
+	const userBaseCurrency =
+		(session?.user?.baseCurrency as (typeof CURRENCIES)[number]) ??
+		BASE_CURRENCY;
 
 	const subs = getFilteredSubscriptions(
 		getSortedSubscriptions(subscriptions, sort),

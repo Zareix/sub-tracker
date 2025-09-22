@@ -23,7 +23,12 @@ import {
 	PopoverTrigger,
 } from "~/components/ui/popover";
 import { Skeleton } from "~/components/ui/skeleton";
-import { BASE_CURRENCY, CURRENCY_SYMBOLS } from "~/lib/constant";
+import { authClient } from "~/lib/auth-client";
+import {
+	BASE_CURRENCY,
+	type CURRENCIES,
+	CURRENCY_SYMBOLS,
+} from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
 import { getFilteredSubscriptions, rounded } from "~/lib/utils";
 import { api, type RouterOutputs } from "~/utils/api";
@@ -38,10 +43,12 @@ const sum = (acc: number, price: number, usersLength?: number) => {
 export default function Stats() {
 	const [filters] = useFilters();
 	const subscriptionsQuery = api.subscription.getAll.useQuery();
-	const userProfileQuery = api.user.getProfile.useQuery();
+	const { data: session } = authClient.useSession();
 
-	const userBaseCurrency = userProfileQuery.data?.baseCurrency ?? BASE_CURRENCY;
-	const isLoading = subscriptionsQuery.isLoading || userProfileQuery.isLoading;
+	const userBaseCurrency =
+		(session?.user?.baseCurrency as (typeof CURRENCIES)[number]) ??
+		BASE_CURRENCY;
+	const isLoading = subscriptionsQuery.isLoading;
 
 	const subscriptions = getFilteredSubscriptions(
 		subscriptionsQuery.data ?? [],

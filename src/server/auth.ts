@@ -54,6 +54,11 @@ export const auth = betterAuth({
 				required: true,
 				input: false,
 			},
+			baseCurrency: {
+				type: "string",
+				required: true,
+				defaultValue: "EUR",
+			},
 		},
 	},
 	trustedOrigins: [env.BETTER_AUTH_URL],
