@@ -3,9 +3,9 @@ import { addMonths, addYears, endOfDay, isBefore } from "date-fns";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import {
-	BASE_CURRENCY,
-	CURRENCIES,
+	Currencies,
 	type Currency,
+	DEFAULT_BASE_CURRENCY,
 	SCHEDULES,
 } from "~/lib/constant";
 import { rounded } from "~/lib/utils";
@@ -157,6 +157,9 @@ export const subscriptionRouter = createTRPCRouter({
 			ctx.db.query.exchangeRates.findMany(),
 		]);
 
+		const userBaseCurrency =
+			(ctx.session.user.baseCurrency as Currency) ?? DEFAULT_BASE_CURRENCY;
+
 		return rows
 			.reduce<
 				Array<
@@ -208,7 +211,7 @@ export const subscriptionRouter = createTRPCRouter({
 							exchangeRates,
 							subscription.price,
 							subscription.currency,
-							BASE_CURRENCY,
+							userBaseCurrency,
 						),
 					),
 					nextPaymentDate,
@@ -225,7 +228,7 @@ export const subscriptionRouter = createTRPCRouter({
 				category: z.number(),
 				image: z.string().optional(),
 				price: z.number(),
-				currency: z.enum(CURRENCIES),
+				currency: z.enum(Currencies),
 				paymentMethod: z.number(),
 				firstPaymentDate: z.date(),
 				schedule: z.enum(SCHEDULES),
@@ -283,7 +286,7 @@ export const subscriptionRouter = createTRPCRouter({
 				description: z.string(),
 				image: z.string().optional(),
 				price: z.number(),
-				currency: z.enum(CURRENCIES),
+				currency: z.enum(Currencies),
 				paymentMethod: z.number(),
 				firstPaymentDate: z.date(),
 				schedule: z.enum(SCHEDULES),

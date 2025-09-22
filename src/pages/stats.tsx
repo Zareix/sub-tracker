@@ -23,9 +23,18 @@ import {
 	PopoverTrigger,
 } from "~/components/ui/popover";
 import { Skeleton } from "~/components/ui/skeleton";
-import { BASE_CURRENCY, CURRENCY_SYMBOLS } from "~/lib/constant";
+import { authClient } from "~/lib/auth-client";
+import {
+	CURRENCY_SYMBOLS,
+	type Currencies,
+	DEFAULT_BASE_CURRENCY,
+} from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
-import { getFilteredSubscriptions, rounded } from "~/lib/utils";
+import {
+	currencyToSymbol,
+	getFilteredSubscriptions,
+	rounded,
+} from "~/lib/utils";
 import { api, type RouterOutputs } from "~/utils/api";
 
 const sum = (acc: number, price: number, usersLength?: number) => {
@@ -38,6 +47,12 @@ const sum = (acc: number, price: number, usersLength?: number) => {
 export default function Stats() {
 	const [filters] = useFilters();
 	const subscriptionsQuery = api.subscription.getAll.useQuery();
+	const { data: session } = authClient.useSession();
+
+	const userBaseCurrency =
+		(session?.user?.baseCurrency as (typeof Currencies)[number]) ??
+		DEFAULT_BASE_CURRENCY;
+	const isLoading = subscriptionsQuery.isLoading;
 
 	const subscriptions = getFilteredSubscriptions(
 		subscriptionsQuery.data ?? [],
@@ -161,44 +176,51 @@ export default function Stats() {
 						subscriptions={subscriptions.filter(
 							(subscription) => subscription.schedule === "Monthly",
 						)}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
+						userBaseCurrency={userBaseCurrency}
 					/>
 					<MonthlyStatsCard
 						title="Yearly sub"
 						subscriptions={subscriptions.filter(
 							(subscription) => subscription.schedule === "Yearly",
 						)}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
+						userBaseCurrency={userBaseCurrency}
 					/>
 					<StatsCard
 						title="Smoothed over a month"
 						description="Monthly + (yearly / 12)"
 						value={totalPerMonth}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
+						userBaseCurrency={userBaseCurrency}
 					/>
 					<StatsCard
 						title="Smoothed over a year"
 						description="(Monthly * 12) + yearly"
 						value={totalPerYear}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
+						userBaseCurrency={userBaseCurrency}
 					/>
 					<StatsCard
 						title="This month"
 						description="Subscriptions that were or will be paid this month"
 						value={totalThisMonth}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
+						userBaseCurrency={userBaseCurrency}
 					/>
 					<StatsCard
 						title="Remaining this month"
 						description="Subscriptions that will be paid from today to the end of this month"
 						value={remainingThisMonth}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
+						userBaseCurrency={userBaseCurrency}
 					/>
 					<StatsCard
 						title="Expected next month"
 						description="Subscriptions that will be paid next month"
 						value={expectedNextMonth}
-						isLoading={subscriptionsQuery.isLoading}
+						isLoading={isLoading}
+						userBaseCurrency={userBaseCurrency}
 					/>
 				</div>
 			</div>
@@ -211,11 +233,13 @@ const StatsCard = ({
 	description,
 	value,
 	isLoading,
+	userBaseCurrency,
 }: {
 	title: string;
 	description?: string;
 	value: number;
 	isLoading: boolean;
+	userBaseCurrency: string;
 }) => {
 	return (
 		<Card className="py-5">
@@ -238,7 +262,8 @@ const StatsCard = ({
 				)}
 			</CardHeader>
 			<CardContent className="mt-2 flex items-center font-bold text-2xl">
-				{isLoading ? <Skeleton className="mr-1 h-6 w-1/4" /> : rounded(value)}€
+				{isLoading ? <Skeleton className="mr-1 h-6 w-1/4" /> : rounded(value)}
+				{currencyToSymbol(userBaseCurrency)}
 			</CardContent>
 		</Card>
 	);
@@ -248,10 +273,12 @@ const MonthlyStatsCard = ({
 	title,
 	subscriptions,
 	isLoading,
+	userBaseCurrency,
 }: {
 	title: string;
 	subscriptions: RouterOutputs["subscription"]["getAll"];
 	isLoading: boolean;
+	userBaseCurrency: string;
 }) => {
 	const [filters] = useFilters();
 	const totalMonthlySub = useMemo(
@@ -363,7 +390,10 @@ const MonthlyStatsCard = ({
 									<ChartTooltipContent
 										hideLabel
 										valueFormatter={(value) =>
-											value.toLocaleString() + CURRENCY_SYMBOLS[BASE_CURRENCY]
+											value.toLocaleString() +
+											CURRENCY_SYMBOLS[
+												userBaseCurrency as keyof typeof CURRENCY_SYMBOLS
+											]
 										}
 									/>
 								}
@@ -397,7 +427,7 @@ const MonthlyStatsCard = ({
 														y={(viewBox.cy ?? 0) + 24}
 														className="fill-muted-foreground"
 													>
-														{BASE_CURRENCY}
+														{userBaseCurrency}
 													</tspan>
 												</text>
 											);

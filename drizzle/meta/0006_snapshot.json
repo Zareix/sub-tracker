@@ -1,8 +1,8 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "44c3e2f6-2fc7-444f-b9f3-179dd6d77f2d",
-	"prevId": "463d7eb2-2476-40b8-a1ea-f3dd7dcb0ebb",
+	"id": "dd93237e-fd2f-4863-9e72-45bc21494ca9",
+	"prevId": "44c3e2f6-2fc7-444f-b9f3-179dd6d77f2d",
 	"tables": {
 		"account": {
 			"name": "account",
@@ -571,6 +571,14 @@
 					"primaryKey": false,
 					"notNull": false,
 					"autoincrement": false
+				},
+				"base_currency": {
+					"name": "base_currency",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false,
+					"default": "'EUR'"
 				},
 				"email_verified": {
 					"name": "email_verified",

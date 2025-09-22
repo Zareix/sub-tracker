@@ -1,5 +1,6 @@
 import { AppearanceSettings } from "~/components/profile/appearance";
 import { CredentialsForm } from "~/components/profile/credentials";
+import { CurrencySettings } from "~/components/profile/currency-settings";
 import { UserInfoForm } from "~/components/profile/user-info";
 import { Separator } from "~/components/ui/separator";
 import { authClient } from "~/lib/auth-client";
@@ -22,6 +23,7 @@ export default function ProfilePage() {
 
 			<div className="grid gap-4">
 				<UserInfoForm user={user} />
+				<CurrencySettings />
 				<AppearanceSettings />
 			</div>
 			<Separator className="my-4 lg:hidden" />

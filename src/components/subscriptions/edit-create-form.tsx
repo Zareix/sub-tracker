@@ -35,7 +35,7 @@ import {
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
 import { authClient } from "~/lib/auth-client";
-import { CURRENCIES, SCHEDULES } from "~/lib/constant";
+import { Currencies, SCHEDULES } from "~/lib/constant";
 import { cn } from "~/lib/utils";
 import { api, type RouterInputs, type RouterOutputs } from "~/utils/api";
 
@@ -78,7 +78,7 @@ const subscriptionCreateSchema = z.object({
 			error: "Price must be greater than 0",
 		}),
 	),
-	currency: z.enum(CURRENCIES),
+	currency: z.enum(Currencies),
 	paymentMethod: z.coerce.number<number>().check(
 		z.positive({
 			error: "Category is required",
@@ -193,7 +193,8 @@ export const EditCreateForm = ({
 			category: subscription?.category.id ?? 1,
 			image: subscription?.image ?? undefined,
 			price: subscription?.originalPrice ?? 0,
-			currency: subscription?.currency ?? "EUR",
+			currency:
+				subscription?.currency ?? session.data?.user.baseCurrency ?? "EUR",
 			paymentMethod: subscription?.paymentMethod.id,
 			schedule: subscription?.schedule ?? "Monthly",
 			firstPaymentDate: subscription?.firstPaymentDate,
@@ -362,7 +363,7 @@ export const EditCreateForm = ({
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
-													{CURRENCIES.map((s) => (
+													{Currencies.map((s) => (
 														<SelectItem value={s} key={s}>
 															{s}
 														</SelectItem>

@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { compareAsc, format, isToday } from "date-fns";
 import { twMerge } from "tailwind-merge";
-import type { Sort } from "~/lib/constant";
+import { CURRENCY_SYMBOLS, type Sort } from "~/lib/constant";
 import type { Filters } from "~/lib/hooks/use-filters";
 import type {
 	Category,
@@ -111,16 +111,8 @@ export const rounded = (val: number, precision = 2) => {
 };
 
 export const currencyToSymbol = (currency: string) => {
-	switch (currency) {
-		case "EUR":
-			return "€";
-		case "GBP":
-			return "£";
-		case "USD":
-			return "$";
-		default:
-			return "€";
-	}
+	// @ts-ignore
+	return CURRENCY_SYMBOLS[currency] ?? "¤";
 };
 
 export const formatNextPaymentDate = (date: Date) => {

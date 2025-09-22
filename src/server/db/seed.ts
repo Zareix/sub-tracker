@@ -1,9 +1,8 @@
 import { Database } from "bun:sqlite";
-import { drizzle } from "drizzle-orm/bun-sqlite";
-import { headers } from "next/headers";
 import { writeFile } from "node:fs/promises";
+import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/bun-sqlite";
 import { env } from "~/env";
-import type { UserRole } from "~/lib/constant";
 import { auth } from "~/server/auth";
 import * as schema from "./schema";
 
@@ -29,13 +28,18 @@ if (users.length === 0) {
 			password: "password",
 		},
 	});
-	await auth.api.setRole({
-		headers: await headers(),
-		body: {
-			userId: res.user.id,
-			role: "admin" satisfies UserRole,
-		},
-	});
+	// TODO Doesn't work because here requires session headers
+	// await auth.api.setRole({
+	// 	headers: await headers(),
+	// 	body: {
+	// 		userId: res.user.id,
+	// 		role: "admin" satisfies UserRole,
+	// 	},
+	// });
+	await db
+		.update(schema.users)
+		.set({ role: "admin" })
+		.where(eq(schema.users, res.user.id));
 	console.log(
 		"Admin user created with id",
 		res.user.id,

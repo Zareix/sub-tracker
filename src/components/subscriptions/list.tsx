@@ -25,7 +25,8 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Separator } from "~/components/ui/separator";
-import { BASE_CURRENCY } from "~/lib/constant";
+import { authClient } from "~/lib/auth-client";
+import { type Currencies, DEFAULT_BASE_CURRENCY } from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
 import { useSort } from "~/lib/hooks/use-sort";
 import {
@@ -43,6 +44,11 @@ type Props = {
 export const SubscriptionList = ({ subscriptions }: Props) => {
 	const [filters] = useFilters();
 	const [sort] = useSort();
+	const { data: session } = authClient.useSession();
+
+	const userBaseCurrency =
+		(session?.user?.baseCurrency as (typeof Currencies)[number]) ??
+		DEFAULT_BASE_CURRENCY;
 
 	const subs = getFilteredSubscriptions(
 		getSortedSubscriptions(subscriptions, sort),
@@ -64,6 +70,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 					<SubscriptionListItem
 						key={subscription.id}
 						subscription={subscription}
+						userBaseCurrency={userBaseCurrency}
 					/>
 					<Separator className="w-full" />
 				</React.Fragment>
@@ -74,8 +81,10 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 
 const SubscriptionListItem = ({
 	subscription,
+	userBaseCurrency,
 }: {
 	subscription: RouterOutputs["subscription"]["getAll"][number];
+	userBaseCurrency: string;
 }) => {
 	const [filters, setFilters] = useFilters();
 	const [isOpen, setIsOpen] = useState({
@@ -98,7 +107,10 @@ const SubscriptionListItem = ({
 							/>
 						)}
 						<h2 className="grow font-semibold text-xl">{subscription.name}</h2>
-						<div className="text-lg">{subscription.price}€</div>
+						<div className="text-lg">
+							{subscription.price}
+							{currencyToSymbol(subscription.currency)}
+						</div>
 						<Button
 							size="icon"
 							variant="ghost"
@@ -133,7 +145,10 @@ const SubscriptionListItem = ({
 							{formatNextPaymentDate(subscription.nextPaymentDate)}
 						</div>
 					</div>
-					<div className="text-lg">{subscription.price}€</div>
+					<div className="text-lg">
+						{subscription.price}
+						{currencyToSymbol(userBaseCurrency)}
+					</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button
@@ -241,7 +256,7 @@ const SubscriptionListItem = ({
 						<RefreshCcwIcon size={16} className="text-primary" />
 						{subscription.schedule}
 					</button>
-					{subscription.currency !== BASE_CURRENCY && (
+					{subscription.currency !== userBaseCurrency && (
 						<div className="flex items-center gap-0.5">
 							<span className="text-primary">
 								{currencyToSymbol(subscription.currency)}
