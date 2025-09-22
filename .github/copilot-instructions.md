@@ -4,7 +4,8 @@ Purpose: Help GitHub Copilot (and contributors using Copilot Chat) make correct,
 
 ## Tech stack (what to assume)
 
-- Runtime: Next.js 15 (React 19) with Pages dir, TypeScript (strict), Bun
+- Runtime : Bun, use `bun` for scripts, DO NOT use `npm` or `npx` but use `bun` and `bunx`.
+- Framework: Next.js 15 (React 19) with Pages dir, TypeScript (strict)
 - Styling: Tailwind CSS v4, shadcn/ui components in `src/components/ui`
 - Data: Drizzle ORM + SQLite (`db.sqlite`), migrations in `drizzle/`
 - API: tRPC v11 (`src/server/api`), TanStack Query v5
@@ -13,6 +14,7 @@ Purpose: Help GitHub Copilot (and contributors using Copilot Chat) make correct,
 
 ## How to run
 
+- Install dependencies: `bun install`
 - Dev: `bun run dev`
 - Build: `bun run build`
 - Start: `bun run start`

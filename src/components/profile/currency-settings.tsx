@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -31,7 +32,18 @@ export const CurrencySettings = () => {
 	const { data: session, isPending: isSessionLoading } =
 		authClient.useSession();
 	const user = session?.user;
-
+	const updateBaseCurrencyMutation = useMutation({
+		mutationFn: (newCurrency: string) =>
+			authClient.updateUser({ baseCurrency: newCurrency }),
+		onSuccess: () => {
+			toast.success("Currency updated successfully!");
+		},
+		onError: (error) => {
+			toast.error(
+				error instanceof Error ? error.message : "Failed to update currency",
+			);
+		},
+	});
 	const form = useForm({
 		resolver: zodResolver(currencySettingsSchema),
 		defaultValues: {
@@ -51,16 +63,7 @@ export const CurrencySettings = () => {
 	}, [user, form]);
 
 	async function onSubmit(values: z.infer<typeof currencySettingsSchema>) {
-		try {
-			await authClient.updateUser({
-				baseCurrency: values.baseCurrency,
-			});
-			toast.success("Currency updated successfully!");
-		} catch (error) {
-			toast.error(
-				error instanceof Error ? error.message : "Failed to update currency",
-			);
-		}
+		updateBaseCurrencyMutation.mutate(values.baseCurrency);
 	}
 
 	if (isSessionLoading || !user) {
