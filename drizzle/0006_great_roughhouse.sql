@@ -1,0 +1,1 @@
+ALTER TABLE `user` ADD `base_currency` text DEFAULT 'EUR' NOT NULL;

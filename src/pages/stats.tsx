@@ -25,9 +25,9 @@ import {
 import { Skeleton } from "~/components/ui/skeleton";
 import { authClient } from "~/lib/auth-client";
 import {
-	BASE_CURRENCY,
-	type CURRENCIES,
+	type Currencies,
 	CURRENCY_SYMBOLS,
+	DEFAULT_BASE_CURRENCY,
 } from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
 import { getFilteredSubscriptions, rounded } from "~/lib/utils";
@@ -46,8 +46,8 @@ export default function Stats() {
 	const { data: session } = authClient.useSession();
 
 	const userBaseCurrency =
-		(session?.user?.baseCurrency as (typeof CURRENCIES)[number]) ??
-		BASE_CURRENCY;
+		(session?.user?.baseCurrency as (typeof Currencies)[number]) ??
+		DEFAULT_BASE_CURRENCY;
 	const isLoading = subscriptionsQuery.isLoading;
 
 	const subscriptions = getFilteredSubscriptions(

@@ -1,5 +1,5 @@
 import { env } from "~/env";
-import { BASE_CURRENCY, CURRENCIES } from "~/lib/constant";
+import { Currencies, DEFAULT_BASE_CURRENCY } from "~/lib/constant";
 import { db, runTransaction } from "~/server/db";
 import { exchangeRates } from "~/server/db/schema";
 
@@ -27,7 +27,7 @@ export const updateExchangeRates = async () => {
 		// eslint-disable-next-line drizzle/enforce-delete-with-where
 		await db.delete(exchangeRates);
 
-		for (const currency of CURRENCIES.filter((c) => c !== "EUR")) {
+		for (const currency of Currencies.filter((c) => c !== "EUR")) {
 			if (!data.rates[currency]) {
 				return new Response(JSON.stringify(data), {
 					status: 500,
@@ -41,17 +41,17 @@ export const updateExchangeRates = async () => {
 			if (!rate) {
 				return;
 			}
-			console.log(`${BASE_CURRENCY} to ${currency} rate: ${rate}`);
+			console.log(`${DEFAULT_BASE_CURRENCY} to ${currency} rate: ${rate}`);
 			await db.insert(exchangeRates).values({
-				baseCurrency: BASE_CURRENCY,
+				baseCurrency: DEFAULT_BASE_CURRENCY,
 				targetCurrency: currency,
 				rate,
 			});
 
-			console.log(`${currency} to ${BASE_CURRENCY} rate: ${1 / rate}`);
+			console.log(`${currency} to ${DEFAULT_BASE_CURRENCY} rate: ${1 / rate}`);
 			await db.insert(exchangeRates).values({
 				baseCurrency: currency,
-				targetCurrency: BASE_CURRENCY,
+				targetCurrency: DEFAULT_BASE_CURRENCY,
 				rate: 1 / rate,
 			});
 		}

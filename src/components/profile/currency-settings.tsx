@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import React from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
@@ -22,18 +22,19 @@ import {
 	SelectValue,
 } from "~/components/ui/select";
 import { authClient } from "~/lib/auth-client";
-import { CURRENCIES, CURRENCY_SYMBOLS } from "~/lib/constant";
+import { CURRENCY_SYMBOLS, Currencies } from "~/lib/constant";
 
 const currencySettingsSchema = z.object({
-	baseCurrency: z.enum(CURRENCIES),
+	baseCurrency: z.enum(Currencies),
 });
+type CurrencySettingsSchema = z.infer<typeof currencySettingsSchema>;
 
 export const CurrencySettings = () => {
 	const { data: session, isPending: isSessionLoading } =
 		authClient.useSession();
 	const user = session?.user;
 	const updateBaseCurrencyMutation = useMutation({
-		mutationFn: (newCurrency: string) =>
+		mutationFn: (newCurrency: CurrencySettingsSchema["baseCurrency"]) =>
 			authClient.updateUser({ baseCurrency: newCurrency }),
 		onSuccess: () => {
 			toast.success("Currency updated successfully!");
@@ -48,21 +49,20 @@ export const CurrencySettings = () => {
 		resolver: zodResolver(currencySettingsSchema),
 		defaultValues: {
 			baseCurrency:
-				(user?.baseCurrency as (typeof CURRENCIES)[number]) ?? "EUR",
+				(user?.baseCurrency as (typeof Currencies)[number]) ?? "EUR",
 		},
 	});
 
-	// Update form when user data loads
-	React.useEffect(() => {
+	useEffect(() => {
 		if (user?.baseCurrency) {
 			form.setValue(
 				"baseCurrency",
-				user.baseCurrency as (typeof CURRENCIES)[number],
+				user.baseCurrency as (typeof Currencies)[number],
 			);
 		}
 	}, [user, form]);
 
-	async function onSubmit(values: z.infer<typeof currencySettingsSchema>) {
+	async function onSubmit(values: CurrencySettingsSchema) {
 		updateBaseCurrencyMutation.mutate(values.baseCurrency);
 	}
 
@@ -99,7 +99,7 @@ export const CurrencySettings = () => {
 											<SelectValue placeholder="Select a currency" />
 										</SelectTrigger>
 										<SelectContent>
-											{CURRENCIES.map((currency) => (
+											{Currencies.map((currency) => (
 												<SelectItem key={currency} value={currency}>
 													{CURRENCY_SYMBOLS[currency]} {currency}
 												</SelectItem>

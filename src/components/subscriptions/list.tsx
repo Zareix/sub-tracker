@@ -26,7 +26,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Separator } from "~/components/ui/separator";
 import { authClient } from "~/lib/auth-client";
-import { BASE_CURRENCY, type CURRENCIES } from "~/lib/constant";
+import { type Currencies, DEFAULT_BASE_CURRENCY } from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
 import { useSort } from "~/lib/hooks/use-sort";
 import {
@@ -47,8 +47,8 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 	const { data: session } = authClient.useSession();
 
 	const userBaseCurrency =
-		(session?.user?.baseCurrency as (typeof CURRENCIES)[number]) ??
-		BASE_CURRENCY;
+		(session?.user?.baseCurrency as (typeof Currencies)[number]) ??
+		DEFAULT_BASE_CURRENCY;
 
 	const subs = getFilteredSubscriptions(
 		getSortedSubscriptions(subscriptions, sort),

@@ -13,7 +13,8 @@
 		"start": "next start",
 		"lint": "biome check .",
 		"check": "biome check --write .",
-		"email:dev": "email dev -d src/server/email/templates -p 3001"
+		"email:dev": "email dev -d src/server/email/templates -p 3001",
+		"auth:generate": "bunx --bun @better-auth/cli generate --config src/server/auth.ts"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.1.1",

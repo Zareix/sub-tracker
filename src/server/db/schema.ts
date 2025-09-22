@@ -145,6 +145,10 @@ export const users = sqliteTable(
 			.$type<UserRole>()
 			.default("user"),
 		image: text("image", { length: 255 }),
+		baseCurrency: text("base_currency")
+			.$type<Currency>()
+			.default("EUR")
+			.notNull(),
 		emailVerified: integer("email_verified", { mode: "boolean" })
 			.notNull()
 			.default(false),

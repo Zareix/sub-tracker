@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CURRENCIES, SCHEDULES, UserRoles } from "~/lib/constant";
+import { Currencies, SCHEDULES, UserRoles } from "~/lib/constant";
 import { preprocessStringToDate } from "~/lib/utils";
 
 import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
@@ -71,7 +71,7 @@ export const adminRouter = createTRPCRouter({
 						image: z.string().nullish(),
 						description: z.string(),
 						price: z.number(),
-						currency: z.enum(CURRENCIES),
+						currency: z.enum(Currencies),
 						paymentMethod: z.number(),
 						schedule: z.enum(SCHEDULES),
 						firstPaymentDate: z.preprocess(preprocessStringToDate, z.date()),

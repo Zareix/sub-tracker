@@ -4,6 +4,7 @@ import { admin } from "better-auth/plugins/admin";
 import { passkey } from "better-auth/plugins/passkey";
 import type { NextRequest } from "next/server";
 import { env } from "~/env";
+import { Currencies, UserRoles } from "~/lib/constant";
 import { db } from "~/server/db";
 import {
 	account,
@@ -50,12 +51,12 @@ export const auth = betterAuth({
 		},
 		additionalFields: {
 			role: {
-				type: "string",
+				type: [...UserRoles],
 				required: true,
 				input: false,
 			},
 			baseCurrency: {
-				type: "string",
+				type: [...Currencies],
 				required: true,
 				defaultValue: "EUR",
 			},
