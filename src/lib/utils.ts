@@ -111,7 +111,7 @@ export const rounded = (val: number, precision = 2) => {
 };
 
 export const currencyToSymbol = (currency: string) => {
-	// @ts-ignore
+	// @ts-expect-error
 	return CURRENCY_SYMBOLS[currency] ?? "¤";
 };
 

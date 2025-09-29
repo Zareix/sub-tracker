@@ -33,6 +33,9 @@ export async function POST(req: NextRequest) {
 
 			const blob = await response.blob();
 			const contentType = response.headers.get("Content-Type");
+			console.log("imageUrl", imageUrl);
+			console.log("contentType", contentType);
+
 			if (!contentType || !contentType.startsWith("image/")) {
 				return NextResponse.json(
 					{ error: "Invalid image URL" },
@@ -62,11 +65,12 @@ export async function POST(req: NextRequest) {
 			const fileBuffer = Buffer.from(await file.arrayBuffer());
 			const compressedBuffer = await sharp(fileBuffer)
 				.resize({ width: 128, height: 128, fit: "inside" })
+				.withMetadata()
 				.png({ quality: 80 })
-				.toBuffer();
+				.toArray();
 
 			const compressedFile = new File(
-				[compressedBuffer],
+				compressedBuffer,
 				file.name.replace(/\.[^/.]+$/, ".png"),
 				{ type: "image/png" },
 			);

@@ -96,7 +96,7 @@ export const ImageSearch = ({
 							alt={image.title}
 							width={64}
 							height={70}
-							className="max-h-[70px] max-w-[64px] object-contain "
+							className="max-h-[70px] max-w-[64px] object-contain"
 						/>
 					</Button>
 				))}

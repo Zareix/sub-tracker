@@ -253,7 +253,7 @@ const StatsCard = ({
 							<InfoIcon size={20} className="text-muted-foreground" />
 						</PopoverTrigger>
 						<PopoverContent
-							className="w-max max-w-[300px] px-2 py-2 "
+							className="w-max max-w-[300px] px-2 py-2"
 							side="top"
 						>
 							<p>{description}</p>

@@ -168,7 +168,7 @@ export const FiltersButton = ({
 								onValueChange={(value) =>
 									setFilters({
 										...filters,
-										paymentMethods: value.map((v) => Number.parseInt(v)),
+										paymentMethods: value.map((v) => Number.parseInt(v, 10)),
 									})
 								}
 								className="bg-background"
@@ -193,7 +193,7 @@ export const FiltersButton = ({
 								onValueChange={(value) =>
 									setFilters({
 										...filters,
-										categories: value.map((v) => Number.parseInt(v)),
+										categories: value.map((v) => Number.parseInt(v, 10)),
 									})
 								}
 								defaultValue={filters.categories.map((pm) => pm.toString())}

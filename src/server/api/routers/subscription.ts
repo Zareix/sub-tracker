@@ -24,7 +24,7 @@ import {
 	users,
 	usersToSubscriptions,
 } from "~/server/db/schema";
-import { searchImages } from "~/server/services/google-search";
+import { searchImages } from "~/server/services/image-search";
 
 const convertToDefaultCurrency = (
 	exchangeRates: Array<ExchangeRate>,
