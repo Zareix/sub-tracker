@@ -53,6 +53,10 @@ services:
 | S3_SECRET_ACCESS_KEY | S3 secret access key                                                       | -                 |
 | S3_REGION            | S3 region                                                                  | -                 |
 | S3_ENDPOINT          | S3 endpoint                                                                | -                 |
+| GOOGLE_SEARCH_ID     | Google Custom Search Engine ID                                             | -                 |
+| GOOGLE_SEARCH_KEY    | Google API key for Custom Search Engine                                    | -                 |
+| EMAIL_SERVER         | SMTP server address                                                        | -                 |
+| EMAIL_FROM           | From email address                                                         | -                 |
 
 > [!NOTE]  
 > Default admin password is `password`.
