@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
+import { env } from "~/env";
 
 import {
 	adminProcedure,
@@ -8,7 +9,12 @@ import {
 	protectedProcedure,
 } from "~/server/api/trpc";
 import { db, runTransaction } from "~/server/db";
-import { subscriptions, users, usersToSubscriptions } from "~/server/db/schema";
+import {
+	devices,
+	subscriptions,
+	users,
+	usersToSubscriptions,
+} from "~/server/db/schema";
 
 export const userRouter = createTRPCRouter({
 	getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -91,5 +97,38 @@ export const userRouter = createTRPCRouter({
 			name: user.name,
 			email: user.email,
 		};
+	}),
+	subscribeUserToPush: protectedProcedure
+		.input(z.any())
+		.mutation(async ({ ctx, input }) => {
+			const user = ctx.session.user;
+			if (!user.id) {
+				return {
+					success: false,
+				};
+			}
+
+			const existingSubscription = await db.query.devices.findFirst({
+				where: eq(devices.userId, user.id),
+			});
+
+			if (existingSubscription) {
+				await db
+					.update(devices)
+					.set({
+						pushSubscription: input,
+					})
+					.where(eq(devices.id, existingSubscription.id));
+			} else {
+				await db.insert(devices).values({
+					pushSubscription: input,
+					userId: user.id,
+				});
+			}
+
+			return { success: true };
+		}),
+	getPublicVapidKey: protectedProcedure.query(() => {
+		return env.VAPID_PUBLIC_KEY;
 	}),
 });

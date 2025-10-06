@@ -10,6 +10,7 @@ import { api } from "~/utils/api";
 // import { env } from "~/env";
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+import PushNotification from "~/components/push-notification";
 import { ThemeProvider } from "~/components/ui/theme-provider";
 import "~/styles/globals.css";
 
@@ -48,6 +49,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
 						<Toaster />
 						{/* {env.NEXT_PUBLIC_ENV === "development" && <ReactQueryDevtools />} */}
 					</TooltipProvider>
+					<PushNotification />
 				</ThemeProvider>
 			</NuqsAdapter>
 		</>

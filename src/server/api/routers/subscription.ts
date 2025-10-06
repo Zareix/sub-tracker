@@ -136,89 +136,99 @@ const calculatePreviousPaymentDate = (
 	}
 };
 
+export const getAllSubscriptionsOfUser = async (
+	database: typeof db,
+	userId: string,
+	baseCurrency?: Currency,
+) => {
+	const [rows, exchangeRates] = await Promise.all([
+		database
+			.select()
+			.from(subscriptions)
+			.innerJoin(
+				usersToSubscriptions,
+				eq(subscriptions.id, usersToSubscriptions.subscriptionId),
+			)
+			.innerJoin(users, eq(usersToSubscriptions.userId, users.id))
+			.innerJoin(
+				paymentMethods,
+				eq(subscriptions.paymentMethod, paymentMethods.id),
+			)
+			.innerJoin(categories, eq(subscriptions.category, categories.id))
+			.orderBy(asc(subscriptions.name))
+			.all(),
+		database.query.exchangeRates.findMany(),
+	]);
+
+	const userBaseCurrency = baseCurrency ?? DEFAULT_BASE_CURRENCY;
+
+	return rows
+		.reduce<
+			Array<
+				Omit<Subscription, "paymentMethod" | "category"> & {
+					paymentMethod: PaymentMethod;
+					category: Category;
+					users: Array<User>;
+				}
+			>
+		>((acc, row) => {
+			const user = row.user;
+			const subscription = row.subscription;
+
+			const existingSubscription = acc.find((s) => s.id === subscription.id);
+			if (existingSubscription) {
+				existingSubscription.users.push(user);
+				return acc;
+			}
+
+			acc.push({
+				...subscription,
+				users: [user],
+				paymentMethod: row.payment_method,
+				category: row.category,
+			});
+			return acc;
+		}, [])
+		.filter((subscription) =>
+			subscription.users.some((user) => user.id === userId),
+		)
+		.map((subscription) => {
+			const nextPaymentDate = calculateNextPaymentDate(
+				subscription.schedule,
+				subscription.firstPaymentDate,
+			);
+			const secondNextPaymentDate = calculateSecondNextPaymentDate(
+				subscription.schedule,
+				nextPaymentDate,
+			);
+			const previousPaymentDate = calculatePreviousPaymentDate(
+				subscription.schedule,
+				subscription.firstPaymentDate,
+				nextPaymentDate,
+			);
+			return {
+				...subscription,
+				originalPrice: subscription.price,
+				price: rounded(
+					convertToDefaultCurrency(
+						exchangeRates,
+						subscription.price,
+						subscription.currency,
+						userBaseCurrency,
+					),
+				),
+				nextPaymentDate,
+				secondNextPaymentDate,
+				previousPaymentDate,
+			};
+		});
+};
+
 export const subscriptionRouter = createTRPCRouter({
 	getAll: protectedProcedure.query(async ({ ctx }) => {
-		const [rows, exchangeRates] = await Promise.all([
-			ctx.db
-				.select()
-				.from(subscriptions)
-				.innerJoin(
-					usersToSubscriptions,
-					eq(subscriptions.id, usersToSubscriptions.subscriptionId),
-				)
-				.innerJoin(users, eq(usersToSubscriptions.userId, users.id))
-				.innerJoin(
-					paymentMethods,
-					eq(subscriptions.paymentMethod, paymentMethods.id),
-				)
-				.innerJoin(categories, eq(subscriptions.category, categories.id))
-				.orderBy(asc(subscriptions.name))
-				.all(),
-			ctx.db.query.exchangeRates.findMany(),
-		]);
-
-		const userBaseCurrency =
-			(ctx.session.user.baseCurrency as Currency) ?? DEFAULT_BASE_CURRENCY;
-
-		return rows
-			.reduce<
-				Array<
-					Omit<Subscription, "paymentMethod" | "category"> & {
-						paymentMethod: PaymentMethod;
-						category: Category;
-						users: Array<User>;
-					}
-				>
-			>((acc, row) => {
-				const user = row.user;
-				const subscription = row.subscription;
-				const paymentMethod = row.payment_method;
-				const category = row.category;
-
-				const existingSubscription = acc.find((s) => s.id === subscription.id);
-				if (existingSubscription) {
-					existingSubscription.users.push(user);
-					return acc;
-				}
-
-				acc.push({
-					...subscription,
-					users: [user],
-					paymentMethod,
-					category,
-				});
-				return acc;
-			}, [])
-			.map((subscription) => {
-				const nextPaymentDate = calculateNextPaymentDate(
-					subscription.schedule,
-					subscription.firstPaymentDate,
-				);
-				const secondNextPaymentDate = calculateSecondNextPaymentDate(
-					subscription.schedule,
-					nextPaymentDate,
-				);
-				const previousPaymentDate = calculatePreviousPaymentDate(
-					subscription.schedule,
-					subscription.firstPaymentDate,
-					nextPaymentDate,
-				);
-				return {
-					...subscription,
-					originalPrice: subscription.price,
-					price: rounded(
-						convertToDefaultCurrency(
-							exchangeRates,
-							subscription.price,
-							subscription.currency,
-							userBaseCurrency,
-						),
-					),
-					nextPaymentDate,
-					secondNextPaymentDate,
-					previousPaymentDate,
-				};
-			});
+		const baseCurrency = ctx.session.user.baseCurrency;
+		const userId = ctx.session.user.id;
+		return getAllSubscriptionsOfUser(db, userId, baseCurrency);
 	}),
 	create: protectedProcedure
 		.input(
