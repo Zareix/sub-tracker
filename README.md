@@ -5,6 +5,7 @@
 ```shell
 docker run --name sub-tracker \
   -p 3000:3000 \
+  -e TZ="Europe/Paris" \
   -e BETTER_AUTH_SECRET="<AUTH_SECRET>" \
   -e BETTER_AUTH_URL=http://localhost:3000 \
   -e ADMIN_EMAIL="raphael@example.com" \
@@ -21,6 +22,7 @@ services:
   subtracker:
     image: ghcr.io/zareix/sub-tracker:v1.0.0
     environment:
+      - TZ=Europe/Paris
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET} # generate with `openssl rand -hex 32`
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - BETTER_AUTH_URL=https://subtracker.example.com
@@ -32,6 +34,12 @@ services:
       - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY} # optional
       - S3_REGION=${S3_REGION} # optional
       - S3_ENDPOINT=${S3_ENDPOINT} # optional
+      - GOOGLE_SEARCH_ID=${GOOGLE_SEARCH_ID} # optional
+      - GOOGLE_SEARCH_KEY=${GOOGLE_SEARCH_KEY} # optional
+      - EMAIL_SERVER=${EMAIL_SERVER} # optional
+      - EMAIL_FROM=${EMAIL_FROM} # optional
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY} # optional, generate with `npx web-push generate-vapid-keys`
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY} # optional, generate with `npx web-push generate-vapid-keys`
     ports:
       - 3000:3000
     volumes:
@@ -42,6 +50,7 @@ services:
 
 | Name                 | Description                                                                | Default value     |
 | -------------------- | -------------------------------------------------------------------------- | ----------------- |
+| TZ                   | Timezone                                                                   | -                 |
 | BETTER_AUTH_SECRET   | Secret key for [better-auth](https://github.com/better-auth/better-auth)   | -                 |
 | ADMIN_EMAIL          | Admin email for default admin user                                         | -                 |
 | BETTER_AUTH_URL      | Your app URL for [better-auth](https://github.com/better-auth/better-auth) | -                 |

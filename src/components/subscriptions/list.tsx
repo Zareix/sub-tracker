@@ -15,7 +15,6 @@ import React, { useState } from "react";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { DeleteDialog } from "~/components/subscriptions/delete";
 import { EditSubscriptionDialog } from "~/components/subscriptions/edit";
-import { Accordion } from "~/components/ui/accordion";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import {
@@ -63,20 +62,16 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 		);
 	}
 
-	return (
-		<Accordion type="single" collapsible>
-			{subs.map((subscription) => (
-				<React.Fragment key={subscription.id}>
-					<SubscriptionListItem
-						key={subscription.id}
-						subscription={subscription}
-						userBaseCurrency={userBaseCurrency}
-					/>
-					<Separator className="w-full" />
-				</React.Fragment>
-			))}
-		</Accordion>
-	);
+	return subs.map((subscription) => (
+		<React.Fragment key={subscription.id}>
+			<SubscriptionListItem
+				key={subscription.id}
+				subscription={subscription}
+				userBaseCurrency={userBaseCurrency}
+			/>
+			<Separator className="w-full" />
+		</React.Fragment>
+	));
 };
 
 const SubscriptionListItem = ({

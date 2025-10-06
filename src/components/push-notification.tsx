@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { Button } from "./ui/button";
 
-export default function PushNotification() {
+export const PushNotificationHandler = () => {
 	const [permission, setPermission] = useState<string | null>(null);
 	const [isServiceWorkerReady, setIsServiceWorkerReady] = useState(false);
 	const subscribeUserMutation = api.user.subscribeUserToPush.useMutation();
@@ -94,7 +94,7 @@ export default function PushNotification() {
 	}
 
 	return (
-		<div className="fixed right-4 bottom-4 z-50">
+		<div className="fixed right-4 bottom-16 z-50 md:bottom-4">
 			<Button
 				onClick={() => Notification.requestPermission().then(setPermission)}
 			>
@@ -102,4 +102,4 @@ export default function PushNotification() {
 			</Button>
 		</div>
 	);
-}
+};

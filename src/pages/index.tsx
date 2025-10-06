@@ -29,7 +29,7 @@ export default function Home() {
 					<SortButton />
 				</div>
 			</header>
-			<div className="grid">
+			<div className="mt-2 grid">
 				{subscriptionsQuery.isLoading ? (
 					<Card className="mt-3 border-none shadow-none">
 						<CardContent>

@@ -103,6 +103,7 @@ const sendNotificationsForDueSubscriptions = async () => {
 
 export const startScheduler = async () => {
 	await sendNotificationsForDueSubscriptions();
+	console.log(`[SCHEDULER] Scheduler started with cron pattern: ${SCHEDULE}`);
 	cron.schedule(SCHEDULE, async () => {
 		console.log("[SCHEDULER] Running subscription due check...");
 		await sendNotificationsForDueSubscriptions();
