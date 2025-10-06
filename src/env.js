@@ -40,6 +40,9 @@ export const env = createEnv({
 
 		EMAIL_SERVER: z.optional(z.string()),
 		EMAIL_FROM: z.optional(z.email()),
+
+		VAPID_PUBLIC_KEY: z.string(),
+		VAPID_PRIVATE_KEY: z.string(),
 	},
 
 	/**
@@ -78,6 +81,8 @@ export const env = createEnv({
 		GOOGLE_SEARCH_KEY: process.env.GOOGLE_SEARCH_KEY,
 		EMAIL_SERVER: process.env.EMAIL_SERVER,
 		EMAIL_FROM: process.env.EMAIL_FROM,
+		VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY,
+		VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

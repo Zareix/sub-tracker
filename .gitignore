@@ -52,3 +52,5 @@ db.sqlite-shm
 db.sqlite-wal
 
 auth-schema.ts
+
+certificates
