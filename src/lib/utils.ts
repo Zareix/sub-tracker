@@ -129,3 +129,10 @@ export const formatNextPaymentDate = (date: Date) => {
 	}
 	return format(date, "dd/MM/yyyy");
 };
+
+export const sum = (acc: number, price: number, usersLength?: number) => {
+	if (usersLength && usersLength > 0) {
+		return acc + price / usersLength;
+	}
+	return acc + price;
+};

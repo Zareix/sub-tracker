@@ -4,6 +4,7 @@ import { LoaderCircleIcon, TrashIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
+import { ApiKeys } from "~/components/profile/api-keys";
 import { Button } from "~/components/ui/button";
 import {
 	Form,
@@ -132,13 +133,21 @@ export const CredentialsForm = ({ userId }: Props) => {
 				) : !passKeysQuery.data ||
 					passKeysQuery.isError ||
 					passKeysQuery.data.length === 0 ? (
-					<p>No passkeys registered.</p>
+					<p className="text-muted-foreground">No passkeys registered.</p>
 				) : (
 					<ul>
 						{passKeysQuery.data.map((passkey) => (
-							<li key={passkey.id} className="flex items-center gap-3 py-2">
+							<li
+								key={passkey.id}
+								className="flex items-center gap-2 rounded-lg border px-4 py-2"
+							>
+								<span className="font-medium">{passkey.name}</span>
+								<span className="text-muted-foreground text-xs">
+									Created on {new Date(passkey.createdAt).toLocaleDateString()}
+								</span>
 								<Button
 									variant="ghost"
+									className="ml-auto"
 									size="icon"
 									onClick={() => removePasskeyMutation.mutate(passkey.id)}
 									disabled={removePasskeyMutation.isPending}
@@ -149,10 +158,6 @@ export const CredentialsForm = ({ userId }: Props) => {
 										<TrashIcon size={20} className="text-destructive" />
 									)}
 								</Button>
-								<span className="text-sm">{passkey.name}</span>
-								<span className="text-muted-foreground text-xs">
-									added on {new Date(passkey.createdAt).toLocaleDateString()}
-								</span>
 							</li>
 						))}
 					</ul>
@@ -160,13 +165,14 @@ export const CredentialsForm = ({ userId }: Props) => {
 				<Form {...passkeyForm}>
 					<form
 						onSubmit={passkeyForm.handleSubmit(onPasskeySubmit)}
-						className="mt-4 flex w-full items-center gap-4"
+						className="mt-4 space-y-4"
 					>
 						<FormField
 							control={passkeyForm.control}
 							name="name"
 							render={({ field }) => (
 								<FormItem>
+									<FormLabel>Passkey name</FormLabel>
 									<FormControl className="w-full">
 										<Input placeholder="Name for your new passkey" {...field} />
 									</FormControl>
@@ -174,12 +180,14 @@ export const CredentialsForm = ({ userId }: Props) => {
 								</FormItem>
 							)}
 						/>
-						<Button type="submit" size="lg">
-							Register Passkey
-						</Button>
+						<div className="flex justify-end">
+							<Button type="submit">Register Passkey</Button>
+						</div>
 					</form>
 				</Form>
 			</div>
+			<Separator className="my-8" />
+			<ApiKeys userId={userId} />
 			<Separator className="my-8" />
 			<h3 className="font-semibold text-lg">Change Password</h3>
 			<Form {...passwordForm}>

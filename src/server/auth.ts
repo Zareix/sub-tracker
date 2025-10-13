@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { apiKey } from "better-auth/plugins";
 import { admin } from "better-auth/plugins/admin";
 import { passkey } from "better-auth/plugins/passkey";
 import type { NextRequest } from "next/server";
@@ -8,6 +9,7 @@ import { Currencies, UserRoles } from "~/lib/constant";
 import { db } from "~/server/db";
 import {
 	account,
+	apiKey as apiKeySchema,
 	passkey as passkeySchema,
 	session,
 	users,
@@ -24,6 +26,7 @@ export const auth = betterAuth({
 			account,
 			verification,
 			passkey: passkeySchema,
+			apikey: apiKeySchema,
 		},
 	}),
 	emailAndPassword: {
@@ -72,6 +75,7 @@ export const auth = betterAuth({
 			rpName: "Subtracker",
 			origin: env.BETTER_AUTH_URL,
 		}),
+		apiKey(),
 		admin(),
 	],
 });
@@ -84,3 +88,22 @@ export const isAuthenticated = async (req: NextRequest) =>
 			headers: req.headers,
 		})
 	)?.user;
+
+export const verifyApiKey = async (req: NextRequest) => {
+	const apiKey =
+		req.headers.get("x-api-key") ?? req.nextUrl.searchParams.get("apiKey");
+	if (!apiKey) {
+		return null;
+	}
+
+	const { valid, key } = await auth.api.verifyApiKey({
+		body: { key: apiKey },
+	});
+	if (!valid || !key) {
+		return null;
+	}
+
+	return await db.query.users.findFirst({
+		where: (users, { eq }) => eq(users.id, key.userId),
+	});
+};

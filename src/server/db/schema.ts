@@ -277,3 +277,45 @@ export const passkey = sqliteTable("passkey", {
 	createdAt: integer("created_at", { mode: "timestamp" }),
 	aaguid: text("aaguid"),
 });
+
+export const apiKey = sqliteTable("api_key", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => Bun.randomUUIDv7()),
+	name: text("name"),
+	start: text("start"),
+	prefix: text("prefix"),
+	key: text("key").notNull(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade" }),
+	refillInterval: integer("refill_interval"),
+	refillAmount: integer("refill_amount"),
+	lastRefillAt: integer("last_refill_at", { mode: "timestamp" }),
+	enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+	rateLimitEnabled: integer("rate_limit_enabled", { mode: "boolean" })
+		.notNull()
+		.default(false),
+	rateLimitTimeWindow: integer("rate_limit_time_window"),
+	rateLimitMax: integer("rate_limit_max"),
+	requestCount: integer("request_count").notNull().default(0),
+	remaining: integer("remaining"),
+	lastRequest: integer("last_request", { mode: "timestamp" }),
+	expiresAt: integer("expires_at", { mode: "timestamp" }),
+	createdAt: integer("created_at", { mode: "timestamp" })
+		.$defaultFn(() => new Date())
+		.notNull(),
+	updatedAt: integer("updated_at", { mode: "timestamp" })
+		.$defaultFn(() => new Date())
+		.$onUpdate(() => new Date())
+		.notNull(),
+	permissions: text("permissions"),
+	metadata: text("metadata", { mode: "json" }),
+});
+
+export const apiKeyRelations = relations(apiKey, ({ one }) => ({
+	user: one(users, {
+		fields: [apiKey.userId],
+		references: [users.id],
+	}),
+}));

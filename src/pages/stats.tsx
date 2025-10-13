@@ -1,10 +1,3 @@
-import {
-	addMonths,
-	endOfMonth,
-	isBefore,
-	isSameMonth,
-	isThisMonth,
-} from "date-fns";
 import { InfoIcon } from "lucide-react";
 import Head from "next/head";
 import { useMemo } from "react";
@@ -30,19 +23,13 @@ import {
 	DEFAULT_BASE_CURRENCY,
 } from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
+import { getStats } from "~/lib/stats";
 import {
 	currencyToSymbol,
 	getFilteredSubscriptions,
 	rounded,
 } from "~/lib/utils";
 import { api, type RouterOutputs } from "~/utils/api";
-
-const sum = (acc: number, price: number, usersLength?: number) => {
-	if (usersLength && usersLength > 0) {
-		return acc + price / usersLength;
-	}
-	return acc + price;
-};
 
 export default function Stats() {
 	const [filters] = useFilters();
@@ -68,91 +55,7 @@ export default function Stats() {
 		totalPerYear,
 		remainingThisMonth,
 		totalThisMonth,
-	} = useMemo(() => {
-		const totalMonthlySub = subscriptions
-			.filter((subscription) => subscription.schedule === "Monthly")
-			.reduce(
-				(acc, subscription) =>
-					sum(
-						acc,
-						subscription.price,
-						filters.users ? subscription.users.length : undefined,
-					),
-				0,
-			);
-
-		const totalYearlySub = subscriptions
-			.filter((subscription) => subscription.schedule === "Yearly")
-			.reduce(
-				(acc, subscription) =>
-					sum(
-						acc,
-						subscription.price,
-						filters.users ? subscription.users.length : undefined,
-					),
-				0,
-			);
-
-		const totalPerMonth = totalMonthlySub + totalYearlySub / 12;
-
-		const totalPerYear = totalMonthlySub * 12 + totalYearlySub;
-
-		const endOfMonthDate = endOfMonth(new Date());
-		const remainingThisMonth = subscriptions
-			.filter((subscription) =>
-				isBefore(subscription.nextPaymentDate, endOfMonthDate),
-			)
-			.reduce(
-				(acc, subscription) =>
-					sum(
-						acc,
-						subscription.price,
-						filters.users ? subscription.users.length : undefined,
-					),
-				0,
-			);
-
-		const nextMonthDate = addMonths(new Date(), 1);
-		const expectedNextMonth = subscriptions
-			.filter(
-				(subscription) =>
-					isSameMonth(subscription.nextPaymentDate, nextMonthDate) ||
-					isSameMonth(subscription.secondNextPaymentDate, nextMonthDate),
-			)
-			.reduce(
-				(acc, subscription) =>
-					sum(
-						acc,
-						subscription.price,
-						filters.users ? subscription.users.length : undefined,
-					),
-				0,
-			);
-
-		const totalThisMonth = subscriptions
-			.filter(
-				(subscription) =>
-					isThisMonth(subscription.nextPaymentDate) ||
-					isThisMonth(subscription.previousPaymentDate),
-			)
-			.reduce(
-				(acc, subscription) =>
-					sum(
-						acc,
-						subscription.price,
-						filters.users ? subscription.users.length : undefined,
-					),
-				0,
-			);
-
-		return {
-			totalPerMonth,
-			totalPerYear,
-			remainingThisMonth,
-			expectedNextMonth,
-			totalThisMonth,
-		};
-	}, [subscriptions, filters.users]);
+	} = useMemo(() => getStats(subscriptions, filters), [subscriptions, filters]);
 
 	if (subscriptionsQuery.isError) {
 		return <div>Error: {subscriptionsQuery.error?.message}</div>;
