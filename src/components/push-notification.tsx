@@ -64,6 +64,7 @@ export const PushNotificationHandler = () => {
 		handleNotificationPermission();
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: not needed
 	useEffect(() => {
 		const subscribeToPush = async () => {
 			if (isServiceWorkerReady && publicVapidKeyQuery.data) {
@@ -83,7 +84,7 @@ export const PushNotificationHandler = () => {
 		};
 
 		subscribeToPush();
-	}, [isServiceWorkerReady, subscribeUserMutation, publicVapidKeyQuery.data]);
+	}, [isServiceWorkerReady, publicVapidKeyQuery.data]);
 
 	if (permission !== "default") {
 		return null;
