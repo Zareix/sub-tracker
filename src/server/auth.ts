@@ -78,6 +78,8 @@ export const auth = betterAuth({
 		apiKey({
 			rateLimit: {
 				enabled: env.NODE_ENV === "production",
+				maxRequests: 100,
+				timeWindow: 10 * 60 * 1000, // 10 minutes
 			},
 		}),
 		admin(),
@@ -103,7 +105,6 @@ export const verifyApiKey = async (req: NextRequest) => {
 	const { valid, key, error } = await auth.api.verifyApiKey({
 		body: { key: apiKey },
 	});
-	console.log(valid);
 	if (!valid || !key) {
 		throw new Error(error?.message || "Invalid API key");
 	}
