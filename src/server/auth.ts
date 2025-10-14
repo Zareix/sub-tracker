@@ -75,7 +75,11 @@ export const auth = betterAuth({
 			rpName: "Subtracker",
 			origin: env.BETTER_AUTH_URL,
 		}),
-		apiKey(),
+		apiKey({
+			rateLimit: {
+				enabled: env.NODE_ENV === "production",
+			},
+		}),
 		admin(),
 	],
 });
@@ -93,14 +97,15 @@ export const verifyApiKey = async (req: NextRequest) => {
 	const apiKey =
 		req.headers.get("x-api-key") ?? req.nextUrl.searchParams.get("apiKey");
 	if (!apiKey) {
-		return null;
+		throw new Error("No API key provided");
 	}
 
-	const { valid, key } = await auth.api.verifyApiKey({
+	const { valid, key, error } = await auth.api.verifyApiKey({
 		body: { key: apiKey },
 	});
+	console.log(valid);
 	if (!valid || !key) {
-		return null;
+		throw new Error(error?.message || "Invalid API key");
 	}
 
 	return await db.query.users.findFirst({

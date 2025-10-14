@@ -1,0 +1,18 @@
+meta {
+  name: stats
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{url}}/api/stats?apiKey={{apiKey}}&categories=1,2&schedule=Monthly
+  body: none
+  auth: none
+}
+
+params:query {
+  apiKey: {{apiKey}}
+  categories: 1,2
+  schedule: Monthly
+  ~paymentMethods: 2
+}
