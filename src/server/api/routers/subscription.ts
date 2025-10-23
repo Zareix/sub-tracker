@@ -66,7 +66,7 @@ const calculateNextPaymentDate = (
 	};
 
 	if (firstPaymentDateDetails.base > currentDateInfo.base) {
-		return firstPaymentDate;
+		return endOfDay(firstPaymentDate);
 	}
 
 	switch (schedule) {
@@ -75,9 +75,6 @@ const calculateNextPaymentDate = (
 				currentDateInfo.year,
 				currentDateInfo.month,
 				firstPaymentDateDetails.day,
-				23,
-				59,
-				59,
 			);
 			if (res > currentDateInfo.base) {
 				return res;
@@ -92,6 +89,7 @@ const calculateNextPaymentDate = (
 				23,
 				59,
 				59,
+				999,
 			);
 			if (res > currentDateInfo.base) {
 				return res;
