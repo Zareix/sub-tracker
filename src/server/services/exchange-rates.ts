@@ -56,7 +56,7 @@ export const updateExchangeRates = async () => {
 			for (const to of Currencies) {
 				const rateFrom = ratesMap[from];
 				const rateTo = ratesMap[to];
-				const rate = rateTo / rateFrom; // includes identity when from === to
+				const rate = Math.round((rateTo / rateFrom) * 1e6) / 1e6;
 				values.push({ baseCurrency: from, targetCurrency: to, rate });
 			}
 		}

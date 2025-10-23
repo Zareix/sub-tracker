@@ -28,6 +28,13 @@
 					}
 				}
 			},
+			"correctness": {
+				"noUnusedImports": {
+					"fix": "safe",
+					"level": "error",
+					"options": {}
+				}
+			},
 			"style": {
 				"noParameterAssign": "error",
 				"useAsConstAssertion": "error",
