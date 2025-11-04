@@ -244,6 +244,12 @@ export const subscriptionRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			if (!input.payedBy.includes(ctx.session.user.id)) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "The creator must be included in the users who pay",
+				});
+			}
 			const subscription = await runTransaction(ctx.db, async (db) => {
 				const subscription = takeFirstOrNull(
 					await db
@@ -303,6 +309,12 @@ export const subscriptionRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			if (!input.payedBy.includes(ctx.session.user.id)) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "The creator must be included in the users who pay",
+				});
+			}
 			const subscription = await runTransaction(ctx.db, async (db) => {
 				const subscription = takeFirstOrNull(
 					await db

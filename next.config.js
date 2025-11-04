@@ -16,6 +16,11 @@ const config = {
 				hostname: "**.gstatic.com",
 			},
 		],
+		localPatterns: [
+			{
+				pathname: "/api/files",
+			},
+		],
 	},
 
 	i18n: {

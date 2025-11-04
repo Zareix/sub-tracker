@@ -279,7 +279,7 @@ export const EditCreateForm = ({
 																{p.icon && (
 																	<CategoryIcon
 																		icon={p.icon}
-																		className="max-h-[20px] max-w-[20px] object-contain"
+																		className="max-h-5 max-w-5 object-contain"
 																	/>
 																)}
 																{p.name}
@@ -405,7 +405,7 @@ export const EditCreateForm = ({
 																		alt={p.name}
 																		width={64}
 																		height={40}
-																		className="max-h-[20px] max-w-[20px] object-contain"
+																		className="max-h-5 max-w-5 object-contain"
 																	/>
 																)}
 																{p.name}
@@ -432,9 +432,10 @@ export const EditCreateForm = ({
 												usersQuery.data?.map((user) => ({
 													label: user.name,
 													value: user.id.toString(),
+													unselectable: user.id === session.data?.user.id,
 												})) ?? []
 											}
-											search={false}
+											searchable={false}
 											onValueChange={field.onChange}
 											defaultValue={field.value}
 											placeholder="Select users"
@@ -503,7 +504,7 @@ export const EditCreateForm = ({
 														mode="single"
 														selected={field.value}
 														onSelect={field.onChange}
-														initialFocus
+														autoFocus
 													/>
 												</PopoverContent>
 											</Popover>
