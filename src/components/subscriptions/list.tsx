@@ -64,7 +64,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 		);
 	}
 
-	const previousSubOfThisMonths = subscriptions.filter(
+	const previousSubOfThisMonths = subs.filter(
 		(s) =>
 			isThisMonth(s.previousPaymentDate) &&
 			isBefore(s.previousPaymentDate, new Date()),
