@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { setMilliseconds, startOfDay } from "date-fns";
 import { takeFirstOrThrow } from "~/lib/utils";
-import { appRouter } from "~/server/api/root";
+import { createCaller } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import { subscriptions } from "~/server/db/schema";
 import * as _mock from "./_mock";
@@ -20,7 +20,7 @@ const compareDates = (date1?: Date, date2?: Date) => {
 
 describe("Subscriptions", () => {
 	const ctx = createInnerTRPCContext({ session: _mock.session });
-	const caller = appRouter.createCaller({ ...ctx });
+	const caller = createCaller(() => ctx);
 
 	test("Get default", async () => {
 		// WHEN

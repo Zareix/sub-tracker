@@ -17,7 +17,7 @@ import {
 import { SCHEDULES, type Schedule } from "~/lib/constant";
 import { type Filters, useFilters } from "~/lib/hooks/use-filters";
 import { cn } from "~/lib/utils";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 type Props = {
 	filtersDisplayed?: Array<keyof Filters>;
@@ -86,7 +86,7 @@ export const FiltersButton = ({
 									<SelectTrigger
 										className={cn(
 											"capitalize",
-											filters.users ? "w-[160px]" : "w-[200px]",
+											filters.users ? "w-40" : "w-[200px]",
 										)}
 									>
 										<SelectValue placeholder="Select..." />
@@ -127,7 +127,7 @@ export const FiltersButton = ({
 									<SelectTrigger
 										className={cn(
 											"capitalize",
-											filters.schedule ? "w-[160px]" : "w-[200px]",
+											filters.schedule ? "w-40" : "w-[200px]",
 										)}
 									>
 										<SelectValue placeholder="Select..." />
@@ -163,7 +163,7 @@ export const FiltersButton = ({
 										value: pm.id.toString(),
 									})) ?? []
 								}
-								search={false}
+								searchable={false}
 								maxCount={0}
 								onValueChange={(value) =>
 									setFilters({
@@ -188,7 +188,7 @@ export const FiltersButton = ({
 									})) ?? []
 								}
 								className="bg-background"
-								search={false}
+								searchable={false}
 								maxCount={0}
 								onValueChange={(value) =>
 									setFilters({

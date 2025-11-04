@@ -1,3 +1,5 @@
+"use client";
+
 import { Calendar1Icon, InfoIcon } from "lucide-react";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
 import { FiltersButton } from "~/components/subscriptions/filters";
@@ -6,7 +8,7 @@ import { SortButton } from "~/components/subscriptions/sort";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 export default function Home() {
 	const subscriptionsQuery = api.subscription.getAll.useQuery();

@@ -1,3 +1,5 @@
+"use client";
+
 import { InfoIcon } from "lucide-react";
 import Head from "next/head";
 import { useMemo } from "react";
@@ -29,9 +31,9 @@ import {
 	getFilteredSubscriptions,
 	rounded,
 } from "~/lib/utils";
-import { api, type RouterOutputs } from "~/utils/api";
+import { api, type RouterOutputs } from "~/trpc/react";
 
-export default function Stats() {
+export default function StatsPage() {
 	const [filters] = useFilters();
 	const subscriptionsQuery = api.subscription.getAll.useQuery();
 	const { data: session } = authClient.useSession();

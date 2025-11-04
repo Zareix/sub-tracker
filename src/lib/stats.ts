@@ -7,7 +7,7 @@ import {
 } from "date-fns";
 import type { Filters } from "~/lib/hooks/use-filters";
 import { rounded, sum } from "~/lib/utils";
-import type { RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/trpc/react";
 
 export const getStats = (
 	subscriptions: RouterOutputs["subscription"]["getAll"],

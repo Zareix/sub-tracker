@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 import { Button } from "./ui/button";
 
 export const PushNotificationHandler = () => {

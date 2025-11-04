@@ -11,7 +11,11 @@ import {
 	WrenchIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import {
+	type ReadonlyURLSearchParams,
+	usePathname,
+	useSearchParams,
+} from "next/navigation";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
@@ -46,7 +50,7 @@ import { ThemeIcon } from "~/components/ui/theme-provider";
 import { authClient } from "~/lib/auth-client";
 import { Currencies, type Currency } from "~/lib/constant";
 import { cn, currencyToSymbol } from "~/lib/utils";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 export const NAV_ITEMS = [
 	{
@@ -84,7 +88,8 @@ export const NAV_ITEMS = [
 ] as const;
 
 export function AppSidebar() {
-	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
 	const session = authClient.useSession();
 	const { setTheme, theme } = useTheme();
 	const apiUtils = api.useUtils();
@@ -116,7 +121,7 @@ export function AppSidebar() {
 							<Link
 								href={{
 									pathname: "/",
-									query: router.query,
+									query: { ...Object.fromEntries([...searchParams]) },
 								}}
 							>
 								<div className="flex aspect-square size-8 items-center justify-center rounded-xs bg-primary text-sidebar-primary-foreground">
@@ -138,14 +143,13 @@ export function AppSidebar() {
 								"role" in item ? item.role === session.data?.user.role : true,
 							).map((item) => (
 								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton
-										asChild
-										isActive={router.pathname === item.url}
-									>
+									<SidebarMenuButton asChild isActive={pathname === item.url}>
 										<Link
 											href={{
 												pathname: item.url,
-												query: item.keepParams ? router.query : null,
+												query: item.keepParams
+													? { ...Object.fromEntries([...searchParams]) }
+													: null,
 											}}
 										>
 											<item.icon />
@@ -313,11 +317,11 @@ export function AppSidebar() {
 
 const NavbarItem = ({
 	pathname,
-	query,
+	searchParams,
 	...item
 }: (typeof NAV_ITEMS)[number] & {
 	pathname: string;
-	query: ReturnType<typeof useRouter>["query"];
+	searchParams: ReadonlyURLSearchParams;
 }) => (
 	<Button
 		key={item.title}
@@ -328,7 +332,9 @@ const NavbarItem = ({
 		<Link
 			href={{
 				pathname: item.url,
-				query: item.keepParams ? query : null,
+				query: item.keepParams
+					? { ...Object.fromEntries([...searchParams]) }
+					: null,
 			}}
 			className="flex h-full items-center justify-center gap-2 font-bold text-xl"
 		>
@@ -338,7 +344,8 @@ const NavbarItem = ({
 );
 
 export const Navbar = () => {
-	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
 
 	const navBarItems = NAV_ITEMS.filter((item) =>
 		"role" in item ? item.role === "user" : true,
@@ -353,8 +360,8 @@ export const Navbar = () => {
 						<NavbarItem
 							key={item.title}
 							{...item}
-							pathname={router.pathname}
-							query={router.query}
+							pathname={pathname}
+							searchParams={searchParams}
 						/>
 					))}
 				<CreateSubscriptionDialog
@@ -373,8 +380,8 @@ export const Navbar = () => {
 						<NavbarItem
 							key={item.title}
 							{...item}
-							pathname={router.pathname}
-							query={router.query}
+							pathname={pathname}
+							searchParams={searchParams}
 						/>
 					))}
 			</div>

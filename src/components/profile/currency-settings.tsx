@@ -1,3 +1,5 @@
+"use client";
+
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
@@ -9,7 +11,7 @@ import {
 } from "~/components/ui/select";
 import { authClient } from "~/lib/auth-client";
 import { CURRENCY_SYMBOLS, Currencies, type Currency } from "~/lib/constant";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 export const CurrencySettings = () => {
 	const { data: session, isPending: isSessionLoading } =

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import type { Category } from "~/server/db/schema";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 export const DeleteCategoryDialog = ({
 	category,

@@ -36,7 +36,7 @@ import {
 	getFilteredSubscriptions,
 	getSortedSubscriptions,
 } from "~/lib/utils";
-import type { RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/trpc/react";
 
 type Props = {
 	subscriptions: RouterOutputs["subscription"]["getAll"];
@@ -173,42 +173,40 @@ const SubscriptionListItem = ({
 						{subscription.price}
 						{currencyToSymbol(userBaseCurrency)}
 					</div>
-					{!isPrevious && (
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button
-									size="icon"
-									variant="ghost"
-									className="w-5 text-muted-foreground md:w-10"
-								>
-									<InfoIcon size={20} />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent
-								className="mr-2 w-32"
-								onClick={(e) => e.stopPropagation()}
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button
+								size="icon"
+								variant="ghost"
+								className="w-5 text-muted-foreground md:w-10"
 							>
-								<DropdownMenuItem
-									onClick={() => setIsOpen({ ...isOpen, edit: true })}
-								>
-									<EditIcon />
-									<span>Edit</span>
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									className="text-destructive"
-									onClick={() =>
-										setIsOpen({
-											...isOpen,
-											delete: true,
-										})
-									}
-								>
-									<TrashIcon />
-									<span>Delete</span>
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					)}
+								<InfoIcon size={20} />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent
+							className="mr-2 w-32"
+							onClick={(e) => e.stopPropagation()}
+						>
+							<DropdownMenuItem
+								onClick={() => setIsOpen({ ...isOpen, edit: true })}
+							>
+								<EditIcon />
+								<span>Edit</span>
+							</DropdownMenuItem>
+							<DropdownMenuItem
+								className="text-destructive"
+								onClick={() =>
+									setIsOpen({
+										...isOpen,
+										delete: true,
+									})
+								}
+							>
+								<TrashIcon />
+								<span>Delete</span>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
 				<div className="flex flex-wrap gap-x-4 gap-y-2 pt-1 text-base text-foreground/80 md:gap-x-6">
 					<div className="flex items-center gap-1">

@@ -1,6 +1,6 @@
 import { EditCreateForm } from "~/components/subscriptions/edit-create-form";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
-import type { RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/trpc/react";
 
 type Props = {
 	subscription: RouterOutputs["subscription"]["getAll"][number];

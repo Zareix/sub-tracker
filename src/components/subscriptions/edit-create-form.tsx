@@ -37,7 +37,7 @@ import { Separator } from "~/components/ui/separator";
 import { authClient } from "~/lib/auth-client";
 import { Currencies, SCHEDULES } from "~/lib/constant";
 import { cn } from "~/lib/utils";
-import { api, type RouterInputs, type RouterOutputs } from "~/utils/api";
+import { api, type RouterInputs, type RouterOutputs } from "~/trpc/react";
 
 const createTempSub = (subscription: RouterInputs["subscription"]["create"]) =>
 	({
@@ -105,7 +105,9 @@ export const EditCreateForm = ({
 	const apiUtils = api.useUtils();
 	const createSubscriptionMutation = api.subscription.create.useMutation({
 		onSuccess: () => {
-			toast.success("Subscription created!");
+			toast.success("Subscription created!", {
+				duration: Number.POSITIVE_INFINITY,
+			});
 			onFinished?.();
 			setTimeout(() => {
 				form.reset();

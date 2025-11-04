@@ -15,7 +15,7 @@ import {
 	FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { api, type RouterOutputs } from "~/utils/api";
+import { api, type RouterOutputs } from "~/trpc/react";
 
 const paymentMethodCreateSchema = z.object({
 	name: z.string(),

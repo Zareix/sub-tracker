@@ -24,7 +24,7 @@ import {
 } from "~/components/ui/select";
 import { authClient } from "~/lib/auth-client";
 import { UserRoles } from "~/lib/constant";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 const userCreateSchema = z.object({
 	image: z.nullish(z.string()),

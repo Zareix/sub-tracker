@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { CreateCategoryDialog } from "~/components/settings/categories/create";
 import { DeleteCategoryDialog } from "~/components/settings/categories/delete";
@@ -15,7 +17,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "~/components/ui/table";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 export default function SettingsPage() {
 	const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
@@ -67,7 +69,7 @@ export default function SettingsPage() {
 												alt={paymentMethod.name}
 												width={64}
 												height={40}
-												className="max-h-[40px] max-w-[64px] object-contain"
+												className="max-h-10 max-w-16 object-contain"
 											/>
 										)}
 									</TableCell>
@@ -93,7 +95,7 @@ export default function SettingsPage() {
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[80px]">Icon</TableHead>
+								<TableHead className="w-20">Icon</TableHead>
 								<TableHead>Name</TableHead>
 								<TableHead className="text-end">Actions</TableHead>
 							</TableRow>

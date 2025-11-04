@@ -3,6 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey } from "better-auth/plugins";
 import { admin } from "better-auth/plugins/admin";
 import { passkey } from "better-auth/plugins/passkey";
+import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
 import { env } from "~/env";
 import { Currencies, UserRoles } from "~/lib/constant";
@@ -65,7 +66,11 @@ export const auth = betterAuth({
 			},
 		},
 	},
-	trustedOrigins: [env.BETTER_AUTH_URL],
+	trustedOrigins: [env.BETTER_AUTH_URL].concat(
+		env.NODE_ENV === "development"
+			? ["http://localhost:3000", "http://192.168.31.6:3000"]
+			: [],
+	),
 	plugins: [
 		passkey({
 			rpID:
@@ -88,12 +93,12 @@ export const auth = betterAuth({
 
 export type Session = typeof auth.$Infer.Session;
 
-export const isAuthenticated = async (req: NextRequest) =>
-	!!(
-		await auth.api.getSession({
-			headers: req.headers,
-		})
-	)?.user;
+export const isAuthenticated = async () => !!(await getAuthSession())?.user;
+
+export const getAuthSession = async () =>
+	auth.api.getSession({
+		headers: await headers(),
+	});
 
 export const verifyApiKey = async (req: NextRequest) => {
 	const apiKey =

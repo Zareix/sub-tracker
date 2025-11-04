@@ -5,7 +5,7 @@ Purpose: Help GitHub Copilot (and contributors using Copilot Chat) make correct,
 ## Tech stack (what to assume)
 
 - Runtime : Bun, use `bun` for scripts, DO NOT use `npm` or `npx` but use `bun` and `bunx`.
-- Framework: Next.js 15 (React 19) with Pages dir, TypeScript (strict)
+- Framework: Next.js 15 (React 19) with App dir, TypeScript (strict)
 - Styling: Tailwind CSS v4, shadcn/ui components in `src/components/ui`
 - Data: Drizzle ORM + SQLite (`db.sqlite`), migrations in `drizzle/`
 - API: tRPC v11 (`src/server/api`), TanStack Query v5
@@ -33,12 +33,16 @@ Copilot: when adding/removing columns, update schema, regenerate, and push. If a
 
 ## Project structure (high level)
 
-- `src/app` — API routes under `api/*`.
-- `src/pages` — Pages structure (e.g., `_app.tsx`).
+- `src/app/api` — API routes under `api/*`.
+- `src/app/(app)` — main app routes/pages.
 - `src/server` — tRPC routers (`api/routers`), DB (`db`), email, services.
 - `src/components` — feature components and `ui/*` primitives.
-- `src/lib` — utilities, constants, hooks; tRPC client in `src/utils/api.ts`.
+- `src/lib` — utilities, constants, hooks.
+- `src/trpc` — tRPC client setup.
+  - `src/trpc/react.ts` — hooks for data fetching/mutations.
+  - `src/trpc/server.ts` — server tRPC setup.
 - `drizzle/` — generated migrations (+ `meta/`).
+- `src/tests` — test files (using Bun test).
 
 Important aliases: `~/*` maps to `src/*`.
 
@@ -48,7 +52,7 @@ Important aliases: `~/*` maps to `src/*`.
 - Validate inputs with zod in server routers; mirror types in client forms via `@hookform/resolvers`.
 - Use `cn` from `src/lib/utils.ts` for class merging; Tailwind for styling.
 - Use `src/components/ui/*` primitives before adding new dependencies.
-- For data fetching/mutations, use tRPC hooks from `src/utils/api.ts` (TanStack Query v5). SSR for tRPC is disabled by design.
+- For data fetching/mutations, use tRPC hooks from `src/trpc/react.ts` (TanStack Query v5). SSR for tRPC is disabled by design.
 - Dates: use `date-fns`.
 - Images: only remote hosts allowed in `next.config.js`.
 
@@ -75,7 +79,7 @@ Important aliases: `~/*` maps to `src/*`.
 
 3. Add a page/route
 
-- Prefer the Pages Router under `src/pages` when possible.
+- Prefer the App dir: `src/app/(app)/*`.
 - Use existing UI primitives and patterns for consistency.
 
 4. Email template
@@ -87,6 +91,7 @@ Important aliases: `~/*` maps to `src/*`.
 
 - Types okay: `tsc` runs during build; ensure no new errors.
 - Lint/style: `bun run check` to autofix; `bun run lint` to verify.
+- Tests: `bun run test` (Bun test).
 - Build passes: `bun run build`.
 - DB migrations generated and applied locally.
 - Screens and forms behave (basic manual test).
