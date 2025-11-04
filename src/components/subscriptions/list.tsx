@@ -1,3 +1,4 @@
+import { isSameDay, isThisMonth } from "date-fns";
 import {
 	Calendar1Icon,
 	EditIcon,
@@ -29,6 +30,7 @@ import { type Currencies, DEFAULT_BASE_CURRENCY } from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
 import { useSort } from "~/lib/hooks/use-sort";
 import {
+	cn,
 	currencyToSymbol,
 	formatNextPaymentDate,
 	getFilteredSubscriptions,
@@ -62,24 +64,47 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 		);
 	}
 
-	return subs.map((subscription) => (
-		<React.Fragment key={subscription.id}>
-			<SubscriptionListItem
-				key={subscription.id}
-				subscription={subscription}
-				userBaseCurrency={userBaseCurrency}
-			/>
-			<Separator className="w-full" />
-		</React.Fragment>
-	));
+	const previousSubOfThisMonths = subscriptions.filter(
+		(s) =>
+			isThisMonth(s.previousPaymentDate) &&
+			!isSameDay(s.previousPaymentDate, s.nextPaymentDate),
+	);
+
+	return (
+		<>
+			{previousSubOfThisMonths.map((subscription) => (
+				<React.Fragment key={subscription.id}>
+					<SubscriptionListItem
+						key={subscription.id}
+						subscription={subscription}
+						userBaseCurrency={userBaseCurrency}
+						isPrevious
+					/>
+					<Separator className="w-full" />
+				</React.Fragment>
+			))}
+			{subs.map((subscription) => (
+				<React.Fragment key={subscription.id}>
+					<SubscriptionListItem
+						key={subscription.id}
+						subscription={subscription}
+						userBaseCurrency={userBaseCurrency}
+					/>
+					<Separator className="w-full" />
+				</React.Fragment>
+			))}
+		</>
+	);
 };
 
 const SubscriptionListItem = ({
 	subscription,
 	userBaseCurrency,
+	isPrevious = false,
 }: {
 	subscription: RouterOutputs["subscription"]["getAll"][number];
 	userBaseCurrency: string;
+	isPrevious?: boolean;
 }) => {
 	const [filters, setFilters] = useFilters();
 	const [isOpen, setIsOpen] = useState({
@@ -98,7 +123,7 @@ const SubscriptionListItem = ({
 								alt={subscription.name}
 								width={64}
 								height={48}
-								className="max-h-[48px] max-w-[40px] object-contain md:max-w-[64px]"
+								className="max-h-12 max-w-10 object-contain md:max-w-16"
 							/>
 						)}
 						<h2 className="grow font-semibold text-xl">{subscription.name}</h2>
@@ -121,7 +146,7 @@ const SubscriptionListItem = ({
 	}
 
 	return (
-		<Card className="border-none shadow-none">
+		<Card className={cn("border-none shadow-none", isPrevious && "opacity-50")}>
 			<CardContent>
 				<div className="flex items-center gap-2">
 					{subscription.image && (
@@ -130,54 +155,60 @@ const SubscriptionListItem = ({
 							alt={subscription.name}
 							width={64}
 							height={48}
-							className="max-h-[48px] max-w-[40px] object-contain md:max-w-[64px]"
+							className="max-h-12 max-w-10 object-contain md:max-w-16"
 						/>
 					)}
 					<div className="flex grow flex-col gap-1">
 						<h2 className="font-semibold text-xl">{subscription.name}</h2>
 						<div className="flex items-center gap-1 text-muted-foreground text-sm">
 							<Calendar1Icon size={16} />
-							{formatNextPaymentDate(subscription.nextPaymentDate)}
+							{formatNextPaymentDate(
+								isPrevious
+									? subscription.previousPaymentDate
+									: subscription.nextPaymentDate,
+							)}
 						</div>
 					</div>
 					<div className="text-lg">
 						{subscription.price}
 						{currencyToSymbol(userBaseCurrency)}
 					</div>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button
-								size="icon"
-								variant="ghost"
-								className="w-5 text-muted-foreground md:w-10"
+					{!isPrevious && (
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button
+									size="icon"
+									variant="ghost"
+									className="w-5 text-muted-foreground md:w-10"
+								>
+									<InfoIcon size={20} />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent
+								className="mr-2 w-32"
+								onClick={(e) => e.stopPropagation()}
 							>
-								<InfoIcon size={20} />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent
-							className="mr-2 w-32"
-							onClick={(e) => e.stopPropagation()}
-						>
-							<DropdownMenuItem
-								onClick={() => setIsOpen({ ...isOpen, edit: true })}
-							>
-								<EditIcon />
-								<span>Edit</span>
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								className="text-destructive"
-								onClick={() =>
-									setIsOpen({
-										...isOpen,
-										delete: true,
-									})
-								}
-							>
-								<TrashIcon />
-								<span>Delete</span>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
+								<DropdownMenuItem
+									onClick={() => setIsOpen({ ...isOpen, edit: true })}
+								>
+									<EditIcon />
+									<span>Edit</span>
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									className="text-destructive"
+									onClick={() =>
+										setIsOpen({
+											...isOpen,
+											delete: true,
+										})
+									}
+								>
+									<TrashIcon />
+									<span>Delete</span>
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					)}
 				</div>
 				<div className="flex flex-wrap gap-x-4 gap-y-2 pt-1 text-base text-foreground/80 md:gap-x-6">
 					<div className="flex items-center gap-1">
@@ -206,7 +237,7 @@ const SubscriptionListItem = ({
 								alt={subscription.paymentMethod.name}
 								width={20}
 								height={20}
-								className="max-h-[20px] max-w-[20px] object-contain"
+								className="max-h-5 max-w-5 object-contain"
 							/>
 						) : (
 							<WalletCardsIcon size={18} className="text-primary" />
