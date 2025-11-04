@@ -2,13 +2,13 @@ import { TRPCError } from "@trpc/server";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "~/env";
-
+import { takeFirstOrThrow } from "~/lib/utils";
 import {
 	adminProcedure,
 	createTRPCRouter,
 	protectedProcedure,
 } from "~/server/api/trpc";
-import { db, runTransaction } from "~/server/db";
+import { runTransaction } from "~/server/db";
 import {
 	devices,
 	subscriptions,
@@ -34,7 +34,7 @@ export const userRouter = createTRPCRouter({
 			z.object({
 				id: z.string(),
 				name: z.string(),
-				email: z.string().email(),
+				email: z.email(),
 				image: z.string().nullish(),
 			}),
 		)
@@ -46,24 +46,23 @@ export const userRouter = createTRPCRouter({
 						"You cannot edit your own user information through this endpoint.",
 				});
 			}
-			const usersReturned = await ctx.db
-				.update(users)
-				.set({
-					name: input.name,
-					email: input.email,
-					image: input.image,
-				})
-				.where(eq(users.id, input.id))
-				.returning({
-					id: users.id,
-				});
-			const user = usersReturned[0];
-			if (!user) {
-				throw new TRPCError({
+			const user = takeFirstOrThrow(
+				await ctx.db
+					.update(users)
+					.set({
+						name: input.name,
+						email: input.email,
+						image: input.image,
+					})
+					.where(eq(users.id, input.id))
+					.returning({
+						id: users.id,
+					}),
+				new TRPCError({
 					code: "INTERNAL_SERVER_ERROR",
 					message: "Error updating user",
-				});
-			}
+				}),
+			);
 			return {
 				id: user.id,
 			};
@@ -78,7 +77,7 @@ export const userRouter = createTRPCRouter({
 				message: "Error creating user",
 			});
 		}
-		await runTransaction(db, async () => {
+		await runTransaction(ctx.db, async (db) => {
 			const usersToSubscriptionsReturned = await db
 				.delete(usersToSubscriptions)
 				.where(eq(usersToSubscriptions.userId, input))
@@ -108,19 +107,19 @@ export const userRouter = createTRPCRouter({
 				};
 			}
 
-			const existingSubscription = await db.query.devices.findFirst({
+			const existingSubscription = await ctx.db.query.devices.findFirst({
 				where: eq(devices.userId, user.id),
 			});
 
 			if (existingSubscription) {
-				await db
+				await ctx.db
 					.update(devices)
 					.set({
 						pushSubscription: input,
 					})
 					.where(eq(devices.id, existingSubscription.id));
 			} else {
-				await db.insert(devices).values({
+				await ctx.db.insert(devices).values({
 					pushSubscription: input,
 					userId: user.id,
 				});

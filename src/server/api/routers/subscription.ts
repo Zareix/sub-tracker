@@ -8,10 +8,9 @@ import {
 	DEFAULT_BASE_CURRENCY,
 	SCHEDULES,
 } from "~/lib/constant";
-import { rounded } from "~/lib/utils";
-
+import { rounded, takeFirstOrNull } from "~/lib/utils";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { db, runTransaction } from "~/server/db";
+import { type db, runTransaction } from "~/server/db";
 import {
 	type Category,
 	categories,
@@ -226,7 +225,7 @@ export const subscriptionRouter = createTRPCRouter({
 	getAll: protectedProcedure.query(async ({ ctx }) => {
 		const baseCurrency = ctx.session.user.baseCurrency;
 		const userId = ctx.session.user.id;
-		return getAllSubscriptionsOfUser(db, userId, baseCurrency);
+		return getAllSubscriptionsOfUser(ctx.db, userId, baseCurrency);
 	}),
 	create: protectedProcedure
 		.input(
@@ -241,29 +240,30 @@ export const subscriptionRouter = createTRPCRouter({
 				firstPaymentDate: z.date(),
 				schedule: z.enum(SCHEDULES),
 				payedBy: z.array(z.string()),
-				url: z.string().url().optional(),
+				url: z.url().optional(),
 			}),
 		)
-		.mutation(async ({ input }) => {
-			const subscription = await runTransaction(db, async () => {
-				const subscriptionsReturned = await db
-					.insert(subscriptions)
-					.values({
-						name: input.name,
-						description: input.description,
-						category: input.category,
-						image: input.image,
-						price: input.price,
-						currency: input.currency,
-						paymentMethod: input.paymentMethod,
-						firstPaymentDate: endOfDay(input.firstPaymentDate),
-						schedule: input.schedule,
-						url: input.url,
-					})
-					.returning({
-						id: subscriptions.id,
-					});
-				const subscription = subscriptionsReturned[0];
+		.mutation(async ({ ctx, input }) => {
+			const subscription = await runTransaction(ctx.db, async (db) => {
+				const subscription = takeFirstOrNull(
+					await db
+						.insert(subscriptions)
+						.values({
+							name: input.name,
+							description: input.description,
+							category: input.category,
+							image: input.image,
+							price: input.price,
+							currency: input.currency,
+							paymentMethod: input.paymentMethod,
+							firstPaymentDate: endOfDay(input.firstPaymentDate),
+							schedule: input.schedule,
+							url: input.url,
+						})
+						.returning({
+							id: subscriptions.id,
+						}),
+				);
 				if (!subscription) {
 					throw new TRPCError({
 						code: "INTERNAL_SERVER_ERROR",
@@ -299,31 +299,31 @@ export const subscriptionRouter = createTRPCRouter({
 				firstPaymentDate: z.date(),
 				schedule: z.enum(SCHEDULES),
 				payedBy: z.array(z.string()),
-				url: z.string().url().optional(),
+				url: z.url().optional(),
 			}),
 		)
-		.mutation(async ({ input }) => {
-			const subscription = await runTransaction(db, async () => {
-				const subscriptionsReturned = await db
-					.update(subscriptions)
-					.set({
-						name: input.name,
-						category: input.category,
-						description: input.description,
-						image: input.image,
-						price: input.price,
-						currency: input.currency,
-						paymentMethod: input.paymentMethod,
-						firstPaymentDate: endOfDay(input.firstPaymentDate),
-						schedule: input.schedule,
-						url: input.url,
-					})
-					.where(eq(subscriptions.id, input.id))
-					.returning({
-						id: subscriptions.id,
-					});
-
-				const subscription = subscriptionsReturned[0];
+		.mutation(async ({ ctx, input }) => {
+			const subscription = await runTransaction(ctx.db, async (db) => {
+				const subscription = takeFirstOrNull(
+					await db
+						.update(subscriptions)
+						.set({
+							name: input.name,
+							category: input.category,
+							description: input.description,
+							image: input.image,
+							price: input.price,
+							currency: input.currency,
+							paymentMethod: input.paymentMethod,
+							firstPaymentDate: endOfDay(input.firstPaymentDate),
+							schedule: input.schedule,
+							url: input.url,
+						})
+						.where(eq(subscriptions.id, input.id))
+						.returning({
+							id: subscriptions.id,
+						}),
+				);
 				if (!subscription) {
 					throw new TRPCError({
 						code: "INTERNAL_SERVER_ERROR",
@@ -349,14 +349,16 @@ export const subscriptionRouter = createTRPCRouter({
 				id: subscription.id,
 			};
 		}),
-	delete: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
-		await runTransaction(db, async () => {
-			await db
-				.delete(usersToSubscriptions)
-				.where(eq(usersToSubscriptions.subscriptionId, input));
-			await db.delete(subscriptions).where(eq(subscriptions.id, input));
-		});
-	}),
+	delete: protectedProcedure
+		.input(z.number())
+		.mutation(async ({ ctx, input }) => {
+			await runTransaction(ctx.db, async (db) => {
+				await db
+					.delete(usersToSubscriptions)
+					.where(eq(usersToSubscriptions.subscriptionId, input));
+				await db.delete(subscriptions).where(eq(subscriptions.id, input));
+			});
+		}),
 	searchImages: protectedProcedure
 		.input(z.object({ query: z.string() }))
 		.query(({ input }) => {

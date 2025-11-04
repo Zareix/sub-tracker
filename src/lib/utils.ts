@@ -14,6 +14,31 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
+export function takeFirstOr<T extends unknown[], U>(
+	values: T,
+	defaultValue: U,
+): T[number] | U {
+	if (values.length > 0) {
+		return values[0] as T[number];
+	}
+	return defaultValue;
+}
+
+export const takeFirstOrThrow = <T extends unknown[]>(
+	values: T,
+	error: string | Error,
+) => {
+	const first = takeFirstOr(values, null);
+	if (first !== null) {
+		return first;
+	}
+	throw typeof error === "string" ? new Error(error) : error;
+};
+
+export const takeFirstOrNull = <T extends unknown[]>(values: T) => {
+	return takeFirstOr(values, null);
+};
+
 export function preprocessStringToNumber(val: unknown) {
 	if (!val) {
 		return undefined;

@@ -15,19 +15,21 @@ const globalForDb = globalThis as unknown as {
 export const client = globalForDb.client ?? new Database(env.DATABASE_PATH);
 if (env.NODE_ENV !== "production") globalForDb.client = client;
 
-client.exec("PRAGMA journal_mode = WAL;");
-client.exec("PRAGMA foreign_keys = ON;");
+client.run("PRAGMA journal_mode = WAL;");
+client.run("PRAGMA foreign_keys = ON;");
 
 export const db = drizzle(client, { schema });
 
-export const runTransaction = async <T>(
-	database: typeof db,
-	callback: () => Promise<T>,
+// -------------------------------- UTILS -------------------------------- //
+// TODO This does not handle concurrent transactions.
+export const runTransaction = async <T, DB extends typeof db>(
+	database: DB,
+	callback: (database: DB) => Promise<T>,
 ): Promise<T> => {
 	database.run(sql`BEGIN`);
 
 	try {
-		const result = await callback();
+		const result = await callback(database);
 		database.run(sql`COMMIT`);
 		return result;
 	} catch (error) {

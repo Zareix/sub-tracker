@@ -1,5 +1,11 @@
 import { afterAll, beforeAll, setSystemTime } from "bun:test";
-import { categories, paymentMethods, users } from "~/server/db/schema";
+import {
+	categories,
+	paymentMethods,
+	subscriptions,
+	users,
+	usersToSubscriptions,
+} from "~/server/db/schema";
 import * as _mock from "./_mock";
 
 const DATABASE_PATH = "./db-test.sqlite";
@@ -25,6 +31,11 @@ beforeAll(async () => {
 	await db
 		.insert(paymentMethods)
 		.values([_mock.paymentMethod1, _mock.paymentMethod2]);
+	await db.insert(subscriptions).values(_mock.subscription1);
+	await db.insert(usersToSubscriptions).values({
+		subscriptionId: _mock.subscription1.id,
+		userId: _mock.user1.id,
+	});
 });
 
 afterAll(async () => {

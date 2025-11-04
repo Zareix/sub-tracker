@@ -1,4 +1,10 @@
-import type { Category, PaymentMethod, User } from "~/server/db/schema";
+import { endOfDay, subMonths } from "date-fns";
+import type {
+	Category,
+	PaymentMethod,
+	Subscription,
+	User,
+} from "~/server/db/schema";
 
 export const now = new Date("2020-05-14T14:00:00.000Z");
 
@@ -33,6 +39,22 @@ export const paymentMethod2: PaymentMethod = {
 	id: 2,
 	name: "PayPal",
 	image: "paypal.png",
+};
+
+export const subscription1: Subscription = {
+	id: 1,
+	name: "Netflix",
+	category: category1.id,
+	price: 12.99,
+	currency: "EUR" as const,
+	paymentMethod: paymentMethod1.id,
+	schedule: "Monthly" as const,
+	image: null,
+	url: "https://www.netflix.com",
+	firstPaymentDate: subMonths(endOfDay(now), 2),
+	description: "Streaming service",
+	createdAt: new Date(),
+	updatedAt: new Date(),
 };
 
 export const session = {

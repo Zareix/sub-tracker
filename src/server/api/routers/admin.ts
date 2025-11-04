@@ -3,7 +3,7 @@ import { Currencies, SCHEDULES, UserRoles } from "~/lib/constant";
 import { preprocessStringToDate } from "~/lib/utils";
 
 import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
-import { db, runTransaction } from "~/server/db";
+import { runTransaction } from "~/server/db";
 import {
 	categories,
 	paymentMethods,
@@ -16,26 +16,27 @@ import { cleanUpFiles } from "~/server/services/files";
 
 export const adminRouter = createTRPCRouter({
 	cleanUpFiles: adminProcedure.mutation(async ({ ctx }) => {
-		let filesInUse = (
-			await ctx.db.query.subscriptions.findMany({
-				columns: {
-					image: true,
-				},
-				where: (tb, { isNotNull }) => isNotNull(tb.image),
-			})
-		).map((subscription) => subscription.image);
-		filesInUse = filesInUse.concat(
-			(
-				await ctx.db.query.paymentMethods.findMany({
-					columns: {
-						image: true,
-					},
-					where: (tb, { isNotNull }) => isNotNull(tb.image),
-				})
-			).map((paymentMethod) => paymentMethod.image),
-		);
-
-		filesInUse = filesInUse
+		const filesInUse = (
+			await Promise.all([
+				ctx.db.query.subscriptions
+					.findMany({
+						columns: {
+							image: true,
+						},
+						where: (tb, { isNotNull }) => isNotNull(tb.image),
+					})
+					.then((subscriptions) => subscriptions.map((s) => s.image)),
+				ctx.db.query.paymentMethods
+					.findMany({
+						columns: {
+							image: true,
+						},
+						where: (tb, { isNotNull }) => isNotNull(tb.image),
+					})
+					.then((paymentMethods) => paymentMethods.map((pm) => pm.image)),
+			])
+		)
+			.flat()
 			.filter(Boolean)
 			.map((file) => file.replace("/api/files?filename=", ""));
 
@@ -121,8 +122,8 @@ export const adminRouter = createTRPCRouter({
 					.optional(),
 			}),
 		)
-		.mutation(async ({ input }) => {
-			await runTransaction(db, async () => {
+		.mutation(async ({ ctx, input }) => {
+			await runTransaction(ctx.db, async (db) => {
 				if (input.users && input.users.length > 0) {
 					await db.insert(users).values(input.users);
 				}
