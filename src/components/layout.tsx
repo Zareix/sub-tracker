@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useQueryState } from "nuqs";
+import { LocaleHandler } from "~/components/locale";
 import { LoginForm } from "~/components/login";
 import { AppSidebar, Navbar } from "~/components/nav";
 import { PushNotificationHandler } from "~/components/push-notification";
@@ -61,6 +62,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 				</main>
 				<Navbar />
 				<PushNotificationHandler />
+				<LocaleHandler />
 			</SidebarProvider>
 		</>
 	);

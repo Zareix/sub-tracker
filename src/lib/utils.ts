@@ -1,5 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
-import { compareAsc, format, isToday } from "date-fns";
+import { compareAsc, differenceInDays, format, formatRelative } from "date-fns";
 import { twMerge } from "tailwind-merge";
 import { CURRENCY_SYMBOLS, type Sort } from "~/lib/constant";
 import type { Filters } from "~/lib/hooks/use-filters";
@@ -141,15 +141,15 @@ export const currencyToSymbol = (currency: string) => {
 };
 
 export const formatNextPaymentDate = (date: Date) => {
-	// if (differenceInDays(date, new Date()) <= 6) {
-	//   return formatRelative(date, new Date(), {
-
-	//   });
-	// }
-	if (isToday(date)) {
-		return "Today";
+	const today = new Date();
+	const difference = differenceInDays(date, today);
+	if (difference <= 6) {
+		const relative = formatRelative(date, today);
+		return `${
+			relative.charAt(0).toUpperCase() + relative.slice(1)
+		}${difference === 0 ? "" : ` (${format(date, "dd/MM")})`} `;
 	}
-	if (new Date().getFullYear() === date.getFullYear()) {
+	if (today.getFullYear() === date.getFullYear()) {
 		return format(date, "dd/MM");
 	}
 	return format(date, "dd/MM/yyyy");

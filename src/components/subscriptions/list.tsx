@@ -1,4 +1,4 @@
-import { isSameDay, isThisMonth } from "date-fns";
+import { isBefore, isThisMonth } from "date-fns";
 import {
 	Calendar1Icon,
 	EditIcon,
@@ -67,7 +67,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 	const previousSubOfThisMonths = subscriptions.filter(
 		(s) =>
 			isThisMonth(s.previousPaymentDate) &&
-			!isSameDay(s.previousPaymentDate, s.nextPaymentDate),
+			isBefore(s.previousPaymentDate, new Date()),
 	);
 
 	return (
