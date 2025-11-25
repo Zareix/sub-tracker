@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { SearchIcon } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -18,6 +19,7 @@ export const ImageSearch = ({
 	query: string;
 	setFileUrl: (url: string) => void;
 }) => {
+	const t = useTranslations("SubscriptionForm");
 	const [isOpen, setIsOpen] = useState(false);
 	const searchImagesQuery = api.subscription.searchImages.useQuery(
 		{
@@ -59,7 +61,7 @@ export const ImageSearch = ({
 	});
 	const searchImage = () => {
 		if (!query) {
-			toast.error("Please enter a name to search for images");
+			toast.error(t("imageSearch.searchError"));
 			return;
 		}
 		searchImagesQuery.refetch();
@@ -101,14 +103,14 @@ export const ImageSearch = ({
 					</Button>
 				))}
 				{searchImagesQuery.isLoading && (
-					<div className="col-span-4">Loading images...</div>
+					<div className="col-span-4">{t("imageSearch.loading")}</div>
 				)}
 				{searchImagesQuery.isError && (
-					<div className="col-span-4">Error fetching images</div>
+					<div className="col-span-4">{t("imageSearch.error")}</div>
 				)}
 				{uploadFileMutation.isPending && (
 					<div className="fade-in-0 absolute inset-0 flex animate-in items-center justify-center bg-white/50 backdrop-blur-xs backdrop-saturate-150">
-						Uploading image...
+						{t("imageSearch.uploading")}
 					</div>
 				)}
 			</PopoverContent>

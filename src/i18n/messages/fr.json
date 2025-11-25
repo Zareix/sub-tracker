@@ -201,5 +201,56 @@
 			"copied": "Clé API copiée dans le presse-papiers !",
 			"deletedSuccess": "Clé API supprimée avec succès !"
 		}
+	},
+	"SubscriptionForm": {
+		"create": {
+			"title": "Créer un abonnement",
+			"success": "Abonnement créé !"
+		},
+		"edit": {
+			"title": "Modifier l'abonnement : {name}",
+			"success": "Abonnement mis à jour !"
+		},
+		"delete": {
+			"title": "Supprimer l'abonnement :",
+			"confirm": "Êtes-vous sûr de vouloir supprimer cet abonnement ?",
+			"success": "Abonnement supprimé !"
+		},
+		"fields": {
+			"name": "Nom",
+			"namePlaceholder": "Netflix",
+			"category": "Catégorie",
+			"categoryPlaceholder": "Sélectionner une catégorie",
+			"url": "URL",
+			"urlPlaceholder": "https://www.netflix.com",
+			"description": "Description",
+			"descriptionPlaceholder": "Informations sur l'abonnement",
+			"price": "Prix",
+			"pricePlaceholder": "10",
+			"currency": "Devise",
+			"currencyPlaceholder": "Sélectionner une devise",
+			"paymentMethod": "Moyen de paiement",
+			"paymentMethodPlaceholder": "Sélectionner un moyen de paiement",
+			"payedBy": "Payé par",
+			"payedByPlaceholder": "Sélectionner les utilisateurs",
+			"schedule": "Périodicité",
+			"schedulePlaceholder": "Sélectionner une périodicité",
+			"firstPaymentDate": "Date du premier paiement",
+			"pickDate": "Choisir une date"
+		},
+		"loading": "Chargement...",
+		"imageSearch": {
+			"searchError": "Veuillez entrer un nom pour rechercher des images",
+			"loading": "Chargement des images...",
+			"error": "Erreur lors du chargement des images",
+			"uploading": "Téléchargement de l'image..."
+		},
+		"validation": {
+			"nameRequired": "Le nom est requis",
+			"categoryRequired": "La catégorie est requise",
+			"pricePositive": "Le prix doit être supérieur à 0",
+			"paymentMethodRequired": "Le moyen de paiement est requis",
+			"userRequired": "Au moins un utilisateur doit être sélectionné"
+		}
 	}
 }

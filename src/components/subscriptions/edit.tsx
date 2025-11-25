@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { EditCreateForm } from "~/components/subscriptions/edit-create-form";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import type { RouterOutputs } from "~/trpc/react";
@@ -13,10 +14,12 @@ export const EditSubscriptionDialog = ({
 	isOpen,
 	setIsOpen,
 }: Props) => {
+	const t = useTranslations("SubscriptionForm");
+
 	return (
 		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
 			<WrapperDialogVaul.Title>
-				Edit Subscription: {subscription.name}
+				{t("edit.title", { name: subscription.name })}
 			</WrapperDialogVaul.Title>
 			<EditCreateForm
 				onFinished={() => {

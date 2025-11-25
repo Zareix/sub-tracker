@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
@@ -15,10 +16,12 @@ export const DeleteDialog = ({
 	isOpen: boolean;
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+	const t = useTranslations("SubscriptionForm");
+	const tCommon = useTranslations("Common");
 	const apiUtils = api.useUtils();
 	const deleteSubscriptionMutation = api.subscription.delete.useMutation({
 		onSuccess: () => {
-			toast.success("Subscription deleted!");
+			toast.success(t("delete.success"));
 			apiUtils.subscription.getAll.invalidate().catch(console.error);
 			setIsOpen(false);
 		},
@@ -34,11 +37,11 @@ export const DeleteDialog = ({
 	return (
 		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
 			<WrapperDialogVaul.Title>
-				Delete subscription:{" "}
+				{t("delete.title")}{" "}
 				<span className="font-medium italic">{subscription.name}</span>
 			</WrapperDialogVaul.Title>
 			<WrapperDialogVaul.Description>
-				Are you sure you want to delete subscription this subscription?
+				{t("delete.confirm")}
 			</WrapperDialogVaul.Description>
 			<WrapperDialogVaul.Footer>
 				<Button
@@ -46,14 +49,14 @@ export const DeleteDialog = ({
 					onClick={onDelete}
 					isLoading={deleteSubscriptionMutation.isPending}
 				>
-					Delete
+					{tCommon("actions.delete")}
 				</Button>
 				<Button
 					variant="outline"
 					onClick={() => setIsOpen(false)}
 					disabled={deleteSubscriptionMutation.isPending}
 				>
-					Cancel
+					{tCommon("actions.cancel")}
 				</Button>
 			</WrapperDialogVaul.Footer>
 		</WrapperDialogVaul>

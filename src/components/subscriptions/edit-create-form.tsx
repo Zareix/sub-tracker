@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
@@ -64,36 +65,6 @@ const createTempSub = (subscription: RouterInputs["subscription"]["create"]) =>
 		url: null,
 	}) satisfies RouterOutputs["subscription"]["getAll"][number];
 
-const subscriptionCreateSchema = z.object({
-	name: z.string().check(z.minLength(1, { error: "Name is required" })),
-	description: z.string(),
-	category: z.coerce.number<number>().check(
-		z.positive({
-			error: "Category is required",
-		}),
-	),
-	image: z.optional(z.string()),
-	price: z.coerce.number<number>().check(
-		z.positive({
-			error: "Price must be greater than 0",
-		}),
-	),
-	currency: z.enum(Currencies),
-	paymentMethod: z.coerce.number<number>().check(
-		z.positive({
-			error: "Category is required",
-		}),
-	),
-	firstPaymentDate: z.date(),
-	schedule: z.enum(SCHEDULES),
-	payedBy: z.array(z.string()).check(
-		z.minLength(1, {
-			error: "At least one user must be selected",
-		}),
-	),
-	url: z.optional(z.url()),
-});
-
 export const EditCreateForm = ({
 	subscription,
 	onFinished,
@@ -101,11 +72,46 @@ export const EditCreateForm = ({
 	subscription?: RouterOutputs["subscription"]["getAll"][number];
 	onFinished?: () => void;
 }) => {
+	const t = useTranslations("SubscriptionForm");
+	const tCommon = useTranslations("Common");
 	const session = authClient.useSession();
 	const apiUtils = api.useUtils();
+
+	const subscriptionCreateSchema = z.object({
+		name: z
+			.string()
+			.check(z.minLength(1, { error: t("validation.nameRequired") })),
+		description: z.string(),
+		category: z.coerce.number<number>().check(
+			z.positive({
+				error: t("validation.categoryRequired"),
+			}),
+		),
+		image: z.optional(z.string()),
+		price: z.coerce.number<number>().check(
+			z.positive({
+				error: t("validation.pricePositive"),
+			}),
+		),
+		currency: z.enum(Currencies),
+		paymentMethod: z.coerce.number<number>().check(
+			z.positive({
+				error: t("validation.paymentMethodRequired"),
+			}),
+		),
+		firstPaymentDate: z.date(),
+		schedule: z.enum(SCHEDULES),
+		payedBy: z.array(z.string()).check(
+			z.minLength(1, {
+				error: t("validation.userRequired"),
+			}),
+		),
+		url: z.optional(z.url()),
+	});
+
 	const createSubscriptionMutation = api.subscription.create.useMutation({
 		onSuccess: () => {
-			toast.success("Subscription created!", {
+			toast.success(t("create.success"), {
 				duration: Number.POSITIVE_INFINITY,
 			});
 			onFinished?.();
@@ -138,7 +144,7 @@ export const EditCreateForm = ({
 	});
 	const editSubscriptionMutation = api.subscription.edit.useMutation({
 		onSuccess: () => {
-			toast.success("Subscription updated!");
+			toast.success(t("edit.success"));
 			onFinished?.();
 			setTimeout(() => {
 				form.reset();
@@ -223,12 +229,12 @@ export const EditCreateForm = ({
 			{usersQuery.isLoading ||
 			paymentMethodsQuery.isLoading ||
 			categoriesQuery.isLoading ? (
-				<div>Loading...</div>
+				<div>{t("loading")}</div>
 			) : usersQuery.isError ||
 				paymentMethodsQuery.isError ||
 				categoriesQuery.isError ? (
 				<div>
-					Error:{" "}
+					{tCommon("error")}:{" "}
 					{usersQuery.error?.message ?? paymentMethodsQuery.error?.message}
 				</div>
 			) : (
@@ -240,9 +246,12 @@ export const EditCreateForm = ({
 								name="name"
 								render={({ field }) => (
 									<FormItem className="col-span-8">
-										<FormLabel>Name</FormLabel>
+										<FormLabel>{t("fields.name")}</FormLabel>
 										<FormControl>
-											<Input placeholder="Netflix" {...field} />
+											<Input
+												placeholder={t("fields.namePlaceholder")}
+												{...field}
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -263,7 +272,7 @@ export const EditCreateForm = ({
 								name="category"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Category</FormLabel>
+										<FormLabel>{t("fields.category")}</FormLabel>
 										<FormControl>
 											<Select
 												onValueChange={field.onChange}
@@ -271,7 +280,9 @@ export const EditCreateForm = ({
 											>
 												<FormControl>
 													<SelectTrigger className="min-w-[170px]">
-														<SelectValue placeholder="Select category" />
+														<SelectValue
+															placeholder={t("fields.categoryPlaceholder")}
+														/>
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
@@ -304,9 +315,12 @@ export const EditCreateForm = ({
 								name="url"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>URL</FormLabel>
+										<FormLabel>{t("fields.url")}</FormLabel>
 										<FormControl>
-											<Input placeholder="https://www.netflix.com" {...field} />
+											<Input
+												placeholder={t("fields.urlPlaceholder")}
+												{...field}
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -318,10 +332,10 @@ export const EditCreateForm = ({
 							name="description"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Description</FormLabel>
+									<FormLabel>{t("fields.description")}</FormLabel>
 									<FormControl>
 										<Input
-											placeholder="Something about the subscription"
+											placeholder={t("fields.descriptionPlaceholder")}
 											{...field}
 										/>
 									</FormControl>
@@ -335,10 +349,10 @@ export const EditCreateForm = ({
 								name="price"
 								render={({ field }) => (
 									<FormItem className="grow">
-										<FormLabel>Price</FormLabel>
+										<FormLabel>{t("fields.price")}</FormLabel>
 										<FormControl>
 											<Input
-												placeholder="10"
+												placeholder={t("fields.pricePlaceholder")}
 												type="number"
 												className="rounded-r-none"
 												{...field}
@@ -353,7 +367,7 @@ export const EditCreateForm = ({
 								name="currency"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Currency</FormLabel>
+										<FormLabel>{t("fields.currency")}</FormLabel>
 										<FormControl>
 											<Select
 												onValueChange={field.onChange}
@@ -361,7 +375,9 @@ export const EditCreateForm = ({
 											>
 												<FormControl>
 													<SelectTrigger className="rounded-l-none border-l-0">
-														<SelectValue placeholder="Select a currency" />
+														<SelectValue
+															placeholder={t("fields.currencyPlaceholder")}
+														/>
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
@@ -386,7 +402,7 @@ export const EditCreateForm = ({
 								name="paymentMethod"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Payment Method</FormLabel>
+										<FormLabel>{t("fields.paymentMethod")}</FormLabel>
 										<FormControl>
 											<Select
 												onValueChange={field.onChange}
@@ -394,7 +410,9 @@ export const EditCreateForm = ({
 											>
 												<FormControl>
 													<SelectTrigger className="min-w-[170px]">
-														<SelectValue placeholder="Select payment method" />
+														<SelectValue
+															placeholder={t("fields.paymentMethodPlaceholder")}
+														/>
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
@@ -427,7 +445,7 @@ export const EditCreateForm = ({
 							name="payedBy"
 							render={({ field }) => (
 								<FormItem className="grow">
-									<FormLabel>Payed By</FormLabel>
+									<FormLabel>{t("fields.payedBy")}</FormLabel>
 									<FormControl>
 										<MultiSelect
 											options={
@@ -440,7 +458,7 @@ export const EditCreateForm = ({
 											searchable={false}
 											onValueChange={field.onChange}
 											defaultValue={field.value}
-											placeholder="Select users"
+											placeholder={t("fields.payedByPlaceholder")}
 										/>
 									</FormControl>
 									<FormMessage />
@@ -453,7 +471,7 @@ export const EditCreateForm = ({
 								name="schedule"
 								render={({ field }) => (
 									<FormItem className="min-w-40">
-										<FormLabel>Schedule</FormLabel>
+										<FormLabel>{t("fields.schedule")}</FormLabel>
 										<FormControl>
 											<Select
 												onValueChange={field.onChange}
@@ -461,13 +479,15 @@ export const EditCreateForm = ({
 											>
 												<FormControl>
 													<SelectTrigger>
-														<SelectValue placeholder="Select a schedule" />
+														<SelectValue
+															placeholder={t("fields.schedulePlaceholder")}
+														/>
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
 													{SCHEDULES.map((s) => (
 														<SelectItem value={s} key={s}>
-															{s}
+															{tCommon(`schedule.${s}`)}
 														</SelectItem>
 													))}
 												</SelectContent>
@@ -482,7 +502,7 @@ export const EditCreateForm = ({
 								name="firstPaymentDate"
 								render={({ field }) => (
 									<FormItem className="grow">
-										<FormLabel>First Payment Date</FormLabel>
+										<FormLabel>{t("fields.firstPaymentDate")}</FormLabel>
 										<FormControl>
 											<Popover modal>
 												<PopoverTrigger asChild>
@@ -497,7 +517,7 @@ export const EditCreateForm = ({
 														{field.value ? (
 															format(field.value, "dd/MM/yyyy")
 														) : (
-															<span>Pick a date</span>
+															<span>{t("fields.pickDate")}</span>
 														)}
 													</Button>
 												</PopoverTrigger>
@@ -524,7 +544,7 @@ export const EditCreateForm = ({
 									editSubscriptionMutation.isPending
 								}
 							>
-								Submit
+								{tCommon("actions.submit")}
 							</Button>
 						</DialogFooter>
 					</form>

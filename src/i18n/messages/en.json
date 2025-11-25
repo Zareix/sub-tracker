@@ -201,5 +201,56 @@
 			"copied": "API key copied to clipboard!",
 			"deletedSuccess": "API key deleted successfully!"
 		}
+	},
+	"SubscriptionForm": {
+		"create": {
+			"title": "Create Subscription",
+			"success": "Subscription created!"
+		},
+		"edit": {
+			"title": "Edit Subscription: {name}",
+			"success": "Subscription updated!"
+		},
+		"delete": {
+			"title": "Delete subscription:",
+			"confirm": "Are you sure you want to delete this subscription?",
+			"success": "Subscription deleted!"
+		},
+		"fields": {
+			"name": "Name",
+			"namePlaceholder": "Netflix",
+			"category": "Category",
+			"categoryPlaceholder": "Select category",
+			"url": "URL",
+			"urlPlaceholder": "https://www.netflix.com",
+			"description": "Description",
+			"descriptionPlaceholder": "Something about the subscription",
+			"price": "Price",
+			"pricePlaceholder": "10",
+			"currency": "Currency",
+			"currencyPlaceholder": "Select a currency",
+			"paymentMethod": "Payment Method",
+			"paymentMethodPlaceholder": "Select payment method",
+			"payedBy": "Payed By",
+			"payedByPlaceholder": "Select users",
+			"schedule": "Schedule",
+			"schedulePlaceholder": "Select a schedule",
+			"firstPaymentDate": "First Payment Date",
+			"pickDate": "Pick a date"
+		},
+		"loading": "Loading...",
+		"imageSearch": {
+			"searchError": "Please enter a name to search for images",
+			"loading": "Loading images...",
+			"error": "Error fetching images",
+			"uploading": "Uploading image..."
+		},
+		"validation": {
+			"nameRequired": "Name is required",
+			"categoryRequired": "Category is required",
+			"pricePositive": "Price must be greater than 0",
+			"paymentMethodRequired": "Payment method is required",
+			"userRequired": "At least one user must be selected"
+		}
 	}
 }
