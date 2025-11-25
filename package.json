@@ -18,6 +18,7 @@
 		"test": "bun test --preload ./src/tests/_setup.ts"
 	},
 	"dependencies": {
+		"@better-auth/passkey": "^1.4.2",
 		"@hookform/resolvers": "^5.2.2",
 		"@next/bundle-analyzer": "^16.0.4",
 		"@radix-ui/react-accordion": "^1.2.12",

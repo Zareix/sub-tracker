@@ -1,8 +1,8 @@
+import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { apiKey } from "better-auth/plugins";
 import { admin } from "better-auth/plugins/admin";
-import { passkey } from "better-auth/plugins/passkey";
 import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
 import { env } from "~/env";
