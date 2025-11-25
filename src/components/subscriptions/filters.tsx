@@ -1,5 +1,6 @@
 import { Label } from "@radix-ui/react-label";
 import { FilterIcon, TrashIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "~/components/ui/button";
 import { MultiSelect } from "~/components/ui/multi-select";
 import {
@@ -26,6 +27,8 @@ type Props = {
 export const FiltersButton = ({
 	filtersDisplayed = ["paymentMethods", "schedule", "users", "categories"],
 }: Props) => {
+	const t = useTranslations("Filters");
+	const tSchedule = useTranslations("Common.schedule");
 	const [filters, setFilters] = useFilters();
 	const usersQuery = api.user.getAll.useQuery();
 	const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
@@ -72,7 +75,7 @@ export const FiltersButton = ({
 				<PopoverContent className="mr-3 flex w-fit flex-col gap-2 p-4">
 					{filtersDisplayed.includes("users") && (
 						<>
-							<Label className="mt-2">Users</Label>
+							<Label className="mt-2">{t("users")}</Label>
 							<div className="flex items-center gap-2">
 								<Select
 									onValueChange={(value) =>
@@ -89,7 +92,7 @@ export const FiltersButton = ({
 											filters.users ? "w-40" : "w-[200px]",
 										)}
 									>
-										<SelectValue placeholder="Select..." />
+										<SelectValue placeholder={t("select")} />
 									</SelectTrigger>
 									<SelectContent>
 										{users.map((user) => (
@@ -113,7 +116,7 @@ export const FiltersButton = ({
 					)}
 					{filtersDisplayed.includes("schedule") && (
 						<>
-							<Label>Schedule</Label>
+							<Label className="mt-2">{t("schedule")}</Label>
 							<div className="flex items-center gap-2">
 								<Select
 									onValueChange={(value) =>
@@ -130,12 +133,12 @@ export const FiltersButton = ({
 											filters.schedule ? "w-40" : "w-[200px]",
 										)}
 									>
-										<SelectValue placeholder="Select..." />
+										<SelectValue placeholder={t("select")} />
 									</SelectTrigger>
 									<SelectContent>
 										{SCHEDULES.map((schedule) => (
 											<SelectItem value={schedule} key={schedule}>
-												{schedule}
+												{tSchedule(schedule)}
 											</SelectItem>
 										))}
 									</SelectContent>
@@ -155,7 +158,7 @@ export const FiltersButton = ({
 
 					{filtersDisplayed.includes("paymentMethods") && (
 						<>
-							<Label className="mt-2">Payment Methods</Label>
+							<Label className="mt-2">{t("paymentMethods")}</Label>
 							<MultiSelect
 								options={
 									paymentMethods.map((pm) => ({
@@ -173,13 +176,13 @@ export const FiltersButton = ({
 								}
 								className="bg-background"
 								defaultValue={filters.paymentMethods.map((pm) => pm.toString())}
-								placeholder="Select..."
+								placeholder={t("select")}
 							/>
 						</>
 					)}
 					{filtersDisplayed.includes("categories") && (
 						<>
-							<Label className="mt-2">Categories</Label>
+							<Label className="mt-2">{t("categories")}</Label>
 							<MultiSelect
 								options={
 									categories.map((pm) => ({
@@ -197,7 +200,7 @@ export const FiltersButton = ({
 									})
 								}
 								defaultValue={filters.categories.map((pm) => pm.toString())}
-								placeholder="Select..."
+								placeholder={t("select")}
 							/>
 						</>
 					)}

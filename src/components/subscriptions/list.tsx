@@ -12,6 +12,7 @@ import {
 	WalletCardsIcon,
 } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { DeleteDialog } from "~/components/subscriptions/delete";
@@ -43,6 +44,8 @@ type Props = {
 };
 
 export const SubscriptionList = ({ subscriptions }: Props) => {
+	const t = useTranslations("SubscriptionList");
+	const tSchedule = useTranslations("Common.schedule");
 	const [filters] = useFilters();
 	const [sort] = useSort();
 	const { data: session } = authClient.useSession();
@@ -59,7 +62,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 	if (subs.length === 0) {
 		return (
 			<div className="text-center text-muted-foreground">
-				No subscriptions found
+				{t("noSubscriptionsFound")}
 			</div>
 		);
 	}
@@ -79,6 +82,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 						subscription={subscription}
 						userBaseCurrency={userBaseCurrency}
 						isPrevious
+						tSchedule={tSchedule}
 					/>
 					<Separator className="w-full" />
 				</React.Fragment>
@@ -89,6 +93,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 						key={subscription.id}
 						subscription={subscription}
 						userBaseCurrency={userBaseCurrency}
+						tSchedule={tSchedule}
 					/>
 					<Separator className="w-full" />
 				</React.Fragment>
@@ -101,11 +106,14 @@ const SubscriptionListItem = ({
 	subscription,
 	userBaseCurrency,
 	isPrevious = false,
+	tSchedule,
 }: {
 	subscription: RouterOutputs["subscription"]["getAll"][number];
 	userBaseCurrency: string;
 	isPrevious?: boolean;
+	tSchedule: ReturnType<typeof useTranslations<"Common.schedule">>;
 }) => {
+	const t = useTranslations("SubscriptionList");
 	const [filters, setFilters] = useFilters();
 	const [isOpen, setIsOpen] = useState({
 		delete: false,
@@ -191,7 +199,7 @@ const SubscriptionListItem = ({
 								onClick={() => setIsOpen({ ...isOpen, edit: true })}
 							>
 								<EditIcon />
-								<span>Edit</span>
+								<span>{t("edit")}</span>
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								className="text-destructive"
@@ -203,7 +211,7 @@ const SubscriptionListItem = ({
 								}
 							>
 								<TrashIcon />
-								<span>Delete</span>
+								<span>{t("delete")}</span>
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
@@ -278,7 +286,7 @@ const SubscriptionListItem = ({
 						}
 					>
 						<RefreshCcwIcon size={16} className="text-primary" />
-						{subscription.schedule}
+						{tSchedule(subscription.schedule)}
 					</button>
 					{subscription.currency !== userBaseCurrency && (
 						<div className="flex items-center gap-0.5">

@@ -21,17 +21,23 @@ export const useFilters = () => {
 		"categories",
 		parseAsArrayOf(parseAsInteger).withDefault([]),
 	);
+	const [search, setSearch] = useQueryState(
+		"search",
+		parseAsString.withDefault(""),
+	);
 
 	const setFilters = (filters: {
 		schedule: typeof schedule;
 		paymentMethods: typeof paymentMethods;
 		users: typeof users;
 		categories: typeof categories;
+		search: typeof search;
 	}) => {
 		setSchedule(filters.schedule).catch(console.error);
 		setPaymentMethods(filters.paymentMethods).catch(console.error);
 		setUsers(filters.users).catch(console.error);
 		setCategories(filters.categories).catch(console.error);
+		setSearch(filters.search).catch(console.error);
 	};
 
 	return [
@@ -40,6 +46,7 @@ export const useFilters = () => {
 			paymentMethods,
 			users,
 			categories,
+			search,
 		},
 		setFilters,
 	] as const;

@@ -84,7 +84,7 @@ export const auth = betterAuth({
 			rateLimit: {
 				enabled: env.NODE_ENV === "production",
 				maxRequests: 100,
-				timeWindow: 60 * 1000, // 10 minutes
+				timeWindow: 1000,
 			},
 		}),
 		admin(),

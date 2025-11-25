@@ -3,15 +3,15 @@ export type Schedule = (typeof SCHEDULES)[number];
 
 export const SORTS = [
 	{
-		label: "Price: Low to High",
+		labelKey: "priceLowToHigh",
 		key: "PRICE_ASC",
 	},
 	{
-		label: "Price: High to Low",
+		labelKey: "priceHighToLow",
 		key: "PRICE_DESC",
 	},
 	{
-		label: "Next Payment Date",
+		labelKey: "nextPaymentDate",
 		key: "NEXT_PAYMENT_DATE",
 	},
 ] as const;

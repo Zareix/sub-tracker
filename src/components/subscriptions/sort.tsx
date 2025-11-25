@@ -1,4 +1,5 @@
 import { SortAscIcon, SortDescIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "~/components/ui/button";
 import {
 	DropdownMenu,
@@ -14,6 +15,7 @@ import { useSort } from "~/lib/hooks/use-sort";
 import { cn } from "~/lib/utils";
 
 export const SortButton = () => {
+	const t = useTranslations("Sort");
 	const [sort, setSort] = useSort();
 
 	return (
@@ -38,7 +40,7 @@ export const SortButton = () => {
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-56">
-				<DropdownMenuLabel>Sort</DropdownMenuLabel>
+				<DropdownMenuLabel>{t("label")}</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuRadioGroup
 					value={sort ?? ""}
@@ -50,7 +52,7 @@ export const SortButton = () => {
 							value={s.key}
 							className="capitalize"
 						>
-							{s.label}
+							{t(s.labelKey)}
 						</DropdownMenuRadioItem>
 					))}
 				</DropdownMenuRadioGroup>

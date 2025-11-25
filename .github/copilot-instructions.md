@@ -10,6 +10,7 @@ Purpose: Help GitHub Copilot (and contributors using Copilot Chat) make correct,
 - Data: Drizzle ORM + SQLite (`db.sqlite`), migrations in `drizzle/`
 - API: tRPC v11 (`src/server/api`), TanStack Query v5
 - Auth: better-auth (`src/server/auth.ts`, `src/lib/auth-client.ts`)
+- i18n: next-intl with English and French locales (`src/i18n/`)
 - Lint/format: Biome (`biome.json`)
 
 ## How to run
@@ -41,6 +42,9 @@ Copilot: when adding/removing columns, update schema, regenerate, and push. If a
 - `src/trpc` — tRPC client setup.
   - `src/trpc/react.ts` — hooks for data fetching/mutations.
   - `src/trpc/server.ts` — server tRPC setup.
+- `src/i18n` — internationalization setup and translations.
+  - `src/i18n/messages/` — translation JSON files (en.json, fr.json).
+  - `src/i18n/routing.ts` — next-intl routing config and navigation utilities.
 - `drizzle/` — generated migrations (+ `meta/`).
 - `src/tests` — test files (using Bun test).
 
@@ -60,7 +64,19 @@ Important aliases: `~/*` maps to `src/*`.
 
 - Server auth config: `src/server/auth.ts`.
 - Client helpers: `src/lib/auth-client.ts`.
-- Don’t log secrets; use environment variables validated via `src/env.js` which use [t3env](https://github.com/t3-oss/t3-env).
+- Don't log secrets; use environment variables validated via `src/env.js` which use [t3env](https://github.com/t3-oss/t3-env).
+
+## Internationalization (i18n)
+
+- Uses [next-intl](https://next-intl.dev/docs) for translations (English and French supported).
+- Translation files: `src/i18n/messages/<locale>.json`
+- Structure translations with nested objects for better organization:
+  - `Common`: shared translations (e.g., `Common.schedule.Monthly`)
+  - Feature-specific: grouped by component/page (e.g., `Navigation`, `Filters`, `SubscriptionList`)
+- In components: use `const t = useTranslations("Namespace")` for client components.
+- Access nested translations with dot notation: `t("theme.light")`, `t("language.label")`.
+- Routing: use `src/i18n/navigation.ts` for locale-aware navigation (`useRouter`, `Link`).
+- Always add translations for user-facing text; avoid hardcoded strings in components.
 
 ## Making common changes with Copilot
 
@@ -87,6 +103,13 @@ Important aliases: `~/*` maps to `src/*`.
 - Add template in `src/server/email/templates` (React Email).
 - Preview with `bun run email:dev`.
 
+5. Add translations
+
+- Add keys to both `src/i18n/messages/en.json` and `src/i18n/messages/fr.json`.
+- Use nested objects for organization (e.g., `"Filters": { "users": "Users" }`).
+- Import `useTranslations` from `next-intl` in client components.
+- Use `const t = useTranslations("Namespace")` and call `t("key")` for translations.
+
 ## Quality checklist (pre-PR)
 
 - Types okay: `tsc` runs during build; ensure no new errors.
@@ -112,7 +135,7 @@ Example prompts
 
 - React 19: avoid legacy patterns; no deprecated lifecycle APIs.
 - Tailwind v4: use class utilities; avoid inline styles unless necessary.
-- i18n: English only for now (`next.config.js`).
+- i18n: English and French supported; always translate user-facing text in both languages.
 - Dockerfile exists for deployment; `next.config.js` sets `output: 'standalone'`.
 - Renovate is enabled; prefer minimal dependency additions.
 

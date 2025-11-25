@@ -2,6 +2,7 @@
 
 import { InfoIcon } from "lucide-react";
 import Head from "next/head";
+import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { Label, Pie, PieChart } from "recharts";
 import { FiltersButton } from "~/components/subscriptions/filters";
@@ -34,6 +35,7 @@ import {
 import { api, type RouterOutputs } from "~/trpc/react";
 
 export default function StatsPage() {
+	const t = useTranslations("StatsPage");
 	const [filters] = useFilters();
 	const subscriptionsQuery = api.subscription.getAll.useQuery();
 	const { data: session } = authClient.useSession();
@@ -60,7 +62,11 @@ export default function StatsPage() {
 	} = useMemo(() => getStats(subscriptions, filters), [subscriptions, filters]);
 
 	if (subscriptionsQuery.isError) {
-		return <div>Error: {subscriptionsQuery.error?.message}</div>;
+		return (
+			<div>
+				{t("error")}: {subscriptionsQuery.error?.message}
+			</div>
+		);
 	}
 
 	return (
@@ -70,14 +76,14 @@ export default function StatsPage() {
 			</Head>
 			<div>
 				<header className="flex items-center justify-between">
-					<h1 className="font-bold text-3xl">Stats</h1>
+					<h1 className="font-bold text-3xl">{t("title")}</h1>
 					<FiltersButton
 						filtersDisplayed={["users", "paymentMethods", "categories"]}
 					/>
 				</header>
 				<div className="mt-2 grid gap-2 md:auto-rows-auto md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 					<MonthlyStatsCard
-						title="Monthly sub"
+						title={t("monthlySub")}
 						subscriptions={subscriptions.filter(
 							(subscription) => subscription.schedule === "Monthly",
 						)}
@@ -85,7 +91,7 @@ export default function StatsPage() {
 						userBaseCurrency={userBaseCurrency}
 					/>
 					<MonthlyStatsCard
-						title="Yearly sub"
+						title={t("yearlySub")}
 						subscriptions={subscriptions.filter(
 							(subscription) => subscription.schedule === "Yearly",
 						)}
@@ -93,36 +99,36 @@ export default function StatsPage() {
 						userBaseCurrency={userBaseCurrency}
 					/>
 					<StatsCard
-						title="Smoothed over a month"
-						description="Monthly + (yearly / 12)"
+						title={t("smoothedMonth.title")}
+						description={t("smoothedMonth.description")}
 						value={totalPerMonth}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
 					/>
 					<StatsCard
-						title="Smoothed over a year"
-						description="(Monthly * 12) + yearly"
+						title={t("smoothedYear.title")}
+						description={t("smoothedYear.description")}
 						value={totalPerYear}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
 					/>
 					<StatsCard
-						title="This month"
-						description="Subscriptions that were or will be paid this month"
+						title={t("thisMonth.title")}
+						description={t("thisMonth.description")}
 						value={totalThisMonth}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
 					/>
 					<StatsCard
-						title="Remaining this month"
-						description="Subscriptions that will be paid from today to the end of this month"
+						title={t("remainingMonth.title")}
+						description={t("remainingMonth.description")}
 						value={remainingThisMonth}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
 					/>
 					<StatsCard
-						title="Expected next month"
-						description="Subscriptions that will be paid next month"
+						title={t("expectedNextMonth.title")}
+						description={t("expectedNextMonth.description")}
 						value={expectedNextMonth}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
@@ -185,6 +191,7 @@ const MonthlyStatsCard = ({
 	isLoading: boolean;
 	userBaseCurrency: string;
 }) => {
+	const t = useTranslations("StatsPage");
 	const [filters] = useFilters();
 	const totalMonthlySub = useMemo(
 		() =>
@@ -281,7 +288,7 @@ const MonthlyStatsCard = ({
 			<CardContent className="flex-1 pb-0">
 				{chartData.length === 0 ? (
 					<div className="mx-auto flex aspect-square max-h-[250px] items-center justify-center">
-						<div className="text-muted-foreground">No data</div>
+						<div className="text-muted-foreground">{t("noData")}</div>
 					</div>
 				) : (
 					<ChartContainer

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Layout } from "~/components/layout";
 import { Toaster } from "~/components/ui/sonner";
@@ -47,13 +48,15 @@ export default function RootLayout({
 							enableSystem
 							disableTransitionOnChange
 						>
-							<Layout>{children}</Layout>
-							<Toaster
-								toastOptions={{
-									className:
-										"bg-background/80 backdrop-blur-sm border-border text-foreground",
-								}}
-							/>
+							<NextIntlClientProvider>
+								<Layout>{children}</Layout>
+								<Toaster
+									toastOptions={{
+										className:
+											"bg-background/80 backdrop-blur-sm border-border text-foreground",
+									}}
+								/>
+							</NextIntlClientProvider>
 						</ThemeProvider>
 					</NuqsAdapter>
 				</TRPCReactProvider>
