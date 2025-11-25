@@ -372,7 +372,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 			(
 				opts: MultiSelectOption[] | MultiSelectGroup[],
 			): opts is MultiSelectGroup[] => {
-				return opts.length > 0 && "heading" in opts[0];
+				return opts.length > 0 && opts[0] !== undefined && "heading" in opts[0];
 			},
 			[],
 		);
@@ -771,7 +771,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 		return (
 			<>
 				<div className="sr-only">
-					<div aria-live="polite" aria-atomic="true" role="status">
+					<div aria-live="polite" aria-atomic="true">
 						{politeMessage}
 					</div>
 					<div aria-live="assertive" aria-atomic="true" role="alert">
@@ -908,6 +908,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 															{option.label}
 														</span>
 														{!option.unselectable && (
+															// biome-ignore lint/a11y/useSemanticElements: parent is a button
 															<div
 																role="button"
 																tabIndex={0}
@@ -949,7 +950,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 													multiSelectVariants({ variant }),
 													responsiveSettings.compactMode &&
 														"px-1.5 py-0.5 text-xs",
-													singleLine && "flex-shrink-0 whitespace-nowrap",
+													singleLine && "shrink-0 whitespace-nowrap",
 													"[&>svg]:pointer-events-auto",
 												)}
 												style={{
@@ -976,6 +977,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 										)}
 									</div>
 									<div className="flex items-center justify-between">
+										{/*biome-ignore lint/a11y/useSemanticElements: parent is a button*/}
 										<div
 											role="button"
 											tabIndex={0}
@@ -1090,7 +1092,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 												)}
 												aria-hidden="true"
 											>
-												<CheckIcon className="size-3" />
+												<CheckIcon className="size-3!" />
 											</div>
 											<span>
 												(Select All
@@ -1135,7 +1137,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 															)}
 															aria-hidden="true"
 														>
-															<CheckIcon className="size-3" />
+															<CheckIcon className="size-3!" />
 														</div>
 														{option.icon && (
 															<option.icon
@@ -1179,7 +1181,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 														)}
 														aria-hidden="true"
 													>
-														<CheckIcon className="h-4 w-4" />
+														<CheckIcon className="size-3!" />
 													</div>
 													{option.icon && (
 														<option.icon

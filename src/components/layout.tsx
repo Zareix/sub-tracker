@@ -1,3 +1,5 @@
+"use client";
+
 import Head from "next/head";
 import { useQueryState } from "nuqs";
 import { LocaleHandler } from "~/components/locale";

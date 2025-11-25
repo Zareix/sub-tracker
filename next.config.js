@@ -1,5 +1,6 @@
 import "./src/env.js";
 import withBundleAnalyzer from "@next/bundle-analyzer";
+import createNextIntlPlugin from "next-intl/plugin";
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -22,11 +23,6 @@ const config = {
 			},
 		],
 	},
-
-	i18n: {
-		locales: ["en"],
-		defaultLocale: "en",
-	},
 	transpilePackages: [
 		"geist",
 		// This should be temporary
@@ -41,11 +37,13 @@ const config = {
 	typescript: {
 		ignoreBuildErrors: !!process.env.SKIP_LINT,
 	},
-	eslint: {
-		ignoreDuringBuilds: !!process.env.SKIP_LINT,
-	},
 };
 
+const withNextIntl = createNextIntlPlugin({
+	experimental: {
+		createMessagesDeclaration: "./src/i18n/messages/en.json",
+	},
+});
 export default withBundleAnalyzer({
 	enabled: process.env.ANALYZE === "true",
-})(config);
+})(withNextIntl(config));

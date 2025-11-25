@@ -1,0 +1,82 @@
+{
+	"Common": {
+		"schedule": {
+			"Monthly": "Monthly",
+			"Yearly": "Yearly"
+		}
+	},
+	"HomePage": {
+		"title": "Subscriptions",
+		"addNewSubscription": "Add new subscription"
+	},
+	"SearchBar": {
+		"placeholder": "Search subscriptions...",
+		"clearSearch": "Clear search"
+	},
+	"Navigation": {
+		"home": "Home",
+		"stats": "Stats",
+		"settings": "Settings",
+		"admin": "Admin",
+		"profile": "Profile",
+		"addSubscription": "Add subscription",
+		"theme": {
+			"label": "Theme",
+			"light": "Light",
+			"dark": "Dark",
+			"system": "System"
+		},
+		"currency": "Currency",
+		"language": {
+			"label": "Language",
+			"english": "English",
+			"french": "Français"
+		},
+		"logOut": "Log out"
+	},
+	"SubscriptionList": {
+		"noSubscriptionsFound": "No subscriptions found",
+		"edit": "Edit",
+		"delete": "Delete"
+	},
+	"Filters": {
+		"users": "Users",
+		"schedule": "Schedule",
+		"paymentMethods": "Payment Methods",
+		"categories": "Categories",
+		"select": "Select..."
+	},
+	"Sort": {
+		"label": "Sort",
+		"priceLowToHigh": "Price: Low to High",
+		"priceHighToLow": "Price: High to Low",
+		"nextPaymentDate": "Next Payment Date"
+	},
+	"StatsPage": {
+		"title": "Stats",
+		"monthlySub": "Monthly sub",
+		"yearlySub": "Yearly sub",
+		"smoothedMonth": {
+			"title": "Smoothed over a month",
+			"description": "Monthly + (yearly / 12)"
+		},
+		"smoothedYear": {
+			"title": "Smoothed over a year",
+			"description": "(Monthly * 12) + yearly"
+		},
+		"thisMonth": {
+			"title": "This month",
+			"description": "Subscriptions that were or will be paid this month"
+		},
+		"remainingMonth": {
+			"title": "Remaining this month",
+			"description": "Subscriptions that will be paid from today to the end of this month"
+		},
+		"expectedNextMonth": {
+			"title": "Expected next month",
+			"description": "Subscriptions that will be paid next month"
+		},
+		"noData": "No data",
+		"error": "Error"
+	}
+}

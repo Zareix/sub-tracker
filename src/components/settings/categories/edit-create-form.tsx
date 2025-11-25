@@ -33,7 +33,7 @@ import {
 	PopoverTrigger,
 } from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
-import { api, type RouterOutputs } from "~/utils/api";
+import { api, type RouterOutputs } from "~/trpc/react";
 
 const categoryCreateSchema = z.object({
 	name: z.string().check(

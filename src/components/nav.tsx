@@ -4,6 +4,7 @@ import {
 	ChartColumnIcon,
 	ChevronsUpDownIcon,
 	HomeIcon,
+	LanguagesIcon,
 	LogOutIcon,
 	PlusIcon,
 	ShieldIcon,
@@ -11,7 +12,8 @@ import {
 	WrenchIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { type ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
@@ -43,39 +45,40 @@ import {
 	SidebarMenuItem,
 } from "~/components/ui/sidebar";
 import { ThemeIcon } from "~/components/ui/theme-provider";
+import { usePathname, useRouter } from "~/i18n/navigation";
 import { authClient } from "~/lib/auth-client";
 import { Currencies, type Currency } from "~/lib/constant";
 import { cn, currencyToSymbol } from "~/lib/utils";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 export const NAV_ITEMS = [
 	{
-		title: "Home",
+		titleKey: "home",
 		url: "/",
 		icon: HomeIcon,
 		keepParams: true,
 	},
 	{
-		title: "Stats",
+		titleKey: "stats",
 		url: "/stats",
 		icon: ChartColumnIcon,
 		keepParams: true,
 	},
 	{
-		title: "Settings",
+		titleKey: "settings",
 		url: "/settings",
 		icon: WrenchIcon,
 		keepParams: false,
 	},
 	{
-		title: "Admin",
+		titleKey: "admin",
 		url: "/admin",
 		icon: ShieldIcon,
 		role: "admin",
 		keepParams: false,
 	},
 	{
-		title: "Profile",
+		titleKey: "profile",
 		url: "/profile",
 		icon: UserCircle2Icon,
 		role: "user",
@@ -84,7 +87,11 @@ export const NAV_ITEMS = [
 ] as const;
 
 export function AppSidebar() {
+	const t = useTranslations("Navigation");
+	const locale = useLocale();
 	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
 	const session = authClient.useSession();
 	const { setTheme, theme } = useTheme();
 	const apiUtils = api.useUtils();
@@ -107,6 +114,20 @@ export function AppSidebar() {
 		},
 	});
 
+	const handleLocaleChange = (newLocale: string) => {
+		const currentPath = pathname;
+		router.replace(currentPath, { locale: newLocale as "en" | "fr" });
+		router.refresh();
+	};
+
+	const query = {
+		...Object.fromEntries(
+			[...searchParams].filter((s) =>
+				["paymentMethods", "users", "categories"].includes(s[0]),
+			),
+		),
+	};
+
 	return (
 		<Sidebar side="left" collapsible="icon">
 			<SidebarHeader>
@@ -116,7 +137,7 @@ export function AppSidebar() {
 							<Link
 								href={{
 									pathname: "/",
-									query: router.query,
+									query,
 								}}
 							>
 								<div className="flex aspect-square size-8 items-center justify-center rounded-xs bg-primary text-sidebar-primary-foreground">
@@ -137,19 +158,16 @@ export function AppSidebar() {
 							{NAV_ITEMS.filter((item) =>
 								"role" in item ? item.role === session.data?.user.role : true,
 							).map((item) => (
-								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton
-										asChild
-										isActive={router.pathname === item.url}
-									>
+								<SidebarMenuItem key={item.titleKey}>
+									<SidebarMenuButton asChild isActive={pathname === item.url}>
 										<Link
 											href={{
 												pathname: item.url,
-												query: item.keepParams ? router.query : null,
+												query: item.keepParams ? query : null,
 											}}
 										>
 											<item.icon />
-											<span>{item.title}</span>
+											<span>{t(item.titleKey)}</span>
 										</Link>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
@@ -166,7 +184,7 @@ export function AppSidebar() {
 								trigger={
 									<SidebarMenuButton className="flex">
 										<PlusIcon />
-										<span>Add subscription</span>
+										<span>{t("addSubscription")}</span>
 									</SidebarMenuButton>
 								}
 							/>
@@ -232,7 +250,7 @@ export function AppSidebar() {
 									<DropdownMenuSub>
 										<DropdownMenuSubTrigger>
 											<ThemeIcon theme={theme} />
-											Theme
+											{t("theme.label")}
 										</DropdownMenuSubTrigger>
 										<DropdownMenuPortal>
 											<DropdownMenuSubContent>
@@ -245,21 +263,21 @@ export function AppSidebar() {
 														className="flex items-center gap-2"
 													>
 														<ThemeIcon theme="light" />
-														Light
+														{t("theme.light")}
 													</DropdownMenuRadioItem>
 													<DropdownMenuRadioItem
 														value="dark"
 														className="flex items-center gap-2"
 													>
 														<ThemeIcon theme="dark" />
-														Dark
+														{t("theme.dark")}
 													</DropdownMenuRadioItem>
 													<DropdownMenuRadioItem
 														value="system"
 														className="flex items-center gap-2"
 													>
 														<ThemeIcon theme="system" />
-														System
+														{t("theme.system")}
 													</DropdownMenuRadioItem>
 												</DropdownMenuRadioGroup>
 											</DropdownMenuSubContent>
@@ -271,7 +289,7 @@ export function AppSidebar() {
 											<span className="mr-2">
 												{currencyToSymbol(session.data.user.baseCurrency)}
 											</span>
-											Currency
+											{t("currency")}
 										</DropdownMenuSubTrigger>
 										<DropdownMenuPortal>
 											<DropdownMenuSubContent className="max-h-64 overflow-auto">
@@ -296,9 +314,37 @@ export function AppSidebar() {
 											</DropdownMenuSubContent>
 										</DropdownMenuPortal>
 									</DropdownMenuSub>
+									{/* Language submenu */}
+									<DropdownMenuSub>
+										<DropdownMenuSubTrigger>
+											<LanguagesIcon className="size-4" />
+											{t("language.label")}
+										</DropdownMenuSubTrigger>
+										<DropdownMenuPortal>
+											<DropdownMenuSubContent>
+												<DropdownMenuRadioGroup
+													value={locale}
+													onValueChange={handleLocaleChange}
+												>
+													<DropdownMenuRadioItem
+														value="en"
+														className="flex items-center gap-2"
+													>
+														{t("language.english")}
+													</DropdownMenuRadioItem>
+													<DropdownMenuRadioItem
+														value="fr"
+														className="flex items-center gap-2"
+													>
+														{t("language.french")}
+													</DropdownMenuRadioItem>
+												</DropdownMenuRadioGroup>
+											</DropdownMenuSubContent>
+										</DropdownMenuPortal>
+									</DropdownMenuSub>
 									<DropdownMenuItem onClick={() => authClient.signOut()}>
 										<LogOutIcon />
-										Log out
+										{t("logOut")}
 									</DropdownMenuItem>
 								</DropdownMenuContent>
 							</DropdownMenu>
@@ -313,14 +359,14 @@ export function AppSidebar() {
 
 const NavbarItem = ({
 	pathname,
-	query,
+	searchParams,
 	...item
 }: (typeof NAV_ITEMS)[number] & {
-	pathname: string;
-	query: ReturnType<typeof useRouter>["query"];
+	pathname: string | null;
+	searchParams: ReadonlyURLSearchParams;
 }) => (
 	<Button
-		key={item.title}
+		key={item.titleKey}
 		asChild
 		variant="link"
 		className={cn(pathname === item.url ? "text-primary" : "text-foreground")}
@@ -328,7 +374,9 @@ const NavbarItem = ({
 		<Link
 			href={{
 				pathname: item.url,
-				query: item.keepParams ? query : null,
+				query: item.keepParams
+					? { ...Object.fromEntries([...searchParams]) }
+					: null,
 			}}
 			className="flex h-full items-center justify-center gap-2 font-bold text-xl"
 		>
@@ -338,7 +386,8 @@ const NavbarItem = ({
 );
 
 export const Navbar = () => {
-	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
 
 	const navBarItems = NAV_ITEMS.filter((item) =>
 		"role" in item ? item.role === "user" : true,
@@ -351,10 +400,10 @@ export const Navbar = () => {
 					.filter((_, i) => i < middleIndex)
 					.map((item) => (
 						<NavbarItem
-							key={item.title}
+							key={item.titleKey}
 							{...item}
-							pathname={router.pathname}
-							query={router.query}
+							pathname={pathname}
+							searchParams={searchParams}
 						/>
 					))}
 				<CreateSubscriptionDialog
@@ -371,10 +420,10 @@ export const Navbar = () => {
 					.filter((_, i) => i >= middleIndex)
 					.map((item) => (
 						<NavbarItem
-							key={item.title}
+							key={item.titleKey}
 							{...item}
-							pathname={router.pathname}
-							query={router.query}
+							pathname={pathname}
+							searchParams={searchParams}
 						/>
 					))}
 			</div>

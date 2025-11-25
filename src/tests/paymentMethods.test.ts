@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { appRouter } from "~/server/api/root";
+import { createCaller } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import { db } from "~/server/db";
 import * as _mock from "./_mock";
 
 describe("Payment Methods", () => {
 	const ctx = createInnerTRPCContext({ session: _mock.session });
-	const caller = appRouter.createCaller({ ...ctx });
+	const caller = createCaller(() => ctx);
 
 	test("Get all default", async () => {
 		// WHEN

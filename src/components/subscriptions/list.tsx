@@ -12,6 +12,7 @@ import {
 	WalletCardsIcon,
 } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { DeleteDialog } from "~/components/subscriptions/delete";
@@ -36,13 +37,15 @@ import {
 	getFilteredSubscriptions,
 	getSortedSubscriptions,
 } from "~/lib/utils";
-import type { RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/trpc/react";
 
 type Props = {
 	subscriptions: RouterOutputs["subscription"]["getAll"];
 };
 
 export const SubscriptionList = ({ subscriptions }: Props) => {
+	const t = useTranslations("SubscriptionList");
+	const tSchedule = useTranslations("Common.schedule");
 	const [filters] = useFilters();
 	const [sort] = useSort();
 	const { data: session } = authClient.useSession();
@@ -59,7 +62,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 	if (subs.length === 0) {
 		return (
 			<div className="text-center text-muted-foreground">
-				No subscriptions found
+				{t("noSubscriptionsFound")}
 			</div>
 		);
 	}
@@ -79,6 +82,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 						subscription={subscription}
 						userBaseCurrency={userBaseCurrency}
 						isPrevious
+						tSchedule={tSchedule}
 					/>
 					<Separator className="w-full" />
 				</React.Fragment>
@@ -89,6 +93,7 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 						key={subscription.id}
 						subscription={subscription}
 						userBaseCurrency={userBaseCurrency}
+						tSchedule={tSchedule}
 					/>
 					<Separator className="w-full" />
 				</React.Fragment>
@@ -101,11 +106,14 @@ const SubscriptionListItem = ({
 	subscription,
 	userBaseCurrency,
 	isPrevious = false,
+	tSchedule,
 }: {
 	subscription: RouterOutputs["subscription"]["getAll"][number];
 	userBaseCurrency: string;
 	isPrevious?: boolean;
+	tSchedule: ReturnType<typeof useTranslations<"Common.schedule">>;
 }) => {
+	const t = useTranslations("SubscriptionList");
 	const [filters, setFilters] = useFilters();
 	const [isOpen, setIsOpen] = useState({
 		delete: false,
@@ -173,42 +181,40 @@ const SubscriptionListItem = ({
 						{subscription.price}
 						{currencyToSymbol(userBaseCurrency)}
 					</div>
-					{!isPrevious && (
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button
-									size="icon"
-									variant="ghost"
-									className="w-5 text-muted-foreground md:w-10"
-								>
-									<InfoIcon size={20} />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent
-								className="mr-2 w-32"
-								onClick={(e) => e.stopPropagation()}
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button
+								size="icon"
+								variant="ghost"
+								className="w-5 text-muted-foreground md:w-10"
 							>
-								<DropdownMenuItem
-									onClick={() => setIsOpen({ ...isOpen, edit: true })}
-								>
-									<EditIcon />
-									<span>Edit</span>
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									className="text-destructive"
-									onClick={() =>
-										setIsOpen({
-											...isOpen,
-											delete: true,
-										})
-									}
-								>
-									<TrashIcon />
-									<span>Delete</span>
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					)}
+								<InfoIcon size={20} />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent
+							className="mr-2 w-32"
+							onClick={(e) => e.stopPropagation()}
+						>
+							<DropdownMenuItem
+								onClick={() => setIsOpen({ ...isOpen, edit: true })}
+							>
+								<EditIcon />
+								<span>{t("edit")}</span>
+							</DropdownMenuItem>
+							<DropdownMenuItem
+								className="text-destructive"
+								onClick={() =>
+									setIsOpen({
+										...isOpen,
+										delete: true,
+									})
+								}
+							>
+								<TrashIcon />
+								<span>{t("delete")}</span>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
 				<div className="flex flex-wrap gap-x-4 gap-y-2 pt-1 text-base text-foreground/80 md:gap-x-6">
 					<div className="flex items-center gap-1">
@@ -280,7 +286,7 @@ const SubscriptionListItem = ({
 						}
 					>
 						<RefreshCcwIcon size={16} className="text-primary" />
-						{subscription.schedule}
+						{tSchedule(subscription.schedule)}
 					</button>
 					{subscription.currency !== userBaseCurrency && (
 						<div className="flex items-center gap-0.5">

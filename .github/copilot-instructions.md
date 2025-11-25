@@ -5,11 +5,12 @@ Purpose: Help GitHub Copilot (and contributors using Copilot Chat) make correct,
 ## Tech stack (what to assume)
 
 - Runtime : Bun, use `bun` for scripts, DO NOT use `npm` or `npx` but use `bun` and `bunx`.
-- Framework: Next.js 15 (React 19) with Pages dir, TypeScript (strict)
+- Framework: Next.js 15 (React 19) with App dir, TypeScript (strict)
 - Styling: Tailwind CSS v4, shadcn/ui components in `src/components/ui`
 - Data: Drizzle ORM + SQLite (`db.sqlite`), migrations in `drizzle/`
 - API: tRPC v11 (`src/server/api`), TanStack Query v5
 - Auth: better-auth (`src/server/auth.ts`, `src/lib/auth-client.ts`)
+- i18n: next-intl with English and French locales (`src/i18n/`)
 - Lint/format: Biome (`biome.json`)
 
 ## How to run
@@ -33,12 +34,19 @@ Copilot: when adding/removing columns, update schema, regenerate, and push. If a
 
 ## Project structure (high level)
 
-- `src/app` — API routes under `api/*`.
-- `src/pages` — Pages structure (e.g., `_app.tsx`).
+- `src/app/api` — API routes under `api/*`.
+- `src/app/(app)` — main app routes/pages.
 - `src/server` — tRPC routers (`api/routers`), DB (`db`), email, services.
 - `src/components` — feature components and `ui/*` primitives.
-- `src/lib` — utilities, constants, hooks; tRPC client in `src/utils/api.ts`.
+- `src/lib` — utilities, constants, hooks.
+- `src/trpc` — tRPC client setup.
+  - `src/trpc/react.ts` — hooks for data fetching/mutations.
+  - `src/trpc/server.ts` — server tRPC setup.
+- `src/i18n` — internationalization setup and translations.
+  - `src/i18n/messages/` — translation JSON files (en.json, fr.json).
+  - `src/i18n/routing.ts` — next-intl routing config and navigation utilities.
 - `drizzle/` — generated migrations (+ `meta/`).
+- `src/tests` — test files (using Bun test).
 
 Important aliases: `~/*` maps to `src/*`.
 
@@ -48,7 +56,7 @@ Important aliases: `~/*` maps to `src/*`.
 - Validate inputs with zod in server routers; mirror types in client forms via `@hookform/resolvers`.
 - Use `cn` from `src/lib/utils.ts` for class merging; Tailwind for styling.
 - Use `src/components/ui/*` primitives before adding new dependencies.
-- For data fetching/mutations, use tRPC hooks from `src/utils/api.ts` (TanStack Query v5). SSR for tRPC is disabled by design.
+- For data fetching/mutations, use tRPC hooks from `src/trpc/react.ts` (TanStack Query v5). SSR for tRPC is disabled by design.
 - Dates: use `date-fns`.
 - Images: only remote hosts allowed in `next.config.js`.
 
@@ -56,7 +64,19 @@ Important aliases: `~/*` maps to `src/*`.
 
 - Server auth config: `src/server/auth.ts`.
 - Client helpers: `src/lib/auth-client.ts`.
-- Don’t log secrets; use environment variables validated via `src/env.js` which use [t3env](https://github.com/t3-oss/t3-env).
+- Don't log secrets; use environment variables validated via `src/env.js` which use [t3env](https://github.com/t3-oss/t3-env).
+
+## Internationalization (i18n)
+
+- Uses [next-intl](https://next-intl.dev/docs) for translations (English and French supported).
+- Translation files: `src/i18n/messages/<locale>.json`
+- Structure translations with nested objects for better organization:
+  - `Common`: shared translations (e.g., `Common.schedule.Monthly`)
+  - Feature-specific: grouped by component/page (e.g., `Navigation`, `Filters`, `SubscriptionList`)
+- In components: use `const t = useTranslations("Namespace")` for client components.
+- Access nested translations with dot notation: `t("theme.light")`, `t("language.label")`.
+- Routing: use `src/i18n/navigation.ts` for locale-aware navigation (`useRouter`, `Link`).
+- Always add translations for user-facing text; avoid hardcoded strings in components.
 
 ## Making common changes with Copilot
 
@@ -75,7 +95,7 @@ Important aliases: `~/*` maps to `src/*`.
 
 3. Add a page/route
 
-- Prefer the Pages Router under `src/pages` when possible.
+- Prefer the App dir: `src/app/(app)/*`.
 - Use existing UI primitives and patterns for consistency.
 
 4. Email template
@@ -83,10 +103,18 @@ Important aliases: `~/*` maps to `src/*`.
 - Add template in `src/server/email/templates` (React Email).
 - Preview with `bun run email:dev`.
 
+5. Add translations
+
+- Add keys to both `src/i18n/messages/en.json` and `src/i18n/messages/fr.json`.
+- Use nested objects for organization (e.g., `"Filters": { "users": "Users" }`).
+- Import `useTranslations` from `next-intl` in client components.
+- Use `const t = useTranslations("Namespace")` and call `t("key")` for translations.
+
 ## Quality checklist (pre-PR)
 
 - Types okay: `tsc` runs during build; ensure no new errors.
 - Lint/style: `bun run check` to autofix; `bun run lint` to verify.
+- Tests: `bun run test` (Bun test).
 - Build passes: `bun run build`.
 - DB migrations generated and applied locally.
 - Screens and forms behave (basic manual test).
@@ -107,7 +135,7 @@ Example prompts
 
 - React 19: avoid legacy patterns; no deprecated lifecycle APIs.
 - Tailwind v4: use class utilities; avoid inline styles unless necessary.
-- i18n: English only for now (`next.config.js`).
+- i18n: English and French supported; always translate user-facing text in both languages.
 - Dockerfile exists for deployment; `next.config.js` sets `output: 'standalone'`.
 - Renovate is enabled; prefer minimal dependency additions.
 

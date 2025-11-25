@@ -4,7 +4,7 @@ import { isAuthenticated } from "~/server/auth";
 import { getFileFromStorage, saveFile } from "~/server/services/files";
 
 export async function POST(req: NextRequest) {
-	if (!(await isAuthenticated(req))) {
+	if (!(await isAuthenticated())) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 	}
 	try {
@@ -121,9 +121,3 @@ export async function GET(req: NextRequest) {
 		return NextResponse.json({ error: "File not found" }, { status: 404 });
 	}
 }
-
-export const config = {
-	api: {
-		bodyParser: false,
-	},
-};

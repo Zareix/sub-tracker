@@ -9,7 +9,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "~/components/ui/popover";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 export const ImageSearch = ({
 	query,

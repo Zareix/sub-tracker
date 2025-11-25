@@ -3,7 +3,7 @@ import { useState } from "react";
 import { EditCreateForm } from "~/components/settings/payment-methods/edit-create-form";
 import { Button } from "~/components/ui/button";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
-import type { RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/trpc/react";
 
 type Props = {
 	paymentMethod: RouterOutputs["paymentMethod"]["getAll"][number];

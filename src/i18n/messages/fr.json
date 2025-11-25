@@ -1,0 +1,82 @@
+{
+	"Common": {
+		"schedule": {
+			"Monthly": "Mensuel",
+			"Yearly": "Annuel"
+		}
+	},
+	"HomePage": {
+		"title": "Abonnements",
+		"addNewSubscription": "Ajouter un nouvel abonnement"
+	},
+	"SearchBar": {
+		"placeholder": "Rechercher des abonnements...",
+		"clearSearch": "Effacer la recherche"
+	},
+	"Navigation": {
+		"home": "Accueil",
+		"stats": "Statistiques",
+		"settings": "Paramètres",
+		"admin": "Admin",
+		"profile": "Profil",
+		"addSubscription": "Ajouter un abonnement",
+		"theme": {
+			"label": "Thème",
+			"light": "Clair",
+			"dark": "Sombre",
+			"system": "Système"
+		},
+		"currency": "Devise",
+		"language": {
+			"label": "Langue",
+			"english": "English",
+			"french": "Français"
+		},
+		"logOut": "Se déconnecter"
+	},
+	"SubscriptionList": {
+		"noSubscriptionsFound": "Aucun abonnement trouvé",
+		"edit": "Modifier",
+		"delete": "Supprimer"
+	},
+	"Filters": {
+		"users": "Utilisateurs",
+		"schedule": "Périodicité",
+		"paymentMethods": "Moyens de paiement",
+		"categories": "Catégories",
+		"select": "Sélectionner..."
+	},
+	"Sort": {
+		"label": "Trier",
+		"priceLowToHigh": "Prix : Croissant",
+		"priceHighToLow": "Prix : Décroissant",
+		"nextPaymentDate": "Date du prochain paiement"
+	},
+	"StatsPage": {
+		"title": "Statistiques",
+		"monthlySub": "Abonnements mensuels",
+		"yearlySub": "Abonnements annuels",
+		"smoothedMonth": {
+			"title": "Lissé sur un mois",
+			"description": "Mensuel + (annuel / 12)"
+		},
+		"smoothedYear": {
+			"title": "Lissé sur un an",
+			"description": "(Mensuel * 12) + annuel"
+		},
+		"thisMonth": {
+			"title": "Ce mois-ci",
+			"description": "Abonnements qui ont été ou seront payés ce mois-ci"
+		},
+		"remainingMonth": {
+			"title": "Restant ce mois-ci",
+			"description": "Abonnements qui seront payés d'aujourd'hui à la fin du mois"
+		},
+		"expectedNextMonth": {
+			"title": "Prévu le mois prochain",
+			"description": "Abonnements qui seront payés le mois prochain"
+		},
+		"noData": "Aucune donnée",
+		"error": "Erreur"
+	}
+}

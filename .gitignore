@@ -47,10 +47,8 @@ yarn-error.log*
 
 temp
 
-db.sqlite-shm
-
-db.sqlite-wal
-
+db.sqlite**
+db-test.sqlite**
 auth-schema.ts
-
 certificates
+src/i18n/messages/*.d.json.ts

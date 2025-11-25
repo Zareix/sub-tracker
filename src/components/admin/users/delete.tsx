@@ -5,7 +5,7 @@ import { Button } from "~/components/ui/button";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 import { authClient } from "~/lib/auth-client";
 import type { User } from "~/server/db/schema";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 export const DeleteUserDialog = ({
 	user,

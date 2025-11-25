@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { CalendarSyncIcon } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -52,7 +52,7 @@ export const LoginForm = () => {
 			if (res?.error) {
 				toast.error(res?.error.message ?? "Could not login, please try again.");
 			} else {
-				router.reload();
+				router.refresh();
 			}
 		},
 		onError: () => {
@@ -78,7 +78,7 @@ export const LoginForm = () => {
 			})
 			.then((res) => {
 				if (!res?.error) {
-					router.reload();
+					router.refresh();
 				}
 			})
 			.catch(console.error);

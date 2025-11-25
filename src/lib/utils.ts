@@ -92,7 +92,7 @@ export const getSortedSubscriptions = <
 
 export const getFilteredSubscriptions = <
 	T extends Array<
-		Pick<Subscription, "schedule"> & {
+		Pick<Subscription, "schedule" | "name" | "description"> & {
 			users: Array<Pick<User, "id">>;
 			paymentMethod: Pick<PaymentMethod, "id">;
 			category: Pick<Category, "id">;
@@ -127,7 +127,15 @@ export const getFilteredSubscriptions = <
 			filters.categories.includes(s.category.id),
 		);
 	}
-
+	if (filters.search) {
+		const searchLower = filters.search.toLowerCase();
+		// @ts-expect-error Actually it's working, I just want the function to return the right type
+		filteredSubscriptions = filteredSubscriptions.filter(
+			(s) =>
+				s.name.toLowerCase().includes(searchLower) ||
+				s.description.toLowerCase().includes(searchLower),
+		);
+	}
 	return filteredSubscriptions;
 };
 
@@ -143,11 +151,11 @@ export const currencyToSymbol = (currency: string) => {
 export const formatNextPaymentDate = (date: Date) => {
 	const today = new Date();
 	const difference = differenceInDays(date, today);
-	if (difference <= 6) {
+	if (Math.abs(difference) < 6) {
 		const relative = formatRelative(date, today);
-		return `${
+		return `${difference === 0 ? "" : `${format(date, "dd/MM")} -`} ${
 			relative.charAt(0).toUpperCase() + relative.slice(1)
-		}${difference === 0 ? "" : ` (${format(date, "dd/MM")})`} `;
+		}`;
 	}
 	if (today.getFullYear() === date.getFullYear()) {
 		return format(date, "dd/MM");

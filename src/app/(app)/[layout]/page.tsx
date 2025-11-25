@@ -1,30 +1,34 @@
+"use client";
+
 import { Calendar1Icon, InfoIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { CreateSubscriptionDialog } from "~/components/subscriptions/create";
 import { FiltersButton } from "~/components/subscriptions/filters";
 import { SubscriptionList } from "~/components/subscriptions/list";
+import { SearchBar } from "~/components/subscriptions/search-bar";
 import { SortButton } from "~/components/subscriptions/sort";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
-export default function Home() {
+export default function HomePage() {
+	const t = useTranslations("HomePage");
 	const subscriptionsQuery = api.subscription.getAll.useQuery();
-
-	if (subscriptionsQuery.isError) {
-		return <div>Error: {subscriptionsQuery.error?.message}</div>;
-	}
 
 	return (
 		<div>
 			<header className="flex flex-wrap items-center justify-between gap-y-1">
-				<h1 className="font-bold text-3xl">Subscriptions</h1>
+				<h1 className="font-bold text-3xl">{t("title")}</h1>
 				<div className="flex items-center gap-2">
 					<CreateSubscriptionDialog
 						trigger={
-							<Button className="hidden md:block">Add new subscription</Button>
+							<Button className="hidden md:block">
+								{t("addNewSubscription")}
+							</Button>
 						}
 					/>
+					<SearchBar />
 					<FiltersButton />
 					<SortButton />
 				</div>

@@ -1,3 +1,5 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import type { UserWithRole } from "better-auth/plugins/admin";
@@ -23,7 +25,7 @@ import {
 	SelectValue,
 } from "~/components/ui/select";
 import { authClient } from "~/lib/auth-client";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 
 const editUserInfoSchema = z.object({
 	id: z.string(),
