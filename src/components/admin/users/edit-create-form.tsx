@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Select } from "@radix-ui/react-select";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
@@ -41,12 +42,14 @@ export const EditCreateForm = ({
 	user?: z.infer<typeof userCreateSchema> & { id: string };
 	onFinished?: () => void;
 }) => {
+	const t = useTranslations("AdminPage");
+	const tCommon = useTranslations("Common");
 	const session = authClient.useSession();
 	const apiUtils = api.useUtils();
 	const createUserMutation = useMutation({
 		mutationFn: (data: z.infer<typeof userCreateSchema>) => {
 			if (!data.password || data.password.length < 8) {
-				throw new Error("Password must be at least 8 characters long");
+				throw new Error(t("passwordMinLength"));
 			}
 			return authClient.admin.createUser({
 				name: data.name,
@@ -59,7 +62,7 @@ export const EditCreateForm = ({
 			});
 		},
 		onSuccess: () => {
-			toast.success("User created!");
+			toast.success(t("userCreated"));
 			apiUtils.user.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -94,7 +97,7 @@ export const EditCreateForm = ({
 			});
 		},
 		onSuccess: () => {
-			toast.success("User edited!");
+			toast.success(t("userEdited"));
 			apiUtils.user.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -142,7 +145,7 @@ export const EditCreateForm = ({
 						name="name"
 						render={({ field }) => (
 							<FormItem className="col-span-10">
-								<FormLabel>Name</FormLabel>
+								<FormLabel>{tCommon("name")}</FormLabel>
 								<FormControl>
 									<Input placeholder="Raphael" {...field} />
 								</FormControl>
@@ -156,7 +159,7 @@ export const EditCreateForm = ({
 					name="email"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Email</FormLabel>
+							<FormLabel>{tCommon("email")}</FormLabel>
 							<FormControl>
 								<Input placeholder="raphael" {...field} />
 							</FormControl>
@@ -170,7 +173,7 @@ export const EditCreateForm = ({
 					name="password"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Password</FormLabel>
+							<FormLabel>{tCommon("password")}</FormLabel>
 							<FormControl>
 								<Input placeholder="***" type="password" {...field} />
 							</FormControl>
@@ -184,7 +187,7 @@ export const EditCreateForm = ({
 					name="role"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Role</FormLabel>
+							<FormLabel>{tCommon("role")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
@@ -193,7 +196,7 @@ export const EditCreateForm = ({
 								>
 									<FormControl>
 										<SelectTrigger className="min-w-[170px] capitalize">
-											<SelectValue placeholder="Select role" />
+											<SelectValue placeholder={tCommon("selectRole")} />
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
@@ -215,7 +218,7 @@ export const EditCreateForm = ({
 					)}
 				/>
 				<DialogFooter>
-					<Button type="submit">Submit</Button>
+					<Button type="submit">{tCommon("submit")}</Button>
 				</DialogFooter>
 			</form>
 		</Form>

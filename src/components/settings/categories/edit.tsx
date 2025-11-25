@@ -1,4 +1,5 @@
 import { EditIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { EditCreateForm } from "~/components/settings/categories/edit-create-form";
 import { Button } from "~/components/ui/button";
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export const EditCategoryDialog = ({ category }: Props) => {
+	const t = useTranslations("SettingsPage");
 	const [isOpen, setIsOpen] = useState(false);
 	return (
 		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -18,7 +20,7 @@ export const EditCategoryDialog = ({ category }: Props) => {
 					<EditIcon size={20} />
 				</Button>
 			</WrapperDialogVaul.Trigger>
-			<WrapperDialogVaul.Title>Edit Category</WrapperDialogVaul.Title>
+			<WrapperDialogVaul.Title>{t("editCategory")}</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} category={category} />
 		</WrapperDialogVaul>
 	);

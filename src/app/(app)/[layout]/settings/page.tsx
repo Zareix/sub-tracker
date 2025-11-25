@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { CreateCategoryDialog } from "~/components/settings/categories/create";
 import { DeleteCategoryDialog } from "~/components/settings/categories/delete";
 import { EditCategoryDialog } from "~/components/settings/categories/edit";
@@ -20,13 +21,15 @@ import {
 import { api } from "~/trpc/react";
 
 export default function SettingsPage() {
+	const t = useTranslations("SettingsPage");
+	const tCommon = useTranslations("Common");
 	const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
 	const categoriesQuery = api.category.getAll.useQuery();
 
 	if (paymentMethodsQuery.isError || categoriesQuery.isError) {
 		return (
 			<div>
-				Error:{" "}
+				{tCommon("error")}:{" "}
 				{paymentMethodsQuery.error?.message ?? categoriesQuery.error?.message}
 			</div>
 		);
@@ -36,16 +39,16 @@ export default function SettingsPage() {
 		<div className="grid max-w-[100vw] items-start gap-4">
 			<section>
 				<header className="flex flex-wrap items-center justify-between">
-					<h1 className="font-bold text-3xl">Payment Methods</h1>
+					<h1 className="font-bold text-3xl">{t("paymentMethods")}</h1>
 					<CreatePaymentMethodDialog />
 				</header>
 				<div className="mt-2 max-w-[calc(100vw-2rem)]">
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[70px]">Image</TableHead>
-								<TableHead>Name</TableHead>
-								<TableHead className="text-end">Actions</TableHead>
+								<TableHead className="w-[70px]">{tCommon("image")}</TableHead>
+								<TableHead>{tCommon("name")}</TableHead>
+								<TableHead className="text-end">{tCommon("actions")}</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -88,16 +91,16 @@ export default function SettingsPage() {
 			</section>
 			<section>
 				<header className="flex flex-wrap items-center justify-between">
-					<h1 className="font-bold text-3xl">Categories</h1>
+					<h1 className="font-bold text-3xl">{t("categories")}</h1>
 					<CreateCategoryDialog />
 				</header>
 				<div className="mt-2 max-w-[calc(100vw-2rem)]">
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-20">Icon</TableHead>
-								<TableHead>Name</TableHead>
-								<TableHead className="text-end">Actions</TableHead>
+								<TableHead className="w-20">{tCommon("icon")}</TableHead>
+								<TableHead>{tCommon("name")}</TableHead>
+								<TableHead className="text-end">{tCommon("actions")}</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>

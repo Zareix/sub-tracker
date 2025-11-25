@@ -1,4 +1,5 @@
 import { TrashIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -11,11 +12,13 @@ export const DeletePaymentMethodDialog = ({
 }: {
 	paymentMethod: Pick<PaymentMethod, "id" | "name">;
 }) => {
+	const t = useTranslations("SettingsPage");
+	const tCommon = useTranslations("Common");
 	const [isOpen, setIsOpen] = useState(false);
 	const apiUtils = api.useUtils();
 	const deletePaymentMethodMutation = api.paymentMethod.delete.useMutation({
 		onSuccess: () => {
-			toast.success("PaymentMethod deleted!");
+			toast.success(t("paymentMethodDeleted"));
 			apiUtils.paymentMethod.getAll.invalidate().catch(console.error);
 			setIsOpen(false);
 		},
@@ -36,18 +39,18 @@ export const DeletePaymentMethodDialog = ({
 				</Button>
 			</WrapperDialogVaul.Trigger>
 			<WrapperDialogVaul.Title>
-				Delete payment method:{" "}
+				{t("deletePaymentMethod")}:{" "}
 				<span className="font-medium italic">{paymentMethod.name}</span>
 			</WrapperDialogVaul.Title>
 			<WrapperDialogVaul.Description>
-				Are you sure you want to delete paymentMethod this payment method?
+				{t("deletePaymentMethodConfirm")}
 			</WrapperDialogVaul.Description>
 			<WrapperDialogVaul.Footer>
 				<Button variant="destructive" onClick={onDelete}>
-					Delete
+					{tCommon("delete")}
 				</Button>
 				<Button variant="outline" onClick={() => setIsOpen(false)}>
-					Cancel
+					{tCommon("cancel")}
 				</Button>
 			</WrapperDialogVaul.Footer>
 		</WrapperDialogVaul>
