@@ -52,4 +52,3 @@ db-test.sqlite**
 auth-schema.ts
 certificates
 src/i18n/messages/*.d.json.ts
-.env
