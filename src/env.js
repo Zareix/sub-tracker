@@ -17,8 +17,9 @@ export const env = createEnv({
 				: z.optional(z.string()),
 		BETTER_AUTH_URL: z.url(),
 		ADMIN_EMAIL: z.string(),
-		DATABASE_PATH: z.string(),
-		UPLOADS_FOLDER: z.string(),
+		DATABASE_PATH: z._default(z.string(), "./db.sqlite"),
+		UPLOADS_FOLDER: z._default(z.string(), "./temp/uploads"),
+
 		FIXER_API_KEY: z.optional(z.string()),
 
 		S3_ENABLED: z._default(
