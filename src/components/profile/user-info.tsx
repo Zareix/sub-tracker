@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import type { UserWithRole } from "better-auth/plugins/admin";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
@@ -39,6 +40,8 @@ type Props = {
 };
 
 export const UserInfoForm = ({ user }: Props) => {
+	const t = useTranslations("ProfilePage");
+	const tCommon = useTranslations("Common");
 	const apiUtils = api.useUtils();
 	const editUserMutation = useMutation({
 		mutationFn: async (data: z.infer<typeof editUserInfoSchema>) => {
@@ -53,7 +56,7 @@ export const UserInfoForm = ({ user }: Props) => {
 			});
 		},
 		onSuccess: () => {
-			toast.success("Profile updated successfully!");
+			toast.success(t("info.updatedSuccess"));
 			apiUtils.user.getAll.invalidate().catch(console.error);
 		},
 		onError: (error) => {
@@ -76,7 +79,7 @@ export const UserInfoForm = ({ user }: Props) => {
 
 	return (
 		<section>
-			<h2 className="mb-4 font-bold text-2xl">Your Information</h2>
+			<h2 className="mb-4 font-bold text-2xl">{t("info.title")}</h2>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
 					<div className="grid grid-cols-12 gap-2">
@@ -89,7 +92,7 @@ export const UserInfoForm = ({ user }: Props) => {
 							name="name"
 							render={({ field }) => (
 								<FormItem className="col-span-10">
-									<FormLabel>Name</FormLabel>
+									<FormLabel>{tCommon("form.name")}</FormLabel>
 									<FormControl>
 										<Input placeholder="Your name" {...field} />
 									</FormControl>
@@ -103,7 +106,7 @@ export const UserInfoForm = ({ user }: Props) => {
 						name="email"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Email</FormLabel>
+								<FormLabel>{tCommon("form.email")}</FormLabel>
 								<FormControl>
 									<Input
 										type="email"
@@ -116,11 +119,11 @@ export const UserInfoForm = ({ user }: Props) => {
 						)}
 					/>
 					<FormItem>
-						<FormLabel>Role</FormLabel>
+						<FormLabel>{tCommon("form.role")}</FormLabel>
 						<FormControl>
 							<Select value={user.role ?? "user"} disabled>
 								<SelectTrigger className="capitalize">
-									<SelectValue placeholder="Role" />
+									<SelectValue placeholder={tCommon("form.role")} />
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem
@@ -142,8 +145,8 @@ export const UserInfoForm = ({ user }: Props) => {
 							className="w-full sm:w-auto"
 						>
 							{editUserMutation.isPending
-								? "Updating..."
-								: "Update Information"}
+								? t("info.updating")
+								: t("info.update")}
 						</Button>
 					</div>
 				</form>

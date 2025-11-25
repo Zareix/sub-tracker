@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
@@ -29,10 +30,12 @@ export const EditCreateForm = ({
 	paymentMethod?: RouterOutputs["paymentMethod"]["getAll"][number];
 	onFinished?: () => void;
 }) => {
+	const t = useTranslations("SettingsPage");
+	const tCommon = useTranslations("Common");
 	const apiUtils = api.useUtils();
 	const createPaymentMethodMutation = api.paymentMethod.create.useMutation({
 		onSuccess: () => {
-			toast.success("PaymentMethod created!");
+			toast.success(t("paymentMethods.createdSuccess"));
 			apiUtils.paymentMethod.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -45,7 +48,7 @@ export const EditCreateForm = ({
 	});
 	const editPaymentMethodMutation = api.paymentMethod.edit.useMutation({
 		onSuccess: () => {
-			toast.success("Payment method edited!");
+			toast.success(t("paymentMethods.editedSuccess"));
 			apiUtils.paymentMethod.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -85,7 +88,7 @@ export const EditCreateForm = ({
 						name="name"
 						render={({ field }) => (
 							<FormItem className="col-span-8">
-								<FormLabel>Name</FormLabel>
+								<FormLabel>{tCommon("form.name")}</FormLabel>
 								<FormControl>
 									<Input placeholder="PayPal" {...field} />
 								</FormControl>
@@ -103,7 +106,7 @@ export const EditCreateForm = ({
 					/>
 				</div>
 				<DialogFooter>
-					<Button type="submit">Submit</Button>
+					<Button type="submit">{tCommon("actions.submit")}</Button>
 				</DialogFooter>
 			</form>
 		</Form>

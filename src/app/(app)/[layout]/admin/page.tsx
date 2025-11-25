@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { CreateUserDialog } from "~/components/admin/users/create";
 import { DeleteUserDialog } from "~/components/admin/users/delete";
@@ -20,13 +21,15 @@ import type { UserRole } from "~/lib/constant";
 import { api, type RouterInputs } from "~/trpc/react";
 
 export default function AdminPage() {
+	const t = useTranslations("AdminPage");
+	const tCommon = useTranslations("Common");
 	const apiUtils = api.useUtils();
 	const usersQuery = api.user.getAll.useQuery();
 	const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
 	const categoriesQuery = api.category.getAll.useQuery();
 	const cleanUpFilesMutation = api.admin.cleanUpFiles.useMutation({
 		onSuccess: () => {
-			toast.success("Cleaned up unused files");
+			toast.success(t("misc.cleanedUpSuccess"));
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -35,7 +38,7 @@ export default function AdminPage() {
 	const updateExchangeRatesMutation = api.admin.updateExchangeRates.useMutation(
 		{
 			onSuccess: () => {
-				toast.success("Updated exchange rates");
+				toast.success(t("misc.exchangeRatesSuccess"));
 			},
 			onError: (error) => {
 				toast.error(error.message);
@@ -51,7 +54,7 @@ export default function AdminPage() {
 			link.href = URL.createObjectURL(res);
 			link.download = "data.json";
 			link.click();
-			toast.success("Successfully exported data");
+			toast.success(t("misc.exportSuccess"));
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -59,7 +62,7 @@ export default function AdminPage() {
 	});
 	const importDataMutation = api.admin.importData.useMutation({
 		onSuccess: () => {
-			toast.success("Successfully imported data");
+			toast.success(t("misc.importSuccess"));
 			apiUtils.user.getAll.invalidate().catch(console.error);
 			apiUtils.paymentMethod.getAll.invalidate().catch(console.error);
 			apiUtils.category.getAll.invalidate().catch(console.error);
@@ -77,7 +80,7 @@ export default function AdminPage() {
 	) {
 		return (
 			<div>
-				Error:{" "}
+				{tCommon("error")}:{" "}
 				{usersQuery.error?.message ??
 					paymentMethodsQuery.error?.message ??
 					categoriesQuery.error?.message}
@@ -89,18 +92,24 @@ export default function AdminPage() {
 		<div className="grid max-w-[100vw] items-start gap-4">
 			<section>
 				<header className="flex flex-wrap items-center justify-between">
-					<h1 className="font-bold text-3xl">Users</h1>
+					<h1 className="font-bold text-3xl">{t("title")}</h1>
 					<CreateUserDialog />
 				</header>
 				<div className="mt-2 max-w-[calc(100vw-2rem)]">
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[70px]">Image</TableHead>
-								<TableHead className="w-[100px]">Name</TableHead>
-								<TableHead>Email</TableHead>
-								<TableHead>Role</TableHead>
-								<TableHead className="text-end">Actions</TableHead>
+								<TableHead className="w-[70px]">
+									{tCommon("form.image")}
+								</TableHead>
+								<TableHead className="w-[100px]">
+									{tCommon("form.name")}
+								</TableHead>
+								<TableHead>{tCommon("form.email")}</TableHead>
+								<TableHead>{tCommon("form.role")}</TableHead>
+								<TableHead className="text-end">
+									{tCommon("actions.label")}
+								</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -155,7 +164,7 @@ export default function AdminPage() {
 
 			<section>
 				<header className="flex items-center justify-between">
-					<h1 className="font-bold text-3xl">Misc</h1>
+					<h1 className="font-bold text-3xl">{t("misc.title")}</h1>
 				</header>
 				<div className="mt-2 flex flex-wrap items-center gap-2">
 					<Button
@@ -164,7 +173,7 @@ export default function AdminPage() {
 						}}
 						disabled={cleanUpFilesMutation.isPending}
 					>
-						Clean up unused files
+						{t("misc.cleanUpFiles")}
 					</Button>
 					<Button
 						onClick={() => {
@@ -172,7 +181,7 @@ export default function AdminPage() {
 						}}
 						disabled={updateExchangeRatesMutation.isPending}
 					>
-						Update exchange rates
+						{t("misc.updateExchangeRates")}
 					</Button>
 					<Button
 						onClick={() => {
@@ -180,14 +189,14 @@ export default function AdminPage() {
 						}}
 						disabled={exportDataMutation.isPending}
 					>
-						Export data
+						{t("misc.exportData")}
 					</Button>
 					<div className="relative">
-						<Button>Import data</Button>
+						<Button>{t("misc.importData")}</Button>
 						<Input
 							className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer opacity-0 disabled:opacity-0"
 							disabled={importDataMutation.isPending}
-							placeholder="Import data"
+							placeholder={t("misc.importData")}
 							onChange={async (e) => {
 								const file = e.target.files?.[0];
 								if (!file) {

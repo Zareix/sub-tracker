@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
 	Select,
@@ -14,6 +15,7 @@ import { CURRENCY_SYMBOLS, Currencies, type Currency } from "~/lib/constant";
 import { api } from "~/trpc/react";
 
 export const CurrencySettings = () => {
+	const t = useTranslations("ProfilePage");
 	const { data: session, isPending: isSessionLoading } =
 		authClient.useSession();
 	const user = session?.user;
@@ -28,12 +30,12 @@ export const CurrencySettings = () => {
 				toast.error(res.error.message);
 				return;
 			}
-			toast.success("Currency updated successfully!");
+			toast.success(t("currency.updatedSuccess"));
 			apiUtils.subscription.getAll.invalidate();
 		},
 		onError: (error) => {
 			toast.error(
-				error instanceof Error ? error.message : "Failed to update currency",
+				error instanceof Error ? error.message : t("currency.updateFailed"),
 			);
 		},
 	});
@@ -41,7 +43,7 @@ export const CurrencySettings = () => {
 	if (isSessionLoading || !user) {
 		return (
 			<section>
-				<h2 className="mb-4 font-bold text-2xl">Currency Settings</h2>
+				<h2 className="mb-4 font-bold text-2xl">{t("currency.title")}</h2>
 				<div className="animate-pulse">
 					<div className="mb-2 h-4 w-32 rounded bg-gray-200" />
 					<div className="h-10 w-full rounded bg-gray-200" />
@@ -52,7 +54,7 @@ export const CurrencySettings = () => {
 
 	return (
 		<section>
-			<h2 className="mb-4 font-bold text-2xl">Currency Settings</h2>
+			<h2 className="mb-4 font-bold text-2xl">{t("currency.title")}</h2>
 			<Select
 				value={user.baseCurrency}
 				onValueChange={(value) => {
@@ -60,7 +62,7 @@ export const CurrencySettings = () => {
 				}}
 			>
 				<SelectTrigger className="min-w-[170px] capitalize">
-					<SelectValue placeholder="Select a currency" />
+					<SelectValue placeholder={t("currency.select")} />
 				</SelectTrigger>
 				<SelectContent>
 					{Currencies.map((currency) => (

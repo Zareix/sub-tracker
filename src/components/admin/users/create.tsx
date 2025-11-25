@@ -1,10 +1,13 @@
 import { PlusIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { EditCreateForm } from "~/components/admin/users/edit-create-form";
 import { Button } from "~/components/ui/button";
 import { WrapperDialogVaul } from "~/components/ui/vaul-dialog";
 
 export const CreateUserDialog = () => {
+	const t = useTranslations("AdminPage");
+	const tCommon = useTranslations("Common");
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -12,10 +15,10 @@ export const CreateUserDialog = () => {
 			<WrapperDialogVaul.Trigger>
 				<Button>
 					<PlusIcon size={20} />
-					<span>Add new</span>
+					<span>{tCommon("actions.addNew")}</span>
 				</Button>
 			</WrapperDialogVaul.Trigger>
-			<WrapperDialogVaul.Title>Create User</WrapperDialogVaul.Title>
+			<WrapperDialogVaul.Title>{t("users.create")}</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} />
 		</WrapperDialogVaul>
 	);

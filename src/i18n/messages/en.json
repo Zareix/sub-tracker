@@ -3,7 +3,32 @@
 		"schedule": {
 			"Monthly": "Monthly",
 			"Yearly": "Yearly"
-		}
+		},
+		"actions": {
+			"label": "Actions",
+			"cancel": "Cancel",
+			"delete": "Delete",
+			"submit": "Submit",
+			"addNew": "Add new"
+		},
+		"form": {
+			"name": "Name",
+			"email": "Email",
+			"password": "Password",
+			"role": "Role",
+			"image": "Image",
+			"selectRole": "Select role"
+		},
+		"icon": {
+			"label": "Icon",
+			"select": "Select icon",
+			"search": "Search icon...",
+			"searchFor": "Search for an icon",
+			"noResults": "No results found.",
+			"findOn": "Find icon on"
+		},
+		"error": "Error",
+		"createdOn": "Created on {date}"
 	},
 	"HomePage": {
 		"title": "Subscriptions",
@@ -78,5 +103,154 @@
 		},
 		"noData": "No data",
 		"error": "Error"
+	},
+	"AdminPage": {
+		"title": "Users",
+		"misc": {
+			"title": "Misc",
+			"cleanUpFiles": "Clean up unused files",
+			"updateExchangeRates": "Update exchange rates",
+			"exportData": "Export data",
+			"importData": "Import data",
+			"cleanedUpSuccess": "Cleaned up unused files",
+			"exchangeRatesSuccess": "Updated exchange rates",
+			"exportSuccess": "Successfully exported data",
+			"importSuccess": "Successfully imported data"
+		},
+		"users": {
+			"create": "Create User",
+			"edit": "Edit User",
+			"delete": "Delete user",
+			"deleteConfirm": "Are you sure you want to delete this user?",
+			"createdSuccess": "User created!",
+			"editedSuccess": "User edited!",
+			"deletedSuccess": "User deleted!",
+			"passwordMinLength": "Password must be at least 8 characters long"
+		}
+	},
+	"SettingsPage": {
+		"paymentMethods": {
+			"title": "Payment Methods",
+			"create": "Add Payment method",
+			"edit": "Edit Payment method",
+			"delete": "Delete payment method",
+			"deleteConfirm": "Are you sure you want to delete this payment method?",
+			"createdSuccess": "Payment method created!",
+			"editedSuccess": "Payment method edited!",
+			"deletedSuccess": "Payment method deleted!"
+		},
+		"categories": {
+			"title": "Categories",
+			"create": "Create Category",
+			"edit": "Edit Category",
+			"delete": "Delete category",
+			"deleteConfirm": "Are you sure you want to delete this category?",
+			"createdSuccess": "Category created!",
+			"editedSuccess": "Category edited!",
+			"deletedSuccess": "Category deleted!"
+		}
+	},
+	"ProfilePage": {
+		"welcome": "Welcome {name}!",
+		"info": {
+			"title": "Your Information",
+			"update": "Update Information",
+			"updating": "Updating...",
+			"updatedSuccess": "Profile updated successfully!"
+		},
+		"currency": {
+			"title": "Currency Settings",
+			"select": "Select a currency",
+			"updatedSuccess": "Currency updated successfully!",
+			"updateFailed": "Failed to update currency"
+		},
+		"appearance": "Appearance",
+		"credentials": "Credentials",
+		"passkey": {
+			"title": "Passkey",
+			"name": "Passkey name",
+			"placeholder": "Name for your new passkey",
+			"register": "Register Passkey",
+			"loading": "Loading passkeys...",
+			"noRegistered": "No passkeys registered.",
+			"registeredSuccess": "Passkey registered successfully!",
+			"removedSuccess": "Passkey removed successfully!"
+		},
+		"password": {
+			"change": "Change Password",
+			"current": "Current Password",
+			"currentPlaceholder": "Enter your current password",
+			"new": "New Password",
+			"newPlaceholder": "Enter your new password",
+			"confirm": "Confirm New Password",
+			"confirmPlaceholder": "Confirm your new password",
+			"changing": "Changing Password...",
+			"changedSuccess": "Password changed successfully!"
+		},
+		"apiKeys": {
+			"title": "Manage API Keys",
+			"name": "API Key Name",
+			"placeholder": "e.g., Mobile App, Analytics Service",
+			"create": "Create API Key",
+			"creating": "Creating API Key...",
+			"newCreated": "New API Key Created!",
+			"saveWarning": "Save this key now - you won't be able to see it again!",
+			"loading": "Loading API keys...",
+			"noCreated": "No API keys created yet.",
+			"expires": "Expires",
+			"copied": "API key copied to clipboard!",
+			"deletedSuccess": "API key deleted successfully!"
+		}
+	},
+	"SubscriptionForm": {
+		"create": {
+			"title": "Create Subscription",
+			"success": "Subscription created!"
+		},
+		"edit": {
+			"title": "Edit Subscription: {name}",
+			"success": "Subscription updated!"
+		},
+		"delete": {
+			"title": "Delete subscription:",
+			"confirm": "Are you sure you want to delete this subscription?",
+			"success": "Subscription deleted!"
+		},
+		"fields": {
+			"name": "Name",
+			"namePlaceholder": "Netflix",
+			"category": "Category",
+			"categoryPlaceholder": "Select category",
+			"url": "URL",
+			"urlPlaceholder": "https://www.netflix.com",
+			"description": "Description",
+			"descriptionPlaceholder": "Something about the subscription",
+			"price": "Price",
+			"pricePlaceholder": "10",
+			"currency": "Currency",
+			"currencyPlaceholder": "Select a currency",
+			"paymentMethod": "Payment Method",
+			"paymentMethodPlaceholder": "Select payment method",
+			"payedBy": "Payed By",
+			"payedByPlaceholder": "Select users",
+			"schedule": "Schedule",
+			"schedulePlaceholder": "Select a schedule",
+			"firstPaymentDate": "First Payment Date",
+			"pickDate": "Pick a date"
+		},
+		"loading": "Loading...",
+		"imageSearch": {
+			"searchError": "Please enter a name to search for images",
+			"loading": "Loading images...",
+			"error": "Error fetching images",
+			"uploading": "Uploading image..."
+		},
+		"validation": {
+			"nameRequired": "Name is required",
+			"categoryRequired": "Category is required",
+			"pricePositive": "Price must be greater than 0",
+			"paymentMethodRequired": "Payment method is required",
+			"userRequired": "At least one user must be selected"
+		}
 	}
 }

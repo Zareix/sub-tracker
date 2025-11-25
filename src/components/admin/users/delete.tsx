@@ -1,4 +1,5 @@
 import { TrashIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -12,12 +13,14 @@ export const DeleteUserDialog = ({
 }: {
 	user: Pick<User, "id" | "name">;
 }) => {
+	const t = useTranslations("AdminPage");
+	const tCommon = useTranslations("Common");
 	const [isOpen, setIsOpen] = useState(false);
 	const session = authClient.useSession();
 	const apiUtils = api.useUtils();
 	const deleteUserMutation = api.user.delete.useMutation({
 		onSuccess: () => {
-			toast.success("User deleted!");
+			toast.success(t("users.deletedSuccess"));
 			apiUtils.user.getAll.invalidate().catch(console.error);
 			setIsOpen(false);
 		},
@@ -43,17 +46,18 @@ export const DeleteUserDialog = ({
 				</Button>
 			</WrapperDialogVaul.Trigger>
 			<WrapperDialogVaul.Title>
-				Delete user: <span className="font-medium italic">{user.name}</span>
+				{t("users.delete")}:{" "}
+				<span className="font-medium italic">{user.name}</span>
 			</WrapperDialogVaul.Title>
 			<WrapperDialogVaul.Description>
-				Are you sure you want to delete user this user?
+				{t("users.deleteConfirm")}
 			</WrapperDialogVaul.Description>
 			<WrapperDialogVaul.Footer>
 				<Button variant="outline" onClick={() => setIsOpen(false)}>
-					Cancel
+					{tCommon("actions.cancel")}
 				</Button>
 				<Button variant="destructive" onClick={onDelete}>
-					Delete
+					{tCommon("actions.delete")}
 				</Button>
 			</WrapperDialogVaul.Footer>
 		</WrapperDialogVaul>

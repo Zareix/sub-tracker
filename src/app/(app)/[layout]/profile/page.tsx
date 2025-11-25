@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { AppearanceSettings } from "~/components/profile/appearance";
 import { CredentialsForm } from "~/components/profile/credentials";
 import { CurrencySettings } from "~/components/profile/currency-settings";
@@ -8,6 +9,7 @@ import { getAuthSession } from "~/server/auth";
 
 export default async function ProfilePage() {
 	const session = await getAuthSession();
+	const t = await getTranslations("ProfilePage");
 	if (!session) {
 		redirect("/");
 	}
@@ -16,7 +18,7 @@ export default async function ProfilePage() {
 		<div className="grid w-full max-w-[100vw] items-start gap-4 lg:grid-cols-2 lg:gap-x-8">
 			<header className="flex flex-wrap items-center justify-between lg:col-span-2">
 				<h1 className="font-bold text-3xl">
-					Welcome <span className="italic">{session.user.name}</span> !
+					{t("welcome", { name: session.user.name })}
 				</h1>
 			</header>
 

@@ -1,4 +1,5 @@
 import { TrashIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -11,11 +12,13 @@ export const DeleteCategoryDialog = ({
 }: {
 	category: Pick<Category, "id" | "name">;
 }) => {
+	const t = useTranslations("SettingsPage");
+	const tCommon = useTranslations("Common");
 	const [isOpen, setIsOpen] = useState(false);
 	const apiUtils = api.useUtils();
 	const deleteCategoryMutation = api.category.delete.useMutation({
 		onSuccess: () => {
-			toast.success("Category deleted!");
+			toast.success(t("categories.deletedSuccess"));
 			apiUtils.category.getAll.invalidate().catch(console.error);
 			setIsOpen(false);
 		},
@@ -41,18 +44,18 @@ export const DeleteCategoryDialog = ({
 				</Button>
 			</WrapperDialogVaul.Trigger>
 			<WrapperDialogVaul.Title>
-				Delete category:{" "}
+				{t("categories.delete")}:{" "}
 				<span className="font-medium italic">{category.name}</span>
 			</WrapperDialogVaul.Title>
 			<WrapperDialogVaul.Description>
-				Are you sure you want to delete this category?
+				{t("categories.deleteConfirm")}
 			</WrapperDialogVaul.Description>
 			<WrapperDialogVaul.Footer>
 				<Button variant="destructive" onClick={onDelete}>
-					Delete
+					{tCommon("actions.delete")}
 				</Button>
 				<Button variant="outline" onClick={() => setIsOpen(false)}>
-					Cancel
+					{tCommon("actions.cancel")}
 				</Button>
 			</WrapperDialogVaul.Footer>
 		</WrapperDialogVaul>

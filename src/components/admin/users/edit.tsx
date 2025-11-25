@@ -1,4 +1,5 @@
 import { EditIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { EditCreateForm } from "~/components/admin/users/edit-create-form";
 import { Button } from "~/components/ui/button";
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export const EditUserDialog = ({ user }: Props) => {
+	const t = useTranslations("AdminPage");
 	const [isOpen, setIsOpen] = useState(false);
 	const session = authClient.useSession();
 
@@ -25,7 +27,7 @@ export const EditUserDialog = ({ user }: Props) => {
 					<EditIcon size={20} />
 				</Button>
 			</WrapperDialogVaul.Trigger>
-			<WrapperDialogVaul.Title>Edit User</WrapperDialogVaul.Title>
+			<WrapperDialogVaul.Title>{t("users.edit")}</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} user={user} />
 		</WrapperDialogVaul>
 	);

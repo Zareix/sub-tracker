@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { defaultFilter } from "cmdk";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { iconNames } from "lucide-react/dynamic";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -55,10 +56,12 @@ export const EditCreateForm = ({
 	category?: RouterOutputs["category"]["getAll"][number];
 	onFinished?: () => void;
 }) => {
+	const t = useTranslations("SettingsPage");
+	const tCommon = useTranslations("Common");
 	const apiUtils = api.useUtils();
 	const createCategoryMutation = api.category.create.useMutation({
 		onSuccess: () => {
-			toast.success("Category created!");
+			toast.success(t("categories.createdSuccess"));
 			apiUtils.category.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -71,7 +74,7 @@ export const EditCreateForm = ({
 	});
 	const editCategoryMutation = api.category.edit.useMutation({
 		onSuccess: () => {
-			toast.success("Category edited!");
+			toast.success(t("categories.editedSuccess"));
 			apiUtils.category.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -121,7 +124,7 @@ export const EditCreateForm = ({
 					name="name"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Name</FormLabel>
+							<FormLabel>{tCommon("form.name")}</FormLabel>
 							<FormControl>
 								<Input placeholder="Raphael" {...field} />
 							</FormControl>
@@ -134,7 +137,7 @@ export const EditCreateForm = ({
 					name="icon"
 					render={({ field }) => (
 						<FormItem className="flex flex-col">
-							<FormLabel>Icon</FormLabel>
+							<FormLabel>{tCommon("icon.label")}</FormLabel>
 							<div className="flex items-center gap-2">
 								{field.value && <CategoryIcon icon={field.value} />}
 								<Popover modal>
@@ -149,7 +152,7 @@ export const EditCreateForm = ({
 											>
 												{field.value
 													? iconNames.find((name) => name === field.value)
-													: "Select icon"}
+													: tCommon("icon.select")}
 												<ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
 											</Button>
 										</FormControl>
@@ -157,14 +160,14 @@ export const EditCreateForm = ({
 									<PopoverContent className="w-[200px] p-0">
 										<Command shouldFilter={false}>
 											<CommandInput
-												placeholder="Search icon..."
+												placeholder={tCommon("icon.search")}
 												onValueChange={setSearch}
 											/>
 											<CommandList>
 												<CommandEmpty>
 													{!search || search === ""
-														? "Search for an icon"
-														: "No results found."}
+														? tCommon("icon.searchFor")
+														: tCommon("icon.noResults")}
 												</CommandEmpty>
 												<CommandGroup>
 													{filteredIconNames.map((name) => (
@@ -194,7 +197,7 @@ export const EditCreateForm = ({
 								</Popover>
 							</div>
 							<FormDescription>
-								Find icon on{" "}
+								{tCommon("icon.findOn")}{" "}
 								<a
 									href="https://lucide.dev/icons/?focus"
 									target="_blank"
@@ -209,7 +212,7 @@ export const EditCreateForm = ({
 					)}
 				/>
 				<DialogFooter>
-					<Button type="submit">Submit</Button>
+					<Button type="submit">{tCommon("actions.submit")}</Button>
 				</DialogFooter>
 			</form>
 		</Form>

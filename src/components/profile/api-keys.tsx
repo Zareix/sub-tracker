@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CopyIcon, LoaderCircleIcon, TrashIcon, XIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -28,6 +29,8 @@ type Props = {
 };
 
 export const ApiKeys = ({ userId }: Props) => {
+	const t = useTranslations("ProfilePage");
+	const tCommon = useTranslations("Common");
 	const [lastCreatedApiKey, setLastCreatedApiKey] = useState<{
 		id: string;
 		name: string;
@@ -72,7 +75,7 @@ export const ApiKeys = ({ userId }: Props) => {
 			queryClient.invalidateQueries({
 				queryKey: ["apiKeys", userId],
 			});
-			toast.success("API key deleted successfully!");
+			toast.success(t("apiKeys.deletedSuccess"));
 		},
 		onError: (error: Error) => {
 			toast.error(error.message || "Failed to delete API key");
@@ -100,7 +103,7 @@ export const ApiKeys = ({ userId }: Props) => {
 
 	const copyToClipboard = (text: string) => {
 		navigator.clipboard.writeText(text);
-		toast.success("API key copied to clipboard!");
+		toast.success(t("apiKeys.copied"));
 	};
 
 	const dismissLastCreatedKey = () => {
@@ -109,14 +112,14 @@ export const ApiKeys = ({ userId }: Props) => {
 
 	return (
 		<section>
-			<h3 className="mb-4 font-semibold text-lg">Manage API Keys</h3>
+			<h3 className="mb-4 font-semibold text-lg">{t("apiKeys.title")}</h3>
 
 			{lastCreatedApiKey && (
 				<Card className="mb-6 border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
 					<CardHeader className="pb-3">
 						<div className="flex items-center justify-between">
 							<CardTitle className="text-green-800 text-lg dark:text-green-200">
-								New API Key Created!
+								{t("apiKeys.newCreated")}
 							</CardTitle>
 							<Button
 								variant="ghost"
@@ -134,7 +137,7 @@ export const ApiKeys = ({ userId }: Props) => {
 								{lastCreatedApiKey.name}
 							</p>
 							<p className="text-green-700 text-sm dark:text-green-300">
-								Save this key now - you won't be able to see it again!
+								{t("apiKeys.saveWarning")}
 							</p>
 						</div>
 						<div className="flex items-center gap-2 rounded bg-green-100 p-3 dark:bg-green-900">
@@ -158,12 +161,12 @@ export const ApiKeys = ({ userId }: Props) => {
 			{apiKeysQuery.isLoading ? (
 				<div className="flex items-center gap-2">
 					<LoaderCircleIcon className="animate-spin" size={16} />
-					<p>Loading API keys...</p>
+					<p>{t("apiKeys.loading")}</p>
 				</div>
 			) : !apiKeysQuery.data ||
 				apiKeysQuery.isError ||
 				apiKeysQuery.data.length === 0 ? (
-				<p className="text-muted-foreground">No API keys created yet.</p>
+				<p className="text-muted-foreground">{t("apiKeys.noCreated")}</p>
 			) : (
 				<div className="space-y-3">
 					{apiKeysQuery.data.map((apiKey) => {
@@ -172,11 +175,13 @@ export const ApiKeys = ({ userId }: Props) => {
 								<div className="flex items-center gap-2">
 									<span className="font-medium">{apiKey.name}</span>
 									<span className="text-muted-foreground text-xs">
-										Created on {new Date(apiKey.createdAt).toLocaleDateString()}
+										{tCommon("createdOn", {
+											date: new Date(apiKey.createdAt).toLocaleDateString(),
+										})}
 									</span>
 									{apiKey.expiresAt && (
 										<span className="rounded bg-muted px-2 py-1 text-muted-foreground text-xs">
-											| Expires:{" "}
+											| {t("apiKeys.expires")}:{" "}
 											{new Date(apiKey.expiresAt).toLocaleDateString()}
 										</span>
 									)}
@@ -210,12 +215,9 @@ export const ApiKeys = ({ userId }: Props) => {
 						name="name"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>API Key Name</FormLabel>
+								<FormLabel>{t("apiKeys.name")}</FormLabel>
 								<FormControl>
-									<Input
-										placeholder="e.g., Mobile App, Analytics Service"
-										{...field}
-									/>
+									<Input placeholder={t("apiKeys.placeholder")} {...field} />
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -231,10 +233,10 @@ export const ApiKeys = ({ userId }: Props) => {
 							{createApiKeyMutation.isPending ? (
 								<>
 									<LoaderCircleIcon className="mr-2 animate-spin" size={16} />
-									Creating API Key...
+									{t("apiKeys.creating")}
 								</>
 							) : (
-								"Create API Key"
+								t("apiKeys.create")
 							)}
 						</Button>
 					</div>

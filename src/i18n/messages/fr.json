@@ -3,7 +3,32 @@
 		"schedule": {
 			"Monthly": "Mensuel",
 			"Yearly": "Annuel"
-		}
+		},
+		"actions": {
+			"label": "Actions",
+			"cancel": "Annuler",
+			"delete": "Supprimer",
+			"submit": "Valider",
+			"addNew": "Ajouter"
+		},
+		"form": {
+			"name": "Nom",
+			"email": "Email",
+			"password": "Mot de passe",
+			"role": "Rôle",
+			"image": "Image",
+			"selectRole": "Sélectionner un rôle"
+		},
+		"icon": {
+			"label": "Icône",
+			"select": "Sélectionner une icône",
+			"search": "Rechercher une icône...",
+			"searchFor": "Rechercher une icône",
+			"noResults": "Aucun résultat trouvé.",
+			"findOn": "Trouver une icône sur"
+		},
+		"error": "Erreur",
+		"createdOn": "Créé le {date}"
 	},
 	"HomePage": {
 		"title": "Abonnements",
@@ -78,5 +103,154 @@
 		},
 		"noData": "Aucune donnée",
 		"error": "Erreur"
+	},
+	"AdminPage": {
+		"title": "Utilisateurs",
+		"misc": {
+			"title": "Divers",
+			"cleanUpFiles": "Nettoyer les fichiers inutilisés",
+			"updateExchangeRates": "Mettre à jour les taux de change",
+			"exportData": "Exporter les données",
+			"importData": "Importer les données",
+			"cleanedUpSuccess": "Fichiers inutilisés nettoyés",
+			"exchangeRatesSuccess": "Taux de change mis à jour",
+			"exportSuccess": "Données exportées avec succès",
+			"importSuccess": "Données importées avec succès"
+		},
+		"users": {
+			"create": "Créer un utilisateur",
+			"edit": "Modifier l'utilisateur",
+			"delete": "Supprimer l'utilisateur",
+			"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
+			"createdSuccess": "Utilisateur créé !",
+			"editedSuccess": "Utilisateur modifié !",
+			"deletedSuccess": "Utilisateur supprimé !",
+			"passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères"
+		}
+	},
+	"SettingsPage": {
+		"paymentMethods": {
+			"title": "Moyens de paiement",
+			"create": "Ajouter un moyen de paiement",
+			"edit": "Modifier le moyen de paiement",
+			"delete": "Supprimer le moyen de paiement",
+			"deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce moyen de paiement ?",
+			"createdSuccess": "Moyen de paiement créé !",
+			"editedSuccess": "Moyen de paiement modifié !",
+			"deletedSuccess": "Moyen de paiement supprimé !"
+		},
+		"categories": {
+			"title": "Catégories",
+			"create": "Créer une catégorie",
+			"edit": "Modifier la catégorie",
+			"delete": "Supprimer la catégorie",
+			"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette catégorie ?",
+			"createdSuccess": "Catégorie créée !",
+			"editedSuccess": "Catégorie modifiée !",
+			"deletedSuccess": "Catégorie supprimée !"
+		}
+	},
+	"ProfilePage": {
+		"welcome": "Bienvenue {name} !",
+		"info": {
+			"title": "Vos informations",
+			"update": "Mettre à jour",
+			"updating": "Mise à jour...",
+			"updatedSuccess": "Profil mis à jour avec succès !"
+		},
+		"currency": {
+			"title": "Paramètres de devise",
+			"select": "Sélectionner une devise",
+			"updatedSuccess": "Devise mise à jour avec succès !",
+			"updateFailed": "Échec de la mise à jour de la devise"
+		},
+		"appearance": "Apparence",
+		"credentials": "Identifiants",
+		"passkey": {
+			"title": "Clé d'accès",
+			"name": "Nom de la clé d'accès",
+			"placeholder": "Nom de votre nouvelle clé d'accès",
+			"register": "Enregistrer la clé d'accès",
+			"loading": "Chargement des clés d'accès...",
+			"noRegistered": "Aucune clé d'accès enregistrée.",
+			"registeredSuccess": "Clé d'accès enregistrée avec succès !",
+			"removedSuccess": "Clé d'accès supprimée avec succès !"
+		},
+		"password": {
+			"change": "Changer le mot de passe",
+			"current": "Mot de passe actuel",
+			"currentPlaceholder": "Entrez votre mot de passe actuel",
+			"new": "Nouveau mot de passe",
+			"newPlaceholder": "Entrez votre nouveau mot de passe",
+			"confirm": "Confirmer le nouveau mot de passe",
+			"confirmPlaceholder": "Confirmez votre nouveau mot de passe",
+			"changing": "Changement du mot de passe...",
+			"changedSuccess": "Mot de passe changé avec succès !"
+		},
+		"apiKeys": {
+			"title": "Gérer les clés API",
+			"name": "Nom de la clé API",
+			"placeholder": "ex: Application mobile, Service d'analyse",
+			"create": "Créer une clé API",
+			"creating": "Création de la clé API...",
+			"newCreated": "Nouvelle clé API créée !",
+			"saveWarning": "Enregistrez cette clé maintenant - vous ne pourrez plus la voir !",
+			"loading": "Chargement des clés API...",
+			"noCreated": "Aucune clé API créée.",
+			"expires": "Expire",
+			"copied": "Clé API copiée dans le presse-papiers !",
+			"deletedSuccess": "Clé API supprimée avec succès !"
+		}
+	},
+	"SubscriptionForm": {
+		"create": {
+			"title": "Créer un abonnement",
+			"success": "Abonnement créé !"
+		},
+		"edit": {
+			"title": "Modifier l'abonnement : {name}",
+			"success": "Abonnement mis à jour !"
+		},
+		"delete": {
+			"title": "Supprimer l'abonnement :",
+			"confirm": "Êtes-vous sûr de vouloir supprimer cet abonnement ?",
+			"success": "Abonnement supprimé !"
+		},
+		"fields": {
+			"name": "Nom",
+			"namePlaceholder": "Netflix",
+			"category": "Catégorie",
+			"categoryPlaceholder": "Sélectionner une catégorie",
+			"url": "URL",
+			"urlPlaceholder": "https://www.netflix.com",
+			"description": "Description",
+			"descriptionPlaceholder": "Informations sur l'abonnement",
+			"price": "Prix",
+			"pricePlaceholder": "10",
+			"currency": "Devise",
+			"currencyPlaceholder": "Sélectionner une devise",
+			"paymentMethod": "Moyen de paiement",
+			"paymentMethodPlaceholder": "Sélectionner un moyen de paiement",
+			"payedBy": "Payé par",
+			"payedByPlaceholder": "Sélectionner les utilisateurs",
+			"schedule": "Périodicité",
+			"schedulePlaceholder": "Sélectionner une périodicité",
+			"firstPaymentDate": "Date du premier paiement",
+			"pickDate": "Choisir une date"
+		},
+		"loading": "Chargement...",
+		"imageSearch": {
+			"searchError": "Veuillez entrer un nom pour rechercher des images",
+			"loading": "Chargement des images...",
+			"error": "Erreur lors du chargement des images",
+			"uploading": "Téléchargement de l'image..."
+		},
+		"validation": {
+			"nameRequired": "Le nom est requis",
+			"categoryRequired": "La catégorie est requise",
+			"pricePositive": "Le prix doit être supérieur à 0",
+			"paymentMethodRequired": "Le moyen de paiement est requis",
+			"userRequired": "Au moins un utilisateur doit être sélectionné"
+		}
 	}
 }
