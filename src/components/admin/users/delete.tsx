@@ -20,7 +20,7 @@ export const DeleteUserDialog = ({
 	const apiUtils = api.useUtils();
 	const deleteUserMutation = api.user.delete.useMutation({
 		onSuccess: () => {
-			toast.success(t("userDeleted"));
+			toast.success(t("users.deletedSuccess"));
 			apiUtils.user.getAll.invalidate().catch(console.error);
 			setIsOpen(false);
 		},
@@ -46,18 +46,18 @@ export const DeleteUserDialog = ({
 				</Button>
 			</WrapperDialogVaul.Trigger>
 			<WrapperDialogVaul.Title>
-				{t("deleteUser")}:{" "}
+				{t("users.delete")}:{" "}
 				<span className="font-medium italic">{user.name}</span>
 			</WrapperDialogVaul.Title>
 			<WrapperDialogVaul.Description>
-				{t("deleteUserConfirm")}
+				{t("users.deleteConfirm")}
 			</WrapperDialogVaul.Description>
 			<WrapperDialogVaul.Footer>
 				<Button variant="outline" onClick={() => setIsOpen(false)}>
-					{tCommon("cancel")}
+					{tCommon("actions.cancel")}
 				</Button>
 				<Button variant="destructive" onClick={onDelete}>
-					{tCommon("delete")}
+					{tCommon("actions.delete")}
 				</Button>
 			</WrapperDialogVaul.Footer>
 		</WrapperDialogVaul>

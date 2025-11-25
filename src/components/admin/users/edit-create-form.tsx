@@ -49,7 +49,7 @@ export const EditCreateForm = ({
 	const createUserMutation = useMutation({
 		mutationFn: (data: z.infer<typeof userCreateSchema>) => {
 			if (!data.password || data.password.length < 8) {
-				throw new Error(t("passwordMinLength"));
+				throw new Error(t("users.passwordMinLength"));
 			}
 			return authClient.admin.createUser({
 				name: data.name,
@@ -62,7 +62,7 @@ export const EditCreateForm = ({
 			});
 		},
 		onSuccess: () => {
-			toast.success(t("userCreated"));
+			toast.success(t("users.createdSuccess"));
 			apiUtils.user.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -97,7 +97,7 @@ export const EditCreateForm = ({
 			});
 		},
 		onSuccess: () => {
-			toast.success(t("userEdited"));
+			toast.success(t("users.editedSuccess"));
 			apiUtils.user.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -145,7 +145,7 @@ export const EditCreateForm = ({
 						name="name"
 						render={({ field }) => (
 							<FormItem className="col-span-10">
-								<FormLabel>{tCommon("name")}</FormLabel>
+								<FormLabel>{tCommon("form.name")}</FormLabel>
 								<FormControl>
 									<Input placeholder="Raphael" {...field} />
 								</FormControl>
@@ -159,7 +159,7 @@ export const EditCreateForm = ({
 					name="email"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>{tCommon("email")}</FormLabel>
+							<FormLabel>{tCommon("form.email")}</FormLabel>
 							<FormControl>
 								<Input placeholder="raphael" {...field} />
 							</FormControl>
@@ -173,7 +173,7 @@ export const EditCreateForm = ({
 					name="password"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>{tCommon("password")}</FormLabel>
+							<FormLabel>{tCommon("form.password")}</FormLabel>
 							<FormControl>
 								<Input placeholder="***" type="password" {...field} />
 							</FormControl>
@@ -187,7 +187,7 @@ export const EditCreateForm = ({
 					name="role"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>{tCommon("role")}</FormLabel>
+							<FormLabel>{tCommon("form.role")}</FormLabel>
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
@@ -196,7 +196,7 @@ export const EditCreateForm = ({
 								>
 									<FormControl>
 										<SelectTrigger className="min-w-[170px] capitalize">
-											<SelectValue placeholder={tCommon("selectRole")} />
+											<SelectValue placeholder={tCommon("form.selectRole")} />
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
@@ -218,7 +218,7 @@ export const EditCreateForm = ({
 					)}
 				/>
 				<DialogFooter>
-					<Button type="submit">{tCommon("submit")}</Button>
+					<Button type="submit">{tCommon("actions.submit")}</Button>
 				</DialogFooter>
 			</form>
 		</Form>

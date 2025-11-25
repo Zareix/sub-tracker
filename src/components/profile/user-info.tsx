@@ -56,7 +56,7 @@ export const UserInfoForm = ({ user }: Props) => {
 			});
 		},
 		onSuccess: () => {
-			toast.success(t("profileUpdatedSuccess"));
+			toast.success(t("info.updatedSuccess"));
 			apiUtils.user.getAll.invalidate().catch(console.error);
 		},
 		onError: (error) => {
@@ -79,7 +79,7 @@ export const UserInfoForm = ({ user }: Props) => {
 
 	return (
 		<section>
-			<h2 className="mb-4 font-bold text-2xl">{t("yourInformation")}</h2>
+			<h2 className="mb-4 font-bold text-2xl">{t("info.title")}</h2>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
 					<div className="grid grid-cols-12 gap-2">
@@ -92,7 +92,7 @@ export const UserInfoForm = ({ user }: Props) => {
 							name="name"
 							render={({ field }) => (
 								<FormItem className="col-span-10">
-									<FormLabel>{tCommon("name")}</FormLabel>
+									<FormLabel>{tCommon("form.name")}</FormLabel>
 									<FormControl>
 										<Input placeholder="Your name" {...field} />
 									</FormControl>
@@ -106,7 +106,7 @@ export const UserInfoForm = ({ user }: Props) => {
 						name="email"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>{tCommon("email")}</FormLabel>
+								<FormLabel>{tCommon("form.email")}</FormLabel>
 								<FormControl>
 									<Input
 										type="email"
@@ -119,11 +119,11 @@ export const UserInfoForm = ({ user }: Props) => {
 						)}
 					/>
 					<FormItem>
-						<FormLabel>{tCommon("role")}</FormLabel>
+						<FormLabel>{tCommon("form.role")}</FormLabel>
 						<FormControl>
 							<Select value={user.role ?? "user"} disabled>
 								<SelectTrigger className="capitalize">
-									<SelectValue placeholder={tCommon("role")} />
+									<SelectValue placeholder={tCommon("form.role")} />
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem
@@ -145,8 +145,8 @@ export const UserInfoForm = ({ user }: Props) => {
 							className="w-full sm:w-auto"
 						>
 							{editUserMutation.isPending
-								? t("updating")
-								: t("updateInformation")}
+								? t("info.updating")
+								: t("info.update")}
 						</Button>
 					</div>
 				</form>

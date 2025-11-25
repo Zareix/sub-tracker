@@ -61,7 +61,7 @@ export const EditCreateForm = ({
 	const apiUtils = api.useUtils();
 	const createCategoryMutation = api.category.create.useMutation({
 		onSuccess: () => {
-			toast.success(t("categoryCreated"));
+			toast.success(t("categories.createdSuccess"));
 			apiUtils.category.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -74,7 +74,7 @@ export const EditCreateForm = ({
 	});
 	const editCategoryMutation = api.category.edit.useMutation({
 		onSuccess: () => {
-			toast.success(t("categoryEdited"));
+			toast.success(t("categories.editedSuccess"));
 			apiUtils.category.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -124,7 +124,7 @@ export const EditCreateForm = ({
 					name="name"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>{tCommon("name")}</FormLabel>
+							<FormLabel>{tCommon("form.name")}</FormLabel>
 							<FormControl>
 								<Input placeholder="Raphael" {...field} />
 							</FormControl>
@@ -137,7 +137,7 @@ export const EditCreateForm = ({
 					name="icon"
 					render={({ field }) => (
 						<FormItem className="flex flex-col">
-							<FormLabel>{tCommon("icon")}</FormLabel>
+							<FormLabel>{tCommon("icon.label")}</FormLabel>
 							<div className="flex items-center gap-2">
 								{field.value && <CategoryIcon icon={field.value} />}
 								<Popover modal>
@@ -152,7 +152,7 @@ export const EditCreateForm = ({
 											>
 												{field.value
 													? iconNames.find((name) => name === field.value)
-													: tCommon("selectIcon")}
+													: tCommon("icon.select")}
 												<ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
 											</Button>
 										</FormControl>
@@ -160,14 +160,14 @@ export const EditCreateForm = ({
 									<PopoverContent className="w-[200px] p-0">
 										<Command shouldFilter={false}>
 											<CommandInput
-												placeholder={tCommon("searchIcon")}
+												placeholder={tCommon("icon.search")}
 												onValueChange={setSearch}
 											/>
 											<CommandList>
 												<CommandEmpty>
 													{!search || search === ""
-														? tCommon("searchForIcon")
-														: tCommon("noResultsFound")}
+														? tCommon("icon.searchFor")
+														: tCommon("icon.noResults")}
 												</CommandEmpty>
 												<CommandGroup>
 													{filteredIconNames.map((name) => (
@@ -197,7 +197,7 @@ export const EditCreateForm = ({
 								</Popover>
 							</div>
 							<FormDescription>
-								{tCommon("findIconOn")}{" "}
+								{tCommon("icon.findOn")}{" "}
 								<a
 									href="https://lucide.dev/icons/?focus"
 									target="_blank"
@@ -212,7 +212,7 @@ export const EditCreateForm = ({
 					)}
 				/>
 				<DialogFooter>
-					<Button type="submit">{tCommon("submit")}</Button>
+					<Button type="submit">{tCommon("actions.submit")}</Button>
 				</DialogFooter>
 			</form>
 		</Form>

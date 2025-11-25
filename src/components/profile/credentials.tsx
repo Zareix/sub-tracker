@@ -50,6 +50,7 @@ type Props = {
 
 export const CredentialsForm = ({ userId }: Props) => {
 	const t = useTranslations("ProfilePage");
+	const tCommon = useTranslations("Common");
 	const queryClient = useQueryClient();
 	const changePasswordMutation = useMutation({
 		mutationFn: async (data: z.infer<typeof changePasswordSchema>) => {
@@ -59,7 +60,7 @@ export const CredentialsForm = ({ userId }: Props) => {
 			});
 		},
 		onSuccess: () => {
-			toast.success(t("passwordChangedSuccess"));
+			toast.success(t("password.changedSuccess"));
 			passwordForm.reset();
 		},
 		onError: (error: Error) => {
@@ -76,7 +77,7 @@ export const CredentialsForm = ({ userId }: Props) => {
 				queryKey: ["passkeys", userId],
 			});
 			passkeyForm.reset();
-			toast.success(t("passkeyRegisteredSuccess"));
+			toast.success(t("passkey.registeredSuccess"));
 		},
 		onError: (error: Error) => {
 			toast.error(error.message || "Failed to register passkey");
@@ -92,7 +93,7 @@ export const CredentialsForm = ({ userId }: Props) => {
 			queryClient.invalidateQueries({
 				queryKey: ["passkeys", userId],
 			});
-			toast.success(t("passkeyRemovedSuccess"));
+			toast.success(t("passkey.removedSuccess"));
 		},
 		onError: (error: Error) => {
 			toast.error(error.message || "Failed to remove passkey");
@@ -131,13 +132,13 @@ export const CredentialsForm = ({ userId }: Props) => {
 		<section>
 			<h2 className="mb-4 font-bold text-2xl">{t("credentials")}</h2>
 			<div>
-				<h3 className="mb-2 font-semibold text-lg">{t("passkey")}</h3>
+				<h3 className="mb-2 font-semibold text-lg">{t("passkey.title")}</h3>
 				{passKeysQuery.isLoading ? (
-					<p>{t("loadingPasskeys")}</p>
+					<p>{t("passkey.loading")}</p>
 				) : !passKeysQuery.data ||
 					passKeysQuery.isError ||
 					passKeysQuery.data.length === 0 ? (
-					<p className="text-muted-foreground">{t("noPasskeysRegistered")}</p>
+					<p className="text-muted-foreground">{t("passkey.noRegistered")}</p>
 				) : (
 					<ul>
 						{passKeysQuery.data.map((passkey) => (
@@ -147,7 +148,7 @@ export const CredentialsForm = ({ userId }: Props) => {
 							>
 								<span className="font-medium">{passkey.name}</span>
 								<span className="text-muted-foreground text-xs">
-									{t("createdOn", {
+									{tCommon("createdOn", {
 										date: new Date(passkey.createdAt).toLocaleDateString(),
 									})}
 								</span>
@@ -178,16 +179,16 @@ export const CredentialsForm = ({ userId }: Props) => {
 							name="name"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>{t("passkeyName")}</FormLabel>
+									<FormLabel>{t("passkey.name")}</FormLabel>
 									<FormControl className="w-full">
-										<Input placeholder={t("passkeyPlaceholder")} {...field} />
+										<Input placeholder={t("passkey.placeholder")} {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
 						<div className="flex justify-end">
-							<Button type="submit">{t("registerPasskey")}</Button>
+							<Button type="submit">{t("passkey.register")}</Button>
 						</div>
 					</form>
 				</Form>
@@ -195,7 +196,7 @@ export const CredentialsForm = ({ userId }: Props) => {
 			<Separator className="my-8" />
 			<ApiKeys userId={userId} />
 			<Separator className="my-8" />
-			<h3 className="font-semibold text-lg">{t("changePassword")}</h3>
+			<h3 className="font-semibold text-lg">{t("password.change")}</h3>
 			<Form {...passwordForm}>
 				<form
 					onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}
@@ -206,11 +207,11 @@ export const CredentialsForm = ({ userId }: Props) => {
 						name="currentPassword"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>{t("currentPassword")}</FormLabel>
+								<FormLabel>{t("password.current")}</FormLabel>
 								<FormControl>
 									<Input
 										type="password"
-										placeholder={t("currentPasswordPlaceholder")}
+										placeholder={t("password.currentPlaceholder")}
 										autoComplete="current-password"
 										{...field}
 									/>
@@ -224,11 +225,11 @@ export const CredentialsForm = ({ userId }: Props) => {
 						name="newPassword"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>{t("newPassword")}</FormLabel>
+								<FormLabel>{t("password.new")}</FormLabel>
 								<FormControl>
 									<Input
 										type="password"
-										placeholder={t("newPasswordPlaceholder")}
+										placeholder={t("password.newPlaceholder")}
 										autoComplete="new-password"
 										{...field}
 									/>
@@ -242,11 +243,11 @@ export const CredentialsForm = ({ userId }: Props) => {
 						name="confirmPassword"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>{t("confirmNewPassword")}</FormLabel>
+								<FormLabel>{t("password.confirm")}</FormLabel>
 								<FormControl>
 									<Input
 										type="password"
-										placeholder={t("confirmNewPasswordPlaceholder")}
+										placeholder={t("password.confirmPlaceholder")}
 										autoComplete="new-password"
 										{...field}
 									/>
@@ -262,8 +263,8 @@ export const CredentialsForm = ({ userId }: Props) => {
 							className="w-full sm:w-auto"
 						>
 							{changePasswordMutation.isPending
-								? t("changingPassword")
-								: t("changePassword")}
+								? t("password.changing")
+								: t("password.change")}
 						</Button>
 					</div>
 				</form>

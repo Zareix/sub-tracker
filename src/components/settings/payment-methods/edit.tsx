@@ -21,7 +21,7 @@ export const EditPaymentMethodDialog = ({ paymentMethod }: Props) => {
 				</Button>
 			</WrapperDialogVaul.Trigger>
 			<WrapperDialogVaul.Title>
-				{t("editPaymentMethod")}
+				{t("paymentMethods.edit")}
 			</WrapperDialogVaul.Title>
 			<EditCreateForm
 				onFinished={() => setIsOpen(false)}

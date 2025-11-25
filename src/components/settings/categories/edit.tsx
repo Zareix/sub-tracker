@@ -20,7 +20,7 @@ export const EditCategoryDialog = ({ category }: Props) => {
 					<EditIcon size={20} />
 				</Button>
 			</WrapperDialogVaul.Trigger>
-			<WrapperDialogVaul.Title>{t("editCategory")}</WrapperDialogVaul.Title>
+			<WrapperDialogVaul.Title>{t("categories.edit")}</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} category={category} />
 		</WrapperDialogVaul>
 	);

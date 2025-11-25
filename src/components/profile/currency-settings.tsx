@@ -30,12 +30,12 @@ export const CurrencySettings = () => {
 				toast.error(res.error.message);
 				return;
 			}
-			toast.success(t("currencyUpdatedSuccess"));
+			toast.success(t("currency.updatedSuccess"));
 			apiUtils.subscription.getAll.invalidate();
 		},
 		onError: (error) => {
 			toast.error(
-				error instanceof Error ? error.message : t("failedToUpdateCurrency"),
+				error instanceof Error ? error.message : t("currency.updateFailed"),
 			);
 		},
 	});
@@ -43,7 +43,7 @@ export const CurrencySettings = () => {
 	if (isSessionLoading || !user) {
 		return (
 			<section>
-				<h2 className="mb-4 font-bold text-2xl">{t("currencySettings")}</h2>
+				<h2 className="mb-4 font-bold text-2xl">{t("currency.title")}</h2>
 				<div className="animate-pulse">
 					<div className="mb-2 h-4 w-32 rounded bg-gray-200" />
 					<div className="h-10 w-full rounded bg-gray-200" />
@@ -54,7 +54,7 @@ export const CurrencySettings = () => {
 
 	return (
 		<section>
-			<h2 className="mb-4 font-bold text-2xl">{t("currencySettings")}</h2>
+			<h2 className="mb-4 font-bold text-2xl">{t("currency.title")}</h2>
 			<Select
 				value={user.baseCurrency}
 				onValueChange={(value) => {
@@ -62,7 +62,7 @@ export const CurrencySettings = () => {
 				}}
 			>
 				<SelectTrigger className="min-w-[170px] capitalize">
-					<SelectValue placeholder={t("selectCurrency")} />
+					<SelectValue placeholder={t("currency.select")} />
 				</SelectTrigger>
 				<SelectContent>
 					{Currencies.map((currency) => (

@@ -18,7 +18,7 @@ export const DeleteCategoryDialog = ({
 	const apiUtils = api.useUtils();
 	const deleteCategoryMutation = api.category.delete.useMutation({
 		onSuccess: () => {
-			toast.success(t("categoryDeleted"));
+			toast.success(t("categories.deletedSuccess"));
 			apiUtils.category.getAll.invalidate().catch(console.error);
 			setIsOpen(false);
 		},
@@ -44,18 +44,18 @@ export const DeleteCategoryDialog = ({
 				</Button>
 			</WrapperDialogVaul.Trigger>
 			<WrapperDialogVaul.Title>
-				{t("deleteCategory")}:{" "}
+				{t("categories.delete")}:{" "}
 				<span className="font-medium italic">{category.name}</span>
 			</WrapperDialogVaul.Title>
 			<WrapperDialogVaul.Description>
-				{t("deleteCategoryConfirm")}
+				{t("categories.deleteConfirm")}
 			</WrapperDialogVaul.Description>
 			<WrapperDialogVaul.Footer>
 				<Button variant="destructive" onClick={onDelete}>
-					{tCommon("delete")}
+					{tCommon("actions.delete")}
 				</Button>
 				<Button variant="outline" onClick={() => setIsOpen(false)}>
-					{tCommon("cancel")}
+					{tCommon("actions.cancel")}
 				</Button>
 			</WrapperDialogVaul.Footer>
 		</WrapperDialogVaul>

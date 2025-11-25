@@ -14,11 +14,11 @@ export const CreatePaymentMethodDialog = () => {
 			<WrapperDialogVaul.Trigger>
 				<Button>
 					<PlusIcon size={20} />
-					<span>{tCommon("addNew")}</span>
+					<span>{tCommon("actions.addNew")}</span>
 				</Button>
 			</WrapperDialogVaul.Trigger>
 			<WrapperDialogVaul.Title>
-				{t("createPaymentMethod")}
+				{t("paymentMethods.create")}
 			</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} />
 		</WrapperDialogVaul>

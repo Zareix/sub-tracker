@@ -18,7 +18,7 @@ export const DeletePaymentMethodDialog = ({
 	const apiUtils = api.useUtils();
 	const deletePaymentMethodMutation = api.paymentMethod.delete.useMutation({
 		onSuccess: () => {
-			toast.success(t("paymentMethodDeleted"));
+			toast.success(t("paymentMethods.deletedSuccess"));
 			apiUtils.paymentMethod.getAll.invalidate().catch(console.error);
 			setIsOpen(false);
 		},
@@ -39,18 +39,18 @@ export const DeletePaymentMethodDialog = ({
 				</Button>
 			</WrapperDialogVaul.Trigger>
 			<WrapperDialogVaul.Title>
-				{t("deletePaymentMethod")}:{" "}
+				{t("paymentMethods.delete")}:{" "}
 				<span className="font-medium italic">{paymentMethod.name}</span>
 			</WrapperDialogVaul.Title>
 			<WrapperDialogVaul.Description>
-				{t("deletePaymentMethodConfirm")}
+				{t("paymentMethods.deleteConfirm")}
 			</WrapperDialogVaul.Description>
 			<WrapperDialogVaul.Footer>
 				<Button variant="destructive" onClick={onDelete}>
-					{tCommon("delete")}
+					{tCommon("actions.delete")}
 				</Button>
 				<Button variant="outline" onClick={() => setIsOpen(false)}>
-					{tCommon("cancel")}
+					{tCommon("actions.cancel")}
 				</Button>
 			</WrapperDialogVaul.Footer>
 		</WrapperDialogVaul>

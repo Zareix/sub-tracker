@@ -39,16 +39,20 @@ export default function SettingsPage() {
 		<div className="grid max-w-[100vw] items-start gap-4">
 			<section>
 				<header className="flex flex-wrap items-center justify-between">
-					<h1 className="font-bold text-3xl">{t("paymentMethods")}</h1>
+					<h1 className="font-bold text-3xl">{t("paymentMethods.title")}</h1>
 					<CreatePaymentMethodDialog />
 				</header>
 				<div className="mt-2 max-w-[calc(100vw-2rem)]">
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[70px]">{tCommon("image")}</TableHead>
-								<TableHead>{tCommon("name")}</TableHead>
-								<TableHead className="text-end">{tCommon("actions")}</TableHead>
+								<TableHead className="w-[70px]">
+									{tCommon("form.image")}
+								</TableHead>
+								<TableHead>{tCommon("form.name")}</TableHead>
+								<TableHead className="text-end">
+									{tCommon("actions.label")}
+								</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -91,16 +95,18 @@ export default function SettingsPage() {
 			</section>
 			<section>
 				<header className="flex flex-wrap items-center justify-between">
-					<h1 className="font-bold text-3xl">{t("categories")}</h1>
+					<h1 className="font-bold text-3xl">{t("categories.title")}</h1>
 					<CreateCategoryDialog />
 				</header>
 				<div className="mt-2 max-w-[calc(100vw-2rem)]">
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-20">{tCommon("icon")}</TableHead>
-								<TableHead>{tCommon("name")}</TableHead>
-								<TableHead className="text-end">{tCommon("actions")}</TableHead>
+								<TableHead className="w-20">{tCommon("icon.label")}</TableHead>
+								<TableHead>{tCommon("form.name")}</TableHead>
+								<TableHead className="text-end">
+									{tCommon("actions.label")}
+								</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>

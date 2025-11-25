@@ -29,7 +29,7 @@ export default function AdminPage() {
 	const categoriesQuery = api.category.getAll.useQuery();
 	const cleanUpFilesMutation = api.admin.cleanUpFiles.useMutation({
 		onSuccess: () => {
-			toast.success(t("cleanedUpSuccess"));
+			toast.success(t("misc.cleanedUpSuccess"));
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -38,7 +38,7 @@ export default function AdminPage() {
 	const updateExchangeRatesMutation = api.admin.updateExchangeRates.useMutation(
 		{
 			onSuccess: () => {
-				toast.success(t("exchangeRatesSuccess"));
+				toast.success(t("misc.exchangeRatesSuccess"));
 			},
 			onError: (error) => {
 				toast.error(error.message);
@@ -54,7 +54,7 @@ export default function AdminPage() {
 			link.href = URL.createObjectURL(res);
 			link.download = "data.json";
 			link.click();
-			toast.success(t("exportSuccess"));
+			toast.success(t("misc.exportSuccess"));
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -62,7 +62,7 @@ export default function AdminPage() {
 	});
 	const importDataMutation = api.admin.importData.useMutation({
 		onSuccess: () => {
-			toast.success(t("importSuccess"));
+			toast.success(t("misc.importSuccess"));
 			apiUtils.user.getAll.invalidate().catch(console.error);
 			apiUtils.paymentMethod.getAll.invalidate().catch(console.error);
 			apiUtils.category.getAll.invalidate().catch(console.error);
@@ -99,11 +99,17 @@ export default function AdminPage() {
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[70px]">{tCommon("image")}</TableHead>
-								<TableHead className="w-[100px]">{tCommon("name")}</TableHead>
-								<TableHead>{tCommon("email")}</TableHead>
-								<TableHead>{tCommon("role")}</TableHead>
-								<TableHead className="text-end">{tCommon("actions")}</TableHead>
+								<TableHead className="w-[70px]">
+									{tCommon("form.image")}
+								</TableHead>
+								<TableHead className="w-[100px]">
+									{tCommon("form.name")}
+								</TableHead>
+								<TableHead>{tCommon("form.email")}</TableHead>
+								<TableHead>{tCommon("form.role")}</TableHead>
+								<TableHead className="text-end">
+									{tCommon("actions.label")}
+								</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -158,7 +164,7 @@ export default function AdminPage() {
 
 			<section>
 				<header className="flex items-center justify-between">
-					<h1 className="font-bold text-3xl">{t("misc")}</h1>
+					<h1 className="font-bold text-3xl">{t("misc.title")}</h1>
 				</header>
 				<div className="mt-2 flex flex-wrap items-center gap-2">
 					<Button
@@ -167,7 +173,7 @@ export default function AdminPage() {
 						}}
 						disabled={cleanUpFilesMutation.isPending}
 					>
-						{t("cleanUpFiles")}
+						{t("misc.cleanUpFiles")}
 					</Button>
 					<Button
 						onClick={() => {
@@ -175,7 +181,7 @@ export default function AdminPage() {
 						}}
 						disabled={updateExchangeRatesMutation.isPending}
 					>
-						{t("updateExchangeRates")}
+						{t("misc.updateExchangeRates")}
 					</Button>
 					<Button
 						onClick={() => {
@@ -183,14 +189,14 @@ export default function AdminPage() {
 						}}
 						disabled={exportDataMutation.isPending}
 					>
-						{t("exportData")}
+						{t("misc.exportData")}
 					</Button>
 					<div className="relative">
-						<Button>{t("importData")}</Button>
+						<Button>{t("misc.importData")}</Button>
 						<Input
 							className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer opacity-0 disabled:opacity-0"
 							disabled={importDataMutation.isPending}
-							placeholder={t("importData")}
+							placeholder={t("misc.importData")}
 							onChange={async (e) => {
 								const file = e.target.files?.[0];
 								if (!file) {

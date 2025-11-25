@@ -27,7 +27,7 @@ export const EditUserDialog = ({ user }: Props) => {
 					<EditIcon size={20} />
 				</Button>
 			</WrapperDialogVaul.Trigger>
-			<WrapperDialogVaul.Title>{t("editUser")}</WrapperDialogVaul.Title>
+			<WrapperDialogVaul.Title>{t("users.edit")}</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} user={user} />
 		</WrapperDialogVaul>
 	);

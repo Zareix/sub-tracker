@@ -35,7 +35,7 @@ export const EditCreateForm = ({
 	const apiUtils = api.useUtils();
 	const createPaymentMethodMutation = api.paymentMethod.create.useMutation({
 		onSuccess: () => {
-			toast.success(t("paymentMethodCreated"));
+			toast.success(t("paymentMethods.createdSuccess"));
 			apiUtils.paymentMethod.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -48,7 +48,7 @@ export const EditCreateForm = ({
 	});
 	const editPaymentMethodMutation = api.paymentMethod.edit.useMutation({
 		onSuccess: () => {
-			toast.success(t("paymentMethodEdited"));
+			toast.success(t("paymentMethods.editedSuccess"));
 			apiUtils.paymentMethod.getAll.invalidate().catch(console.error);
 			onFinished?.();
 			setTimeout(() => {
@@ -88,7 +88,7 @@ export const EditCreateForm = ({
 						name="name"
 						render={({ field }) => (
 							<FormItem className="col-span-8">
-								<FormLabel>{tCommon("name")}</FormLabel>
+								<FormLabel>{tCommon("form.name")}</FormLabel>
 								<FormControl>
 									<Input placeholder="PayPal" {...field} />
 								</FormControl>
@@ -106,7 +106,7 @@ export const EditCreateForm = ({
 					/>
 				</div>
 				<DialogFooter>
-					<Button type="submit">{tCommon("submit")}</Button>
+					<Button type="submit">{tCommon("actions.submit")}</Button>
 				</DialogFooter>
 			</form>
 		</Form>

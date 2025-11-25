@@ -15,10 +15,12 @@ export const CreateCategoryDialog = () => {
 			<WrapperDialogVaul.Trigger>
 				<Button>
 					<PlusIcon size={20} />
-					<span>{tCommon("addNew")}</span>
+					<span>{tCommon("actions.addNew")}</span>
 				</Button>
 			</WrapperDialogVaul.Trigger>
-			<WrapperDialogVaul.Title>{t("createCategory")}</WrapperDialogVaul.Title>
+			<WrapperDialogVaul.Title>
+				{t("categories.create")}
+			</WrapperDialogVaul.Title>
 			<EditCreateForm onFinished={() => setIsOpen(false)} />
 		</WrapperDialogVaul>
 	);
