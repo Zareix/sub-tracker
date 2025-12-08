@@ -1,63 +1,82 @@
-import { Database } from "bun:sqlite";
-import { writeFile } from "node:fs/promises";
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/bun-sqlite";
 import { env } from "~/env";
 import { auth } from "~/server/auth";
+import { db } from "~/server/db";
 import * as schema from "./schema";
 
-if (!(await Bun.file(env.DATABASE_PATH).exists())) {
-	console.log("Database file created");
-	await writeFile(env.DATABASE_PATH, "");
-}
+export const seed = async () => {
+	console.log("Seeding database...");
 
-console.log("Seeding database...");
+	const users = await db.query.users.findMany();
+	if (users.length === 0) {
+		console.log("Creating admin user...");
+		const res = await auth.api.signUpEmail({
+			body: {
+				name: "Admin",
+				email: env.ADMIN_EMAIL,
+				password: "password",
+			},
+		});
+		// TODO Doesn't work because here requires session headers
+		// await auth.api.setRole({
+		// 	headers: await headers(),
+		// 	body: {
+		// 		userId: res.user.id,
+		// 		role: "admin" satisfies UserRole,
+		// 	},
+		// });
+		const updated = await db
+			.update(schema.users)
+			.set({ role: "admin" })
+			.where(eq(schema.users.id, res.user.id))
+			.returning();
+		if (updated.length === 0) {
+			throw new Error("Failed to set admin role for the user");
+		}
+		console.log(
+			"Admin user created with id",
+			res.user.id,
+			"and email",
+			res.user.email,
+			"and default password is 'password'. Please change the password after logging in.",
+		);
+	}
 
-const sqlite = new Database(env.DATABASE_PATH);
-sqlite.exec("PRAGMA journal_mode = WAL;");
-sqlite.exec("PRAGMA foreign_keys = ON;");
-const db = drizzle(sqlite, { schema });
+	const cat = await db.query.categories.findMany();
+	if (cat.length === 0) {
+		console.log("Creating default category...");
+		const insertedCatRes = await db
+			.insert(schema.categories)
+			.values({
+				id: 1,
+				name: "Misc",
+				icon: "circle-ellipsis",
+			})
+			.returning();
+		const insertedCat = insertedCatRes[0];
+		if (!insertedCat) {
+			throw new Error("Failed to create default category");
+		}
+		console.log("Default category created with id", insertedCat.id);
+	}
 
-const users = await db.query.users.findMany();
-if (users.length === 0) {
-	console.log("Creating admin user...");
-	const res = await auth.api.signUpEmail({
-		body: {
-			name: "Admin",
-			email: env.ADMIN_EMAIL,
-			password: "password",
-		},
-	});
-	// TODO Doesn't work because here requires session headers
-	// await auth.api.setRole({
-	// 	headers: await headers(),
-	// 	body: {
-	// 		userId: res.user.id,
-	// 		role: "admin" satisfies UserRole,
-	// 	},
-	// });
-	await db
-		.update(schema.users)
-		.set({ role: "admin" })
-		.where(eq(schema.users, res.user.id));
-	console.log(
-		"Admin user created with id",
-		res.user.id,
-		"and email",
-		res.user.email,
-		"and default password is 'password'. Please change the password after logging in.",
-	);
-}
+	// same for defaut payment
+	const pm = await db.query.paymentMethods.findMany();
+	if (pm.length === 0) {
+		console.log("Creating default payment method...");
+		const insertedPmRes = await db
+			.insert(schema.paymentMethods)
+			.values({
+				id: 1,
+				name: "Credit Card",
+			})
+			.returning();
+		const insertedPm = insertedPmRes[0];
+		if (!insertedPm) {
+			throw new Error("Failed to create default payment method");
+		}
+		console.log("Default payment method created with id", insertedPm.id);
+	}
 
-const cat = await db.query.categories.findMany();
-if (cat.length === 0) {
-	console.log("Creating default category...");
-	await db.insert(schema.categories).values({
-		name: "Misc",
-		icon: "circle-ellipsis",
-	});
-}
-
-console.log("Database seeded");
-
-db.$client.close();
+	console.log("Database seeded");
+};

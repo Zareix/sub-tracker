@@ -34,7 +34,12 @@ export const DeletePaymentMethodDialog = ({
 	return (
 		<WrapperDialogVaul isOpen={isOpen} setIsOpen={setIsOpen}>
 			<WrapperDialogVaul.Trigger>
-				<Button variant="ghost" className="w-8 text-destructive" size="icon">
+				<Button
+					variant="ghost"
+					className="w-8 text-destructive"
+					size="icon"
+					disabled={paymentMethod.id === 1}
+				>
 					<TrashIcon size={20} />
 				</Button>
 			</WrapperDialogVaul.Trigger>

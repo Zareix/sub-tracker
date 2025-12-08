@@ -1,9 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { setMilliseconds, startOfDay } from "date-fns";
 import { takeFirstOrThrow } from "~/lib/utils";
-import { createCaller } from "~/server/api/root";
-import { createInnerTRPCContext } from "~/server/api/trpc";
 import { subscriptions } from "~/server/db/schema";
+import { createTestCaller } from "~/tests/_utils";
 import * as _mock from "./_mock";
 
 const compareDates = (date1?: Date, date2?: Date) => {
@@ -18,9 +17,8 @@ const compareDates = (date1?: Date, date2?: Date) => {
 	).toBeTrue();
 };
 
-describe("Subscriptions", () => {
-	const ctx = createInnerTRPCContext({ session: _mock.session });
-	const caller = createCaller(() => ctx);
+describe("Subscriptions", async () => {
+	const [caller, ctx] = await createTestCaller();
 
 	test("Get default", async () => {
 		// WHEN

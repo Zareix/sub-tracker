@@ -1,13 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { createCaller } from "~/server/api/root";
-import { createInnerTRPCContext } from "~/server/api/trpc";
 import { db } from "~/server/db";
 import { subscriptions } from "~/server/db/schema";
+import { createTestCaller } from "~/tests/_utils";
 import * as _mock from "./_mock";
 
 describe("Categories", async () => {
-	const ctx = createInnerTRPCContext({ session: _mock.session });
-	const caller = createCaller(() => ctx);
+	const [caller] = await createTestCaller();
 
 	test("Get all default", async () => {
 		// WHEN

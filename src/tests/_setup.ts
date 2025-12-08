@@ -1,4 +1,10 @@
-import { afterAll, beforeAll, setSystemTime } from "bun:test";
+import {
+	afterAll,
+	afterEach,
+	beforeAll,
+	beforeEach,
+	setSystemTime,
+} from "bun:test";
 import {
 	categories,
 	paymentMethods,
@@ -6,6 +12,7 @@ import {
 	users,
 	usersToSubscriptions,
 } from "~/server/db/schema";
+import { cleanupDatabase } from "~/tests/_utils";
 import * as _mock from "./_mock";
 
 const DATABASE_PATH = "./db-test.sqlite";
@@ -20,26 +27,37 @@ process.env.VAPID_PUBLIC_KEY = "BMockVapidPublicKeyForTests";
 process.env.VAPID_PRIVATE_KEY = "MockVapidPrivateKeyForTests";
 process.env.FIXER_API_KEY = "API_KEY_FOR_TESTS";
 
+const { db } = await import("~/server/db");
+
 beforeAll(async () => {
 	setSystemTime(_mock.now);
 
 	await import("~/server/db/migrate");
-	const { db } = await import("~/server/db");
+});
 
-	await db.insert(users).values(_mock.user1);
-	await db.insert(categories).values(_mock.category1);
-	await db
-		.insert(paymentMethods)
-		.values([_mock.paymentMethod1, _mock.paymentMethod2]);
-	await db.insert(subscriptions).values(_mock.subscription1);
+beforeEach(async () => {
+	await Promise.all([
+		db.insert(users).values(_mock.user1),
+		db.insert(categories).values(_mock.category1),
+		db
+			.insert(paymentMethods)
+			.values([_mock.paymentMethod1, _mock.paymentMethod2]),
+		db.insert(subscriptions).values(_mock.subscription1),
+	]);
 	await db.insert(usersToSubscriptions).values({
 		subscriptionId: _mock.subscription1.id,
 		userId: _mock.user1.id,
 	});
 });
 
+afterEach(async () => {
+	await cleanupDatabase(db);
+});
+
 afterAll(async () => {
-	await Bun.file(DATABASE_PATH).delete();
-	await Bun.file(`${DATABASE_PATH}-shm`).delete();
-	await Bun.file(`${DATABASE_PATH}-wal`).delete();
+	await Promise.all([
+		Bun.file(DATABASE_PATH).delete(),
+		Bun.file(`${DATABASE_PATH}-shm`).delete(),
+		Bun.file(`${DATABASE_PATH}-wal`).delete(),
+	]);
 });
