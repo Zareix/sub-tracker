@@ -115,4 +115,193 @@ describe("Subscriptions", async () => {
 		});
 		expect(subscriptionDb).toBeUndefined();
 	});
+
+	describe("Edit", () => {
+		test("all fields", async () => {
+			// GIVEN
+			const originalSubscription = await ctx.db.query.subscriptions.findFirst({
+				where: (tb, { eq }) => eq(tb.id, _mock.subscription1.id),
+			});
+			expect(originalSubscription).toBeDefined();
+
+			const updated = {
+				id: _mock.subscription1.id,
+				name: "Updated Netflix",
+				description: "Updated description",
+				category: _mock.category2.id,
+				price: 29.99,
+				currency: "EUR" as const,
+				paymentMethod: _mock.paymentMethod2.id,
+				firstPaymentDate: new Date("2024-07-01T00:00:00.000Z"),
+				schedule: "Yearly" as const,
+				payedBy: [_mock.user1.id],
+				image: "https://example.com/updated-image.png",
+				url: "https://updated.example.com",
+			};
+
+			// WHEN
+			const result = await caller.subscription.edit(updated);
+
+			// THEN
+			expect(result).toHaveProperty("id", updated.id);
+			const subscriptionDb = await ctx.db.query.subscriptions.findFirst({
+				where: (tb, { eq }) => eq(tb.id, updated.id),
+			});
+			expect(subscriptionDb).toBeDefined();
+			if (!subscriptionDb) {
+				return;
+			}
+			expect(subscriptionDb.name).toBe(updated.name);
+			expect(subscriptionDb.description).toBe(updated.description);
+			expect(subscriptionDb.category).toBe(updated.category);
+			expect(subscriptionDb.price).toBe(updated.price);
+			expect(subscriptionDb.currency).toBe(updated.currency);
+			expect(subscriptionDb.paymentMethod).toBe(updated.paymentMethod);
+			compareDates(
+				startOfDay(subscriptionDb.firstPaymentDate),
+				updated.firstPaymentDate,
+			);
+			expect(subscriptionDb.schedule).toBe(updated.schedule);
+			expect(subscriptionDb.image).toBe(updated.image);
+			expect(subscriptionDb.url).toBe(updated.url);
+		});
+
+		test("without optional fields", async () => {
+			// GIVEN
+			const updated = {
+				id: _mock.subscription1.id,
+				name: "Updated Name Only",
+				description: "Updated description only",
+				category: _mock.category1.id,
+				price: 15.99,
+				currency: "USD" as const,
+				paymentMethod: _mock.paymentMethod1.id,
+				firstPaymentDate: new Date("2024-05-15T00:00:00.000Z"),
+				schedule: "Monthly" as const,
+				payedBy: [_mock.user1.id],
+			};
+
+			// WHEN
+			const result = await caller.subscription.edit(updated);
+
+			// THEN
+			expect(result).toHaveProperty("id", updated.id);
+			const subscriptionDb = await ctx.db.query.subscriptions.findFirst({
+				where: (tb, { eq }) => eq(tb.id, updated.id),
+			});
+			expect(subscriptionDb).toBeDefined();
+			if (!subscriptionDb) {
+				return;
+			}
+			expect(subscriptionDb.name).toBe(updated.name);
+			expect(subscriptionDb.description).toBe(updated.description);
+			expect(subscriptionDb.price).toBe(updated.price);
+		});
+
+		test("without creator in payedBy fails", async () => {
+			// GIVEN
+			const updated = {
+				id: _mock.subscription1.id,
+				name: "Should Fail",
+				description: "This should fail",
+				category: _mock.category1.id,
+				price: 10.0,
+				currency: "USD" as const,
+				paymentMethod: _mock.paymentMethod1.id,
+				firstPaymentDate: new Date("2024-05-15T00:00:00.000Z"),
+				schedule: "Monthly" as const,
+				payedBy: [], // Empty array - creator not included
+			};
+
+			// WHEN/THEN
+			try {
+				await caller.subscription.edit(updated);
+				expect().fail();
+			} catch (e) {
+				expect((e as Error).message).toContain(
+					"The creator must be included in the users who pay",
+				);
+			}
+		});
+
+		test("non-existent subscription fails", async () => {
+			// GIVEN
+			const nonExistentId = 99999;
+			const updated = {
+				id: nonExistentId,
+				name: "Should Fail",
+				description: "This should fail",
+				category: _mock.category1.id,
+				price: 10.0,
+				currency: "USD" as const,
+				paymentMethod: _mock.paymentMethod1.id,
+				firstPaymentDate: new Date("2024-05-15T00:00:00.000Z"),
+				schedule: "Monthly" as const,
+				payedBy: [_mock.user1.id],
+			};
+
+			// WHEN/THEN
+			try {
+				await caller.subscription.edit(updated);
+				expect().fail();
+			} catch (e) {
+				expect((e as Error).message).toContain("Error creating subscription");
+			}
+		});
+
+		test("changes schedule from Monthly to Yearly", async () => {
+			// GIVEN
+			const updated = {
+				id: _mock.subscription1.id,
+				name: _mock.subscription1.name,
+				description: _mock.subscription1.description,
+				category: _mock.subscription1.category,
+				price: _mock.subscription1.price,
+				currency: _mock.subscription1.currency,
+				paymentMethod: _mock.subscription1.paymentMethod,
+				firstPaymentDate: _mock.subscription1.firstPaymentDate,
+				schedule: "Yearly" as const, // Changed from Monthly to Yearly
+				payedBy: [_mock.user1.id],
+			};
+
+			// WHEN
+			const result = await caller.subscription.edit(updated);
+
+			// THEN
+			expect(result).toHaveProperty("id", updated.id);
+			const subscriptionDb = await ctx.db.query.subscriptions.findFirst({
+				where: (tb, { eq }) => eq(tb.id, updated.id),
+			});
+			expect(subscriptionDb).toBeDefined();
+			expect(subscriptionDb?.schedule).toBe("Yearly");
+		});
+
+		test("price and currency", async () => {
+			// GIVEN
+			const updated = {
+				id: _mock.subscription1.id,
+				name: _mock.subscription1.name,
+				description: _mock.subscription1.description,
+				category: _mock.subscription1.category,
+				price: 99.99,
+				currency: "GBP" as const,
+				paymentMethod: _mock.subscription1.paymentMethod,
+				firstPaymentDate: _mock.subscription1.firstPaymentDate,
+				schedule: _mock.subscription1.schedule,
+				payedBy: [_mock.user1.id],
+			};
+
+			// WHEN
+			const result = await caller.subscription.edit(updated);
+
+			// THEN
+			expect(result).toHaveProperty("id", updated.id);
+			const subscriptionDb = await ctx.db.query.subscriptions.findFirst({
+				where: (tb, { eq }) => eq(tb.id, updated.id),
+			});
+			expect(subscriptionDb).toBeDefined();
+			expect(subscriptionDb?.price).toBe(99.99);
+			expect(subscriptionDb?.currency).toBe("GBP");
+		});
+	});
 });

@@ -48,7 +48,7 @@ export const paymentMethodRouter = createTRPCRouter({
 			z.object({
 				id: z.number(),
 				name: z.string(),
-				image: z.string().optional(),
+				image: z.string().nullish(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -57,7 +57,7 @@ export const paymentMethodRouter = createTRPCRouter({
 					.update(paymentMethods)
 					.set({
 						name: input.name,
-						image: input.image,
+						image: input.image ?? null,
 					})
 					.where(eq(paymentMethods.id, input.id))
 					.returning({

@@ -16,62 +16,64 @@ describe("Payment Methods", async () => {
 		expect(methods[1]).toMatchObject(_mock.paymentMethod2);
 	});
 
-	test("Create", async () => {
-		// GIVEN
-		const newMethod = {
-			name: "Bank Transfer",
-			image: "bank-transfer.png",
-		};
+	describe("Create", () => {
+		test("with all fields", async () => {
+			// GIVEN
+			const newMethod = {
+				name: "Bank Transfer",
+				image: "bank-transfer.png",
+			};
 
-		// WHEN
-		const result = await caller.paymentMethod.create(newMethod);
+			// WHEN
+			const result = await caller.paymentMethod.create(newMethod);
 
-		// THEN
-		expect(result).toHaveProperty("id");
-		const methodDb = await db.query.paymentMethods.findFirst({
-			where: (tb, { eq }) => eq(tb.id, result.id),
+			// THEN
+			expect(result).toHaveProperty("id");
+			const methodDb = await db.query.paymentMethods.findFirst({
+				where: (tb, { eq }) => eq(tb.id, result.id),
+			});
+			expect(methodDb).toBeDefined();
+			expect(methodDb?.name).toBe(newMethod.name);
+			expect(methodDb?.image).toBe(newMethod.image);
 		});
-		expect(methodDb).toBeDefined();
-		expect(methodDb?.name).toBe(newMethod.name);
-		expect(methodDb?.image).toBe(newMethod.image);
-	});
 
-	test("Create no image", async () => {
-		// GIVEN
-		const newMethod = {
-			name: "Bank Transfer",
-		};
+		test("without image", async () => {
+			// GIVEN
+			const newMethod = {
+				name: "Bank Transfer",
+			};
 
-		// WHEN
-		const result = await caller.paymentMethod.create(newMethod);
+			// WHEN
+			const result = await caller.paymentMethod.create(newMethod);
 
-		// THEN
-		expect(result).toHaveProperty("id");
-		const methodDb = await db.query.paymentMethods.findFirst({
-			where: (tb, { eq }) => eq(tb.id, result.id),
+			// THEN
+			expect(result).toHaveProperty("id");
+			const methodDb = await db.query.paymentMethods.findFirst({
+				where: (tb, { eq }) => eq(tb.id, result.id),
+			});
+			expect(methodDb).toBeDefined();
+			expect(methodDb?.name).toBe(newMethod.name);
+			expect(methodDb?.image).toBeNull();
 		});
-		expect(methodDb).toBeDefined();
-		expect(methodDb?.name).toBe(newMethod.name);
-		expect(methodDb?.image).toBeNull();
-	});
 
-	test("Create empty name", async () => {
-		// GIVEN
-		const newMethod = {
-			name: "",
-		};
+		test("with empty name should throw", async () => {
+			// GIVEN
+			const newMethod = {
+				name: "",
+			};
 
-		// WHEN
-		// await expect(async () => {
-		//     await caller.paymentMethod.create(newMethod);
-		//   }).rejects.toThrow();
-		try {
-			await caller.paymentMethod.create(newMethod);
-		} catch (e) {
-			expect((e as Error).message).toContain("Name cannot be empty");
-			return;
-		}
-		expect().fail();
+			// WHEN
+			// await expect(async () => {
+			//     await caller.paymentMethod.create(newMethod);
+			//   }).rejects.toThrow();
+			try {
+				await caller.paymentMethod.create(newMethod);
+			} catch (e) {
+				expect((e as Error).message).toContain("Name cannot be empty");
+				return;
+			}
+			expect().fail();
+		});
 	});
 
 	test("Delete", async () => {
@@ -93,29 +95,98 @@ describe("Payment Methods", async () => {
 		expect(methodDb).toBeUndefined();
 	});
 
-	test("Edit", async () => {
-		// GIVEN
-		const original = await db.query.paymentMethods.findFirst({
-			where: (tb, { eq }) => eq(tb.id, _mock.paymentMethod1.id),
+	describe("Edit", () => {
+		test("all fields", async () => {
+			// GIVEN
+			const original = await db.query.paymentMethods.findFirst({
+				where: (tb, { eq }) => eq(tb.id, _mock.paymentMethod1.id),
+			});
+			expect(original).toBeDefined();
+
+			const updated = {
+				id: _mock.paymentMethod1.id,
+				name: "Updated Credit Card",
+				image: "updated-credit-card.png",
+			};
+
+			// WHEN
+			const result = await caller.paymentMethod.edit(updated);
+
+			// THEN
+			expect(result).toHaveProperty("id", updated.id);
+			const methodDb = await db.query.paymentMethods.findFirst({
+				where: (tb, { eq }) => eq(tb.id, updated.id),
+			});
+			expect(methodDb).toBeDefined();
+			expect(methodDb?.name).toBe(updated.name);
+			expect(methodDb?.image).toBe(updated.image);
 		});
-		expect(original).toBeDefined();
 
-		const updated = {
-			id: _mock.paymentMethod1.id,
-			name: "Updated Credit Card",
-			image: "updated-credit-card.png",
-		};
+		test("name only", async () => {
+			// GIVEN
+			const original = await db.query.paymentMethods.findFirst({
+				where: (tb, { eq }) => eq(tb.id, _mock.paymentMethod2.id),
+			});
+			expect(original).toBeDefined();
 
-		// WHEN
-		const result = await caller.paymentMethod.edit(updated);
+			const updated = {
+				id: _mock.paymentMethod2.id,
+				name: "New Name Only",
+				image: original?.image,
+			};
 
-		// THEN
-		expect(result).toHaveProperty("id", updated.id);
-		const methodDb = await db.query.paymentMethods.findFirst({
-			where: (tb, { eq }) => eq(tb.id, updated.id),
+			// WHEN
+			const result = await caller.paymentMethod.edit(updated);
+
+			// THEN
+			expect(result).toHaveProperty("id", updated.id);
+			const methodDb = await db.query.paymentMethods.findFirst({
+				where: (tb, { eq }) => eq(tb.id, updated.id),
+			});
+			expect(methodDb).toBeDefined();
+			expect(methodDb?.name).toBe(updated.name);
+			expect(methodDb?.image).toBe(original?.image);
 		});
-		expect(methodDb).toBeDefined();
-		expect(methodDb?.name).toBe(updated.name);
-		expect(methodDb?.image).toBe(updated.image);
+
+		test("remove image", async () => {
+			// GIVEN
+			const methodWithImage = await caller.paymentMethod.create({
+				name: "Method With Image",
+				image: "some-image.png",
+			});
+
+			// WHEN
+			const result = await caller.paymentMethod.edit({
+				id: methodWithImage.id,
+				name: "Method Without Image",
+			});
+
+			// THEN
+			expect(result).toHaveProperty("id", methodWithImage.id);
+			const methodDb = await db.query.paymentMethods.findFirst({
+				where: (tb, { eq }) => eq(tb.id, methodWithImage.id),
+			});
+			expect(methodDb).toBeDefined();
+			expect(methodDb?.name).toBe("Method Without Image");
+			expect(methodDb?.image).toBeNull();
+		});
+
+		test("non-existent payment method should throw", async () => {
+			// GIVEN
+			const nonExistentId = 99999;
+			const updated = {
+				id: nonExistentId,
+				name: "Should Fail",
+				image: "fail.png",
+			};
+
+			// WHEN/THEN
+			try {
+				await caller.paymentMethod.edit(updated);
+				expect().fail();
+			} catch (e) {
+				expect((e as Error).message).toContain("Error creating paymentMethod");
+			}
+		});
 	});
 });

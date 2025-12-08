@@ -12,7 +12,9 @@ describe("Categories", async () => {
 		const categories = await caller.category.getAll();
 
 		// THEN
-		expect(categories).toHaveLength(1);
+		expect(categories).toHaveLength(2);
+		expect(categories[0]).toMatchObject(_mock.category1);
+		expect(categories[1]).toMatchObject(_mock.category2);
 	});
 
 	test("Add", async () => {

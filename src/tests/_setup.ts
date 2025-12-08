@@ -38,7 +38,7 @@ beforeAll(async () => {
 beforeEach(async () => {
 	await Promise.all([
 		db.insert(users).values(_mock.user1),
-		db.insert(categories).values(_mock.category1),
+		db.insert(categories).values([_mock.category1, _mock.category2]),
 		db
 			.insert(paymentMethods)
 			.values([_mock.paymentMethod1, _mock.paymentMethod2]),

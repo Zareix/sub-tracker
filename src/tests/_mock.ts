@@ -29,6 +29,12 @@ export const category1: Category = {
 	icon: "activity",
 };
 
+export const category2: Category = {
+	id: 2,
+	name: "Productivity",
+	icon: "briefcase",
+};
+
 export const paymentMethod1: PaymentMethod = {
 	id: 1,
 	name: "Credit Card",
