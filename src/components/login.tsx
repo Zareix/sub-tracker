@@ -118,7 +118,7 @@ export const LoginForm = () => {
 					className="flex items-center gap-2 self-center py-4 font-medium text-xl"
 				>
 					<div className="flex size-9 items-center justify-center rounded-xs bg-primary text-primary-foreground">
-						<CalendarSyncIcon className="size-[22px]" />
+						<CalendarSyncIcon className="size-5.5" />
 					</div>
 					Subtracker
 				</Link>

@@ -42,8 +42,8 @@ export const env = createEnv({
 		EMAIL_SERVER: z.optional(z.string()),
 		EMAIL_FROM: z.optional(z.email()),
 
-		VAPID_PUBLIC_KEY: z.string(),
-		VAPID_PRIVATE_KEY: z.string(),
+		VAPID_PUBLIC_KEY: z.optional(z.string()),
+		VAPID_PRIVATE_KEY: z.optional(z.string()),
 	},
 
 	/**

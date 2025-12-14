@@ -19,6 +19,7 @@ const DialogOverlay = ({
 	...props
 }: React.ComponentProps<typeof DialogPrimitive.Overlay>) => (
 	<DialogPrimitive.Overlay
+		data-testid="dialogOverlay"
 		className={cn(
 			"data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80 backdrop-blur-xs backdrop-saturate-150 data-[state=closed]:animate-out data-[state=open]:animate-in",
 			className,

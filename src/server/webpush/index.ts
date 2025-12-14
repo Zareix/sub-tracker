@@ -8,11 +8,13 @@ import type { Device } from "~/server/db/schema";
 
 const SCHEDULE = "0 9 * * *";
 
-webpush.setVapidDetails(
-	`mailto:${env.ADMIN_EMAIL}`,
-	env.VAPID_PUBLIC_KEY,
-	env.VAPID_PRIVATE_KEY,
-);
+if (env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY) {
+	webpush.setVapidDetails(
+		`mailto:${env.ADMIN_EMAIL}`,
+		env.VAPID_PUBLIC_KEY,
+		env.VAPID_PRIVATE_KEY,
+	);
+}
 
 export interface CustomPushSubscription extends PushSubscription {
 	keys: {
@@ -21,7 +23,7 @@ export interface CustomPushSubscription extends PushSubscription {
 	};
 }
 
-export const sendNotification = async (
+const sendNotification = async (
 	devices: Array<Device>,
 	notificationContent: {
 		title: string;
@@ -102,6 +104,9 @@ const sendNotificationsForDueSubscriptions = async () => {
 };
 
 export const startScheduler = async () => {
+	if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY) {
+		return;
+	}
 	await sendNotificationsForDueSubscriptions();
 	console.log(`[SCHEDULER] Scheduler started with cron pattern: ${SCHEDULE}`);
 	cron.schedule(SCHEDULE, async () => {

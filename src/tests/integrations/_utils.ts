@@ -5,7 +5,7 @@ import {
 	users,
 	usersToSubscriptions,
 } from "~/server/db/schema";
-import * as _mock from "~/tests/_mock";
+import * as _mock from "~/tests/integrations/_mock";
 
 export const cleanupDatabase = async (db: typeof import("~/server/db").db) =>
 	Promise.all([
