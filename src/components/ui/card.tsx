@@ -16,8 +16,8 @@ const CardHeader = ({ className, ...props }: React.ComponentProps<"div">) => (
 	<div className={cn("flex flex-col space-y-1.5", className)} {...props} />
 );
 
-const CardTitle = ({ className, ...props }: React.ComponentProps<"div">) => (
-	<div
+const CardTitle = ({ className, ...props }: React.ComponentProps<"h1">) => (
+	<h1
 		className={cn(
 			"font-semibold text-2xl leading-none tracking-tight",
 			className,

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { db } from "~/server/db";
-import { createTestCaller } from "~/tests/_utils";
-import * as _mock from "./_mock";
+import * as _mock from "~/tests/integrations/_mock";
+import { createTestCaller } from "~/tests/integrations/_utils";
 
 describe("Payment Methods", async () => {
 	const [caller] = await createTestCaller();

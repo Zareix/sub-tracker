@@ -12,12 +12,12 @@ import {
 	users,
 	usersToSubscriptions,
 } from "~/server/db/schema";
-import { cleanupDatabase } from "~/tests/_utils";
-import * as _mock from "./_mock";
+import * as _mock from "~/tests/integrations/_mock";
+import { cleanupDatabase } from "~/tests/integrations/_utils";
 
 const DATABASE_PATH = "./db-test.sqlite";
 
-// @ts-expect-error Possible in Bun
+// @ts-expect-error It's possible
 process.env.NODE_ENV = "test";
 process.env.DATABASE_PATH = DATABASE_PATH;
 process.env.BETTER_AUTH_URL = "http://localhost:3000";

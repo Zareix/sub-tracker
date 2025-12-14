@@ -507,6 +507,7 @@ export const EditCreateForm = ({
 											<Popover modal>
 												<PopoverTrigger asChild>
 													<Button
+														data-testid="firstPaymentDatePicker"
 														variant="outline-t"
 														className={cn(
 															"h-10 w-full justify-start text-left font-normal",

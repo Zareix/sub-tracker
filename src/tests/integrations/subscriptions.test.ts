@@ -2,8 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { setMilliseconds, startOfDay } from "date-fns";
 import { takeFirstOrThrow } from "~/lib/utils";
 import { subscriptions } from "~/server/db/schema";
-import { createTestCaller } from "~/tests/_utils";
-import * as _mock from "./_mock";
+import * as _mock from "~/tests/integrations/_mock";
+import { createTestCaller } from "~/tests/integrations/_utils";
 
 const compareDates = (date1?: Date, date2?: Date) => {
 	if (!date1 || !date2) {

@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { env } from "~/env";
 import { db } from "~/server/db";
 import { seed } from "~/server/db/seed";
-import { cleanupDatabase } from "~/tests/_utils";
+import { cleanupDatabase } from "~/tests/integrations/_utils";
 
 describe("Seed", () => {
 	test("Should create admin user", async () => {
