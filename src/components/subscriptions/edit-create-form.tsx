@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
+import { addYears, format, subYears } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -527,6 +527,9 @@ export const EditCreateForm = ({
 														selected={field.value}
 														onSelect={field.onChange}
 														autoFocus
+														captionLayout="dropdown"
+														startMonth={subYears(new Date(), 10)}
+														endMonth={addYears(new Date(), 10)}
 													/>
 												</PopoverContent>
 											</Popover>
