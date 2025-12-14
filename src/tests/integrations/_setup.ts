@@ -23,9 +23,6 @@ process.env.DATABASE_PATH = DATABASE_PATH;
 process.env.BETTER_AUTH_URL = "http://localhost:3000";
 process.env.ADMIN_EMAIL = _mock.user1.email;
 process.env.UPLOADS_FOLDER = "./uploads-test";
-process.env.VAPID_PUBLIC_KEY = "BMockVapidPublicKeyForTests";
-process.env.VAPID_PRIVATE_KEY = "MockVapidPrivateKeyForTests";
-process.env.FIXER_API_KEY = "API_KEY_FOR_TESTS";
 
 const { db } = await import("~/server/db");
 

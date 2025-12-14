@@ -6,10 +6,6 @@ process.env.DATABASE_PATH = "./db-test.sqlite";
 process.env.BETTER_AUTH_URL = "http://localhost:3000";
 process.env.ADMIN_EMAIL = "admin@gmail.com";
 process.env.UPLOADS_FOLDER = "./uploads-test";
-process.env.VAPID_PUBLIC_KEY =
-	"BJVzbs7dBVtp3MsbTgvc8QiHTfoF-eCwXRMyXcLOauFzxOpBoaQGjN58pTff-rmJALJ5ALdZJS0J5kvYrVuvM4E";
-process.env.VAPID_PRIVATE_KEY = "x-L7lS-rLtEivUeNwc9PnRjmC_U3BQlQqS39j9vcCxI";
-process.env.FIXER_API_KEY = "API_KEY_FOR_TESTS";
 
 export default defineConfig({
 	testDir: "./src/tests/e2e",
