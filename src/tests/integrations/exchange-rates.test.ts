@@ -2,8 +2,9 @@ import { expect, test } from "bun:test";
 import { useFetchMock } from "bun-fetch-mock";
 import { db } from "~/server/db";
 import { updateExchangeRates } from "~/server/services/exchange-rates";
-import * as _mock from "../_mock";
+import * as _mock from "~/tests/integrations/_mock";
 
+// biome-ignore lint/correctness/useHookAtTopLevel: Not a React hook
 const fetchMock = useFetchMock({
 	baseUrl: "http://data.fixer.io",
 });

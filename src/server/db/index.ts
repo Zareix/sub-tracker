@@ -1,8 +1,13 @@
+import { rm } from "bun:fs/promises";
 import { Database } from "bun:sqlite";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { env } from "~/env";
 import * as schema from "./schema";
+
+if (env.NODE_ENV === "test") {
+	await rm(env.DATABASE_PATH, { force: true });
+}
 
 /**
  * Cache the database connection in development. This avoids creating a new connection on every HMR

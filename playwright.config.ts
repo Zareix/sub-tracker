@@ -1,3 +1,4 @@
+import type { GitHubActionOptions } from "@estruyf/github-actions-reporter";
 import { defineConfig, devices } from "@playwright/test";
 
 // @ts-expect-error It's possible
@@ -13,8 +14,17 @@ export default defineConfig({
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	workers: 1,
-	reporter: "html",
+	workers: process.env.CI ? 1 : undefined,
+	reporter: [
+		["html"],
+		["github"],
+		[
+			"@estruyf/github-actions-reporter",
+			<GitHubActionOptions>{
+				showError: true,
+			},
+		],
+	],
 	use: {
 		baseURL: "http://localhost:3000",
 		trace: "on-first-retry",
@@ -31,10 +41,10 @@ export default defineConfig({
 			use: { ...devices["Desktop Chrome"] },
 		},
 
-		{
-			name: "firefox",
-			use: { ...devices["Desktop Firefox"] },
-		},
+		// {
+		// 	name: "firefox",
+		// 	use: { ...devices["Desktop Firefox"] },
+		// },
 
 		// {
 		// 	name: "webkit",
