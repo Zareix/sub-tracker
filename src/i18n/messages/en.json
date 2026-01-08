@@ -42,6 +42,7 @@
 		"home": "Home",
 		"stats": "Stats",
 		"settings": "Settings",
+		"calendar": "Calendar",
 		"admin": "Admin",
 		"profile": "Profile",
 		"addSubscription": "Add subscription",
@@ -61,6 +62,8 @@
 	},
 	"SubscriptionList": {
 		"noSubscriptionsFound": "No subscriptions found",
+		"showPreviousPayments": "Show previous payments",
+		"hidePreviousPayments": "Hide previous payments",
 		"edit": "Edit",
 		"delete": "Delete"
 	},
@@ -76,6 +79,13 @@
 		"priceLowToHigh": "Price: Low to High",
 		"priceHighToLow": "Price: High to Low",
 		"nextPaymentDate": "Next Payment Date"
+	},
+	"CalendarPage": {
+		"title": "Calendrier des paiements",
+		"loading": "Loading subscriptions...",
+		"error": "Error loading subscriptions",
+		"dueSubscriptionsTitle": "{count} Subscriptions due",
+		"noDueSubscriptions": "No subscriptions due"
 	},
 	"StatsPage": {
 		"title": "Stats",

@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import {
+	Calendar1Icon,
 	CalendarSyncIcon,
 	ChartColumnIcon,
 	ChevronsUpDownIcon,
@@ -43,11 +44,14 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	SidebarTrigger,
+	useSidebar,
 } from "~/components/ui/sidebar";
 import { ThemeIcon } from "~/components/ui/theme-provider";
 import { usePathname, useRouter } from "~/i18n/navigation";
 import { authClient } from "~/lib/auth-client";
 import { Currencies, type Currency } from "~/lib/constant";
+import { useIsMobile } from "~/lib/hooks/use-mobile";
 import { cn, currencyToSymbol } from "~/lib/utils";
 import { api } from "~/trpc/react";
 
@@ -57,6 +61,12 @@ export const NAV_ITEMS = [
 		url: "/",
 		icon: HomeIcon,
 		keepParams: true,
+	},
+	{
+		titleKey: "calendar",
+		url: "/calendar",
+		icon: Calendar1Icon,
+		keepParams: false,
 	},
 	{
 		titleKey: "stats",
@@ -95,6 +105,8 @@ export function AppSidebar() {
 	const session = authClient.useSession();
 	const { setTheme, theme } = useTheme();
 	const apiUtils = api.useUtils();
+	const isMobile = useIsMobile();
+	const { toggleSidebar } = useSidebar();
 
 	const updateBaseCurrencyMutation = useMutation({
 		mutationFn: (newCurrency: string) =>
@@ -218,7 +230,7 @@ export function AppSidebar() {
 								</DropdownMenuTrigger>
 								<DropdownMenuContent
 									className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-									side="right"
+									side={isMobile ? "top" : "right"}
 									align="end"
 									sideOffset={4}
 								>
@@ -226,6 +238,7 @@ export function AppSidebar() {
 										<Link
 											href="/profile"
 											className="flex items-center gap-2 rounded-md px-1 py-1.5 text-left text-sm hover:bg-muted"
+											onClick={toggleSidebar}
 										>
 											<Avatar className="size-8 rounded-lg">
 												<AvatarImage
@@ -417,7 +430,7 @@ export const Navbar = () => {
 					}
 				/>
 				{navBarItems
-					.filter((_, i) => i >= middleIndex)
+					.filter((_, i) => i >= middleIndex && i < 3)
 					.map((item) => (
 						<NavbarItem
 							key={item.titleKey}
@@ -426,6 +439,7 @@ export const Navbar = () => {
 							searchParams={searchParams}
 						/>
 					))}
+				<SidebarTrigger className="h-full w-full px-3 py-1.5 [&_svg]:size-6.5" />
 			</div>
 		</nav>
 	);

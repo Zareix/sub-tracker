@@ -38,10 +38,18 @@
 		"placeholder": "Rechercher des abonnements...",
 		"clearSearch": "Effacer la recherche"
 	},
+	"CalendarPage": {
+		"title": "Calendrier des paiements",
+		"loading": "Chargement des abonnements...",
+		"error": "Erreur lors du chargement des abonnements",
+		"dueSubscriptionsTitle": "{count} abonnement(s) à payer",
+		"noDueSubscriptions": "Aucun abonnement à payer pour cette période"
+	},
 	"Navigation": {
 		"home": "Accueil",
 		"stats": "Statistiques",
 		"settings": "Paramètres",
+		"calendar": "Calendrier",
 		"admin": "Admin",
 		"profile": "Profil",
 		"addSubscription": "Ajouter un abonnement",
@@ -61,6 +69,8 @@
 	},
 	"SubscriptionList": {
 		"noSubscriptionsFound": "Aucun abonnement trouvé",
+		"showPreviousPayments": "Afficher les paiements précédents",
+		"hidePreviousPayments": "Masquer les paiements précédents",
 		"edit": "Modifier",
 		"delete": "Supprimer"
 	},

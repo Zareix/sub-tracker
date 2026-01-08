@@ -49,6 +49,8 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 	const [filters] = useFilters();
 	const [sort] = useSort();
 	const { data: session } = authClient.useSession();
+	const [arePreviousPaymentsShown, setArePreviousPaymentsShown] =
+		useState(false);
 
 	const userBaseCurrency =
 		(session?.user?.baseCurrency as (typeof Currencies)[number]) ??
@@ -79,18 +81,31 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 
 	return (
 		<>
-			{previousSubOfThisMonths.map((subscription) => (
-				<React.Fragment key={subscription.id}>
-					<SubscriptionListItem
-						key={subscription.id}
-						subscription={subscription}
-						userBaseCurrency={userBaseCurrency}
-						isPrevious
-						tSchedule={tSchedule}
-					/>
-					<Separator className="w-full" />
-				</React.Fragment>
-			))}
+			{arePreviousPaymentsShown ? (
+				previousSubOfThisMonths.map((subscription) => (
+					<React.Fragment key={subscription.id}>
+						<SubscriptionListItem
+							key={subscription.id}
+							subscription={subscription}
+							userBaseCurrency={userBaseCurrency}
+							isPrevious
+							tSchedule={tSchedule}
+						/>
+						<Separator className="w-full" />
+					</React.Fragment>
+				))
+			) : (
+				<div className="mx-auto flex max-w-[90vw] items-center justify-center overflow-x-hidden">
+					<Separator className="w-32" />
+					<Button
+						variant="outline-t"
+						onClick={() => setArePreviousPaymentsShown(true)}
+					>
+						{t("showPreviousPayments")}
+					</Button>
+					<Separator className="w-32" />
+				</div>
+			)}
 			{subs.map((subscription) => (
 				<React.Fragment key={subscription.id}>
 					<SubscriptionListItem

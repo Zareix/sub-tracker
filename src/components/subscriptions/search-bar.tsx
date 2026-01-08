@@ -20,7 +20,7 @@ export const SearchBar = () => {
 
 	return (
 		<div className="relative w-full">
-			<Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
+			<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 			<Input
 				type="search"
 				placeholder={t("placeholder")}
@@ -34,7 +34,7 @@ export const SearchBar = () => {
 				size="icon"
 				onClick={handleClear}
 				className={cn(
-					"-translate-y-1/2 absolute top-1/2 right-1 h-7 w-7 transition-opacity",
+					"absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2 transition-opacity",
 					search ? "opacity-100" : "pointer-events-none opacity-0",
 				)}
 			>
