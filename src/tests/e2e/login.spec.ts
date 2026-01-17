@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { env } from "~/env";
 import { login, waitForToast } from "~/tests/e2e/helpers";
 
-test.describe("Login", () => {
+test.describe("Login with Password", () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto("/");
 	});

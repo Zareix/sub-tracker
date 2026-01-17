@@ -1,7 +1,7 @@
 import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { apiKey } from "better-auth/plugins";
+import { apiKey, genericOAuth } from "better-auth/plugins";
 import { admin } from "better-auth/plugins/admin";
 import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
@@ -72,6 +72,21 @@ export const auth = betterAuth({
 			: [],
 	),
 	plugins: [
+		env.OAUTH_ENABLED && env.OAUTH_PROVIDER_ID && env.OAUTH_CLIENT_ID
+			? genericOAuth({
+					config: [
+						{
+							// biome-ignore lint/style/noNonNullAssertion : OAUTH_ENABLED
+							providerId: env.OAUTH_PROVIDER_ID!,
+							// biome-ignore lint/style/noNonNullAssertion : OAUTH_ENABLED
+							clientId: env.OAUTH_CLIENT_ID!,
+							clientSecret: env.OAUTH_CLIENT_SECRET,
+							discoveryUrl: env.OAUTH_DISCOVERY_URL,
+							scopes: ["openid", "email", "profile"],
+						},
+					],
+				})
+			: null,
 		passkey({
 			rpID:
 				env.NODE_ENV === "production" && env.BETTER_AUTH_URL
@@ -88,7 +103,7 @@ export const auth = betterAuth({
 			},
 		}),
 		admin(),
-	],
+	].filter(Boolean),
 });
 
 export type Session = typeof auth.$Infer.Session;

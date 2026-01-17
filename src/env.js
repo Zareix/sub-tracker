@@ -44,6 +44,18 @@ export const env = createEnv({
 
 		VAPID_PUBLIC_KEY: z.optional(z.string()),
 		VAPID_PRIVATE_KEY: z.optional(z.string()),
+
+		OAUTH_ENABLED: z._default(
+			z.boolean(),
+			!!process.env.OAUTH_PROVIDER_ID &&
+				!!process.env.OAUTH_CLIENT_ID &&
+				!!process.env.OAUTH_CLIENT_SECRET &&
+				!!process.env.OAUTH_DISCOVERY_URL,
+		),
+		OAUTH_PROVIDER_ID: z.optional(z.string()),
+		OAUTH_CLIENT_ID: z.optional(z.string()),
+		OAUTH_CLIENT_SECRET: z.optional(z.string()),
+		OAUTH_DISCOVERY_URL: z.optional(z.string()),
 	},
 
 	/**
@@ -84,6 +96,11 @@ export const env = createEnv({
 		EMAIL_FROM: process.env.EMAIL_FROM,
 		VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY,
 		VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
+		OAUTH_ENABLED: process.env.OAUTH_ENABLED,
+		OAUTH_CLIENT_ID: process.env.OAUTH_CLIENT_ID,
+		OAUTH_CLIENT_SECRET: process.env.OAUTH_CLIENT_SECRET,
+		OAUTH_PROVIDER_ID: process.env.OAUTH_PROVIDER_ID,
+		OAUTH_DISCOVERY_URL: process.env.OAUTH_DISCOVERY_URL,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

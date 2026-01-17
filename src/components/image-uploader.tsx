@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import { ImageUpIcon, LoaderCircleIcon } from "lucide-react";
-import Image from "next/image";
 import { toast } from "sonner";
 
 type Props = {
@@ -51,9 +50,10 @@ export const ImageFileUploader = ({ setFileUrl, fileUrl }: Props) => {
 			{uploadFileMutation.isPending ? (
 				<LoaderCircleIcon className="size-8 animate-spin" />
 			) : fileUrl ? (
-				<Image
+				// biome-ignore lint/performance/noImgElement : can be external
+				<img
 					src={fileUrl}
-					alt="Uploaded image"
+					alt="Uploaded avatar"
 					width={64}
 					height={64}
 					className="size-16 object-contain"

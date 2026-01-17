@@ -16,6 +16,11 @@ const config = {
 				protocol: "https",
 				hostname: "**.gstatic.com",
 			},
+			{
+				protocol: "https",
+				hostname: "cdn.jsdelivr.net",
+				pathname: "/gh/homarr-labs/dashboard-icons/**",
+			},
 		],
 		localPatterns: [
 			{

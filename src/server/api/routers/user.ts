@@ -2,11 +2,13 @@ import { TRPCError } from "@trpc/server";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "~/env";
+import type { AuthProvider } from "~/lib/auth-client";
 import { takeFirstOrThrow } from "~/lib/utils";
 import {
 	adminProcedure,
 	createTRPCRouter,
 	protectedProcedure,
+	publicProcedure,
 } from "~/server/api/trpc";
 import { runTransaction } from "~/server/db";
 import {
@@ -17,6 +19,13 @@ import {
 } from "~/server/db/schema";
 
 export const userRouter = createTRPCRouter({
+	authProviders: publicProcedure.query(async () => {
+		const providers: AuthProvider[] = ["password", "passkey"];
+		if (env.OAUTH_ENABLED) {
+			providers.push(`oauth-${env.OAUTH_PROVIDER_ID}`);
+		}
+		return providers;
+	}),
 	getAll: protectedProcedure.query(async ({ ctx }) => {
 		return ctx.db.query.users.findMany({
 			columns: {
