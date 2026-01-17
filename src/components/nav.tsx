@@ -238,7 +238,9 @@ export function AppSidebar() {
 										<Link
 											href="/profile"
 											className="flex items-center gap-2 rounded-md px-1 py-1.5 text-left text-sm hover:bg-muted"
-											onClick={toggleSidebar}
+											onClick={() => {
+												if (isMobile) toggleSidebar();
+											}}
 										>
 											<Avatar className="size-8 rounded-lg">
 												<AvatarImage
