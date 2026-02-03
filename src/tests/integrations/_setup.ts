@@ -5,6 +5,7 @@ import {
 	beforeEach,
 	setSystemTime,
 } from "bun:test";
+import { rmdir } from "node:fs/promises";
 import {
 	categories,
 	paymentMethods,
@@ -16,18 +17,31 @@ import * as _mock from "~/tests/integrations/_mock";
 import { cleanupDatabase } from "~/tests/integrations/_utils";
 
 const DATABASE_PATH = "./db-test.sqlite";
+const UPLOADS_FOLDER = "./uploads-test";
 
 // @ts-expect-error It's possible
 process.env.NODE_ENV = "test";
 process.env.DATABASE_PATH = DATABASE_PATH;
 process.env.BETTER_AUTH_URL = "http://localhost:3000";
 process.env.ADMIN_EMAIL = _mock.user1.email;
-process.env.UPLOADS_FOLDER = "./uploads-test";
+process.env.UPLOADS_FOLDER = UPLOADS_FOLDER;
 process.env.FIXER_API_KEY = "API_KEY_FOR_TESTS";
 
 const { db } = await import("~/server/db");
 
 beforeAll(async () => {
+	await Promise.all([
+		Bun.file(DATABASE_PATH)
+			.delete()
+			.catch(() => {}),
+		Bun.file(`${DATABASE_PATH}-shm`)
+			.delete()
+			.catch(() => {}),
+		Bun.file(`${DATABASE_PATH}-wal`)
+			.delete()
+			.catch(() => {}),
+		rmdir(UPLOADS_FOLDER).catch(() => {}),
+	]);
 	setSystemTime(_mock.now);
 
 	await import("~/server/db/migrate");
@@ -54,8 +68,15 @@ afterEach(async () => {
 
 afterAll(async () => {
 	await Promise.all([
-		Bun.file(DATABASE_PATH).delete(),
-		Bun.file(`${DATABASE_PATH}-shm`).delete(),
-		Bun.file(`${DATABASE_PATH}-wal`).delete(),
+		Bun.file(DATABASE_PATH)
+			.delete()
+			.catch(() => {}),
+		Bun.file(`${DATABASE_PATH}-shm`)
+			.delete()
+			.catch(() => {}),
+		Bun.file(`${DATABASE_PATH}-wal`)
+			.delete()
+			.catch(() => {}),
+		rmdir(UPLOADS_FOLDER).catch(() => {}),
 	]);
 });

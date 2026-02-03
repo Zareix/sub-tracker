@@ -114,11 +114,7 @@ export const WrapperDialogVaul = ({
 	}
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
-			{trigger && (
-				<DialogTrigger asChild {...trigger.props}>
-					{trigger}
-				</DialogTrigger>
-			)}
+			{trigger && <DialogTrigger render={trigger} {...trigger.props} />}
 			<DialogContent>
 				{title && <DialogTitle {...title.props}>{title}</DialogTitle>}
 				{content}

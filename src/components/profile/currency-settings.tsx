@@ -61,7 +61,7 @@ export const CurrencySettings = () => {
 					updateBaseCurrencyMutation.mutate(value as Currency);
 				}}
 			>
-				<SelectTrigger className="min-w-[170px] capitalize">
+				<SelectTrigger className="min-w-42.5 capitalize">
 					<SelectValue placeholder={t("currency.select")} />
 				</SelectTrigger>
 				<SelectContent>

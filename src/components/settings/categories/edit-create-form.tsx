@@ -141,23 +141,25 @@ export const EditCreateForm = ({
 							<div className="flex items-center gap-2">
 								{field.value && <CategoryIcon icon={field.value} />}
 								<Popover modal>
-									<PopoverTrigger asChild>
-										<FormControl>
-											<Button
-												variant="outline-t"
-												className={cn(
-													"h-10 grow justify-between",
-													!field.value && "text-muted-foreground",
-												)}
-											>
-												{field.value
-													? iconNames.find((name) => name === field.value)
-													: tCommon("icon.select")}
-												<ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
-											</Button>
-										</FormControl>
-									</PopoverTrigger>
-									<PopoverContent className="w-[200px] p-0">
+									<PopoverTrigger
+										render={
+											<FormControl>
+												<Button
+													variant="outline"
+													className={cn(
+														"h-10 grow justify-between",
+														!field.value && "text-muted-foreground",
+													)}
+												>
+													{field.value
+														? iconNames.find((name) => name === field.value)
+														: tCommon("icon.select")}
+													<ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
+												</Button>
+											</FormControl>
+										}
+									/>
+									<PopoverContent className="w-50 p-0">
 										<Command shouldFilter={false}>
 											<CommandInput
 												placeholder={tCommon("icon.search")}

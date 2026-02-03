@@ -163,16 +163,13 @@ const StatsCard = ({
 						<PopoverTrigger className="mb-auto">
 							<InfoIcon size={20} className="text-muted-foreground" />
 						</PopoverTrigger>
-						<PopoverContent
-							className="w-max max-w-[300px] px-2 py-2"
-							side="top"
-						>
+						<PopoverContent className="w-max max-w-75 px-2 py-2" side="top">
 							<p>{description}</p>
 						</PopoverContent>
 					</Popover>
 				)}
 			</CardHeader>
-			<CardContent className="mt-2 flex items-center font-bold text-2xl">
+			<CardContent className="flex items-center font-bold text-2xl">
 				{isLoading ? <Skeleton className="mr-1 h-6 w-1/4" /> : rounded(value)}
 				{currencyToSymbol(userBaseCurrency)}
 			</CardContent>
@@ -270,7 +267,7 @@ const MonthlyStatsCard = ({
 					</CardTitle>
 				</CardHeader>
 				<CardContent className="flex-1 pb-0">
-					<div className="mx-auto flex aspect-square max-h-[250px] items-center justify-center">
+					<div className="mx-auto flex aspect-square max-h-62.5 items-center justify-center">
 						<Skeleton className="h-10 w-24" />
 					</div>
 				</CardContent>
@@ -280,20 +277,20 @@ const MonthlyStatsCard = ({
 
 	return (
 		<Card className="flex flex-col md:row-span-2">
-			<CardHeader className="items-center pb-0">
+			<CardHeader className="items-center">
 				<CardTitle className="font-normal text-lg md:text-xl">
 					{title}
 				</CardTitle>
 			</CardHeader>
-			<CardContent className="flex-1 pb-0">
+			<CardContent className="flex-1">
 				{chartData.length === 0 ? (
-					<div className="mx-auto flex aspect-square max-h-[250px] items-center justify-center">
+					<div className="mx-auto flex aspect-square max-h-62.5 items-center justify-center">
 						<div className="text-muted-foreground">{t("noData")}</div>
 					</div>
 				) : (
 					<ChartContainer
 						config={chartConfig}
-						className="mx-auto aspect-square max-h-[250px]"
+						className="mx-auto aspect-square max-h-62.5"
 					>
 						<PieChart>
 							<ChartTooltip

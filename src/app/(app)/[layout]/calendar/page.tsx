@@ -60,21 +60,23 @@ export default function CalendarPage() {
 
 								return (
 									<Popover open={isOpen} onOpenChange={setIsOpen}>
-										<PopoverTrigger asChild>
-											<CalendarDayButton
-												className={cn(
-													className,
-													isBefore(day.date, new Date()) && "bg-primary/50!",
-												)}
-												day={day}
-												modifiers={{
-													...modifiers,
-													selected: true,
-												}}
-												{...props}
-												onClick={() => setIsOpen(true)}
-											/>
-										</PopoverTrigger>
+										<PopoverTrigger
+											render={
+												<CalendarDayButton
+													className={cn(
+														className,
+														isBefore(day.date, new Date()) && "bg-primary/50!",
+													)}
+													day={day}
+													modifiers={{
+														...modifiers,
+														selected: true,
+													}}
+													{...props}
+													onClick={() => setIsOpen(true)}
+												/>
+											}
+										/>
 										<PopoverContent className="flex max-w-md flex-col p-4">
 											{dueSubscriptions?.map((subscription) => (
 												<div

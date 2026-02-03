@@ -21,3 +21,5 @@ export const ThemeIcon = ({ theme }: { theme?: string }) => {
 			return <LaptopIcon className="size-4" />;
 	}
 };
+
+export const THEMES = ["light", "dark", "system"] as const;

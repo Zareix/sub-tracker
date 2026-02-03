@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuLabel,
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
@@ -20,42 +21,46 @@ export const SortButton = () => {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button variant="ghost" size="icon">
-					{sort?.endsWith("ASC") ? (
-						<SortAscIcon
-							size={24}
-							className={cn(
-								sort ? "fill-primary text-primary" : "`text-foreground",
-							)}
-						/>
-					) : (
-						<SortDescIcon
-							size={24}
-							className={cn(
-								sort ? "fill-primary text-primary" : "`text-foreground",
-							)}
-						/>
-					)}
-				</Button>
-			</DropdownMenuTrigger>
+			<DropdownMenuTrigger
+				render={
+					<Button variant="ghost" size="icon">
+						{sort?.endsWith("ASC") ? (
+							<SortAscIcon
+								size={24}
+								className={cn(
+									sort ? "fill-primary text-primary" : "`text-foreground",
+								)}
+							/>
+						) : (
+							<SortDescIcon
+								size={24}
+								className={cn(
+									sort ? "fill-primary text-primary" : "`text-foreground",
+								)}
+							/>
+						)}
+					</Button>
+				}
+			/>
 			<DropdownMenuContent className="w-56">
-				<DropdownMenuLabel>{t("label")}</DropdownMenuLabel>
-				<DropdownMenuSeparator />
-				<DropdownMenuRadioGroup
-					value={sort ?? ""}
-					onValueChange={(v) => setSort(v === sort ? null : (v as Sort))}
-				>
-					{SORTS.map((s) => (
-						<DropdownMenuRadioItem
-							key={s.key}
-							value={s.key}
-							className="capitalize"
-						>
-							{t(s.labelKey)}
-						</DropdownMenuRadioItem>
-					))}
-				</DropdownMenuRadioGroup>
+				<DropdownMenuGroup>
+					<DropdownMenuLabel>{t("label")}</DropdownMenuLabel>
+					<DropdownMenuSeparator />
+					<DropdownMenuRadioGroup
+						value={sort ?? ""}
+						onValueChange={(v) => setSort(v === sort ? null : (v as Sort))}
+					>
+						{SORTS.map((s) => (
+							<DropdownMenuRadioItem
+								key={s.key}
+								value={s.key}
+								className="capitalize"
+							>
+								{t(s.labelKey)}
+							</DropdownMenuRadioItem>
+						))}
+					</DropdownMenuRadioGroup>
+				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

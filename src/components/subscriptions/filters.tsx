@@ -1,8 +1,7 @@
-import { Label } from "@radix-ui/react-label";
 import { FilterIcon, TrashIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "~/components/ui/button";
-import { MultiSelect } from "~/components/ui/multi-select";
+import { Label } from "~/components/ui/label";
 import {
 	Popover,
 	PopoverContent,
@@ -49,29 +48,31 @@ export const FiltersButton = ({
 	return (
 		<div className="flex items-center gap-4">
 			<Popover>
-				<PopoverTrigger asChild>
-					<Button
-						size="icon"
-						variant="ghost"
-						disabled={
-							usersQuery.isLoading ||
-							paymentMethodsQuery.isLoading ||
-							categoriesQuery.isLoading
-						}
-					>
-						<FilterIcon
-							size={24}
-							className={cn(
-								filters.schedule ||
-									filters.users ||
-									filters.paymentMethods.length > 0 ||
-									filters.categories.length > 0
-									? "fill-primary text-primary"
-									: "`text-foreground",
-							)}
-						/>
-					</Button>
-				</PopoverTrigger>
+				<PopoverTrigger
+					render={
+						<Button
+							size="icon"
+							variant="ghost"
+							disabled={
+								usersQuery.isLoading ||
+								paymentMethodsQuery.isLoading ||
+								categoriesQuery.isLoading
+							}
+						>
+							<FilterIcon
+								size={24}
+								className={cn(
+									filters.schedule ||
+										filters.users ||
+										filters.paymentMethods.length > 0 ||
+										filters.categories.length > 0
+										? "fill-primary text-primary"
+										: "`text-foreground",
+								)}
+							/>
+						</Button>
+					}
+				/>
 				<PopoverContent className="mr-3 flex w-fit flex-col gap-2 p-4">
 					{filtersDisplayed.includes("users") && (
 						<>
@@ -85,11 +86,15 @@ export const FiltersButton = ({
 										})
 									}
 									value={filters.users ?? ""}
+									items={usersQuery.data?.map((u) => ({
+										label: u.name,
+										value: u.id,
+									}))}
 								>
 									<SelectTrigger
 										className={cn(
 											"capitalize",
-											filters.users ? "w-40" : "w-[200px]",
+											filters.users ? "w-40" : "w-50",
 										)}
 									>
 										<SelectValue placeholder={t("select")} />
@@ -130,7 +135,7 @@ export const FiltersButton = ({
 									<SelectTrigger
 										className={cn(
 											"capitalize",
-											filters.schedule ? "w-40" : "w-[200px]",
+											filters.schedule ? "w-40" : "w-50",
 										)}
 									>
 										<SelectValue placeholder={t("select")} />
@@ -159,49 +164,65 @@ export const FiltersButton = ({
 					{filtersDisplayed.includes("paymentMethods") && (
 						<>
 							<Label className="mt-2">{t("paymentMethods")}</Label>
-							<MultiSelect
-								options={
-									paymentMethods.map((pm) => ({
-										label: pm.name,
-										value: pm.id.toString(),
-									})) ?? []
-								}
-								searchable={false}
-								maxCount={0}
+							<Select
 								onValueChange={(value) =>
 									setFilters({
 										...filters,
 										paymentMethods: value.map((v) => Number.parseInt(v, 10)),
 									})
 								}
-								className="bg-background"
-								defaultValue={filters.paymentMethods.map((pm) => pm.toString())}
-								placeholder={t("select")}
-							/>
+								value={filters.paymentMethods.map((pm) => pm.toString())}
+								multiple
+								items={
+									paymentMethods.map((pm) => ({
+										label: pm.name,
+										value: pm.id.toString(),
+									})) ?? []
+								}
+							>
+								<SelectTrigger className="w-full capitalize">
+									<SelectValue placeholder={t("select")} />
+								</SelectTrigger>
+								<SelectContent>
+									{paymentMethods.map((pm) => (
+										<SelectItem value={pm.id.toString()} key={pm.id}>
+											{pm.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
 						</>
 					)}
 					{filtersDisplayed.includes("categories") && (
 						<>
 							<Label className="mt-2">{t("categories")}</Label>
-							<MultiSelect
-								options={
-									categories.map((pm) => ({
-										label: pm.name,
-										value: pm.id.toString(),
-									})) ?? []
-								}
-								className="bg-background"
-								searchable={false}
-								maxCount={0}
+							<Select
 								onValueChange={(value) =>
 									setFilters({
 										...filters,
 										categories: value.map((v) => Number.parseInt(v, 10)),
 									})
 								}
-								defaultValue={filters.categories.map((pm) => pm.toString())}
-								placeholder={t("select")}
-							/>
+								value={filters.categories.map((pm) => pm.toString())}
+								items={
+									categories.map((pm) => ({
+										label: pm.name,
+										value: pm.id.toString(),
+									})) ?? []
+								}
+								multiple
+							>
+								<SelectTrigger className="w-full capitalize">
+									<SelectValue placeholder={t("select")} />
+								</SelectTrigger>
+								<SelectContent>
+									{categories.map((pm) => (
+										<SelectItem value={pm.id.toString()} key={pm.id}>
+											{pm.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
 						</>
 					)}
 				</PopoverContent>

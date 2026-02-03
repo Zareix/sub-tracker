@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { CalendarSyncIcon, KeySquareIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
@@ -86,23 +86,6 @@ export const LoginForm = () => {
 		},
 	});
 
-	useEffect(() => {
-		if (typeof PublicKeyCredential === "undefined") {
-			return;
-		}
-		PublicKeyCredential.isConditionalMediationAvailable()
-			.then((available) => {
-				if (!available) return;
-				return authClient.signIn.passkey({ autoFill: true });
-			})
-			.then((res) => {
-				if (!res?.error) {
-					router.refresh();
-				}
-			})
-			.catch(console.error);
-	}, [router]);
-
 	function onSubmit(values: z.infer<typeof loginSchema>) {
 		signInMutation.mutate(values);
 	}
@@ -138,7 +121,7 @@ export const LoginForm = () => {
 	}
 
 	return (
-		<Card>
+		<Card className="from-card">
 			<CardHeader>
 				<Link
 					href="#"

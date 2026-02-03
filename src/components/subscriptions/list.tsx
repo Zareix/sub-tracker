@@ -100,7 +100,8 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 						<div className="mx-auto flex max-w-[90vw] items-center justify-center overflow-x-hidden">
 							<Separator className="w-32" />
 							<Button
-								variant="outline-t"
+								variant="outline"
+								size="sm"
 								onClick={() => setArePreviousPaymentsShown(true)}
 							>
 								{t("showPreviousPayments")}
@@ -144,7 +145,7 @@ const SubscriptionListItem = ({
 
 	if (subscription.id === -1) {
 		return (
-			<Card className="mt-3 border-none opacity-50 shadow-none">
+			<Card className="mt-3 border-none from-card opacity-50 shadow-none ring-transparent">
 				<CardContent>
 					<div className="flex items-center gap-2">
 						{subscription.image && (
@@ -176,7 +177,12 @@ const SubscriptionListItem = ({
 	}
 
 	return (
-		<Card className={cn("border-none shadow-none", isPrevious && "opacity-50")}>
+		<Card
+			className={cn(
+				"border-none from-card shadow-none ring-transparent",
+				isPrevious && "opacity-50",
+			)}
+		>
 			<CardContent>
 				<div className="flex items-center gap-2">
 					{subscription.image && (
@@ -204,15 +210,17 @@ const SubscriptionListItem = ({
 						{currencyToSymbol(userBaseCurrency)}
 					</div>
 					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button
-								size="icon"
-								variant="ghost"
-								className="w-5 text-muted-foreground md:w-10"
-							>
-								<InfoIcon size={20} />
-							</Button>
-						</DropdownMenuTrigger>
+						<DropdownMenuTrigger
+							render={
+								<Button
+									size="icon"
+									variant="ghost"
+									className="w-5 text-muted-foreground md:w-10"
+								>
+									<InfoIcon size={20} />
+								</Button>
+							}
+						/>
 						<DropdownMenuContent
 							className="mr-2 w-32"
 							onClick={(e) => e.stopPropagation()}

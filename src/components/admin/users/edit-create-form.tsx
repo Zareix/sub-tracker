@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Select } from "@radix-ui/react-select";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -18,6 +17,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import {
+	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
@@ -191,11 +191,11 @@ export const EditCreateForm = ({
 							<FormControl>
 								<Select
 									onValueChange={field.onChange}
-									defaultValue={field.value}
+									value={field.value}
 									disabled={isCurrentUser}
 								>
 									<FormControl>
-										<SelectTrigger className="min-w-[170px] capitalize">
+										<SelectTrigger className="min-w-42.5 capitalize">
 											<SelectValue placeholder={tCommon("form.selectRole")} />
 										</SelectTrigger>
 									</FormControl>

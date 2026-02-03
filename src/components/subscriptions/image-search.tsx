@@ -73,17 +73,19 @@ export const ImageSearch = ({
 
 	return (
 		<Popover open={isOpen} onOpenChange={setIsOpen}>
-			<PopoverTrigger asChild>
-				<Button
-					type="button"
-					size="icon"
-					variant="ghost"
-					className="group hover:bg-transparent"
-					onClick={searchImage}
-				>
-					<SearchIcon className="size-8 group-hover:text-primary" />
-				</Button>
-			</PopoverTrigger>
+			<PopoverTrigger
+				render={
+					<Button
+						type="button"
+						size="icon"
+						variant="ghost"
+						className="group hover:bg-transparent"
+						onClick={searchImage}
+					>
+						<SearchIcon className="size-8 group-hover:text-primary" />
+					</Button>
+				}
+			/>
 			<PopoverContent align="start" className="relative grid grid-cols-4 gap-2">
 				{searchImagesQuery.data?.map((image) => (
 					<Button
@@ -98,7 +100,7 @@ export const ImageSearch = ({
 							alt={image.title}
 							width={64}
 							height={70}
-							className="max-h-[70px] max-w-[64px] object-contain"
+							className="max-h-17.5 max-w-16 object-contain"
 						/>
 					</Button>
 				))}

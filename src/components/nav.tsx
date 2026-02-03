@@ -23,6 +23,7 @@ import { Button } from "~/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuPortal,
@@ -47,7 +48,7 @@ import {
 	SidebarTrigger,
 	useSidebar,
 } from "~/components/ui/sidebar";
-import { ThemeIcon } from "~/components/ui/theme-provider";
+import { THEMES, ThemeIcon } from "~/components/ui/theme-provider";
 import { usePathname, useRouter } from "~/i18n/navigation";
 import { authClient } from "~/lib/auth-client";
 import { Currencies, type Currency } from "~/lib/constant";
@@ -116,7 +117,6 @@ export function AppSidebar() {
 				toast.error(res.error.message);
 				return;
 			}
-			toast.success("Currency updated successfully!");
 			apiUtils.subscription.getAll.invalidate();
 		},
 		onError: (error) => {
@@ -145,21 +145,24 @@ export function AppSidebar() {
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
-						<SidebarMenuButton size="lg" asChild>
-							<Link
-								href={{
-									pathname: "/",
-									query,
-								}}
-							>
-								<div className="flex aspect-square size-8 items-center justify-center rounded-xs bg-primary text-sidebar-primary-foreground">
-									<CalendarSyncIcon className="size-4" />
-								</div>
-								<div className="flex flex-col gap-0.5 leading-none">
-									<span className="font-semibold">Subtracker</span>
-								</div>
-							</Link>
-						</SidebarMenuButton>
+						<SidebarMenuButton
+							size="lg"
+							render={
+								<Link
+									href={{
+										pathname: "/",
+										query,
+									}}
+								>
+									<div className="flex aspect-square size-8 items-center justify-center rounded-xs bg-primary text-sidebar-primary-foreground">
+										<CalendarSyncIcon className="size-4" />
+									</div>
+									<div className="flex flex-col gap-0.5 leading-none">
+										<span className="font-semibold">Subtracker</span>
+									</div>
+								</Link>
+							}
+						/>
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarHeader>
@@ -171,17 +174,20 @@ export function AppSidebar() {
 								"role" in item ? item.role === session.data?.user.role : true,
 							).map((item) => (
 								<SidebarMenuItem key={item.titleKey}>
-									<SidebarMenuButton asChild isActive={pathname === item.url}>
-										<Link
-											href={{
-												pathname: item.url,
-												query: item.keepParams ? query : null,
-											}}
-										>
-											<item.icon />
-											<span>{t(item.titleKey)}</span>
-										</Link>
-									</SidebarMenuButton>
+									<SidebarMenuButton
+										isActive={pathname === item.url}
+										render={
+											<Link
+												href={{
+													pathname: item.url,
+													query: item.keepParams ? query : null,
+												}}
+											>
+												<item.icon />
+												<span>{t(item.titleKey)}</span>
+											</Link>
+										}
+									/>
 								</SidebarMenuItem>
 							))}
 						</SidebarMenu>
@@ -203,49 +209,16 @@ export function AppSidebar() {
 						</SidebarMenuItem>
 						<SidebarMenuItem>
 							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<SidebarMenuButton
-										size="lg"
-										className="border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-									>
-										<Avatar className="size-8 rounded-lg">
-											<AvatarImage
-												src={session.data.user.image ?? undefined}
-												alt={session.data.user.name ?? ""}
-											/>
-											<AvatarFallback className="rounded-lg">
-												{session.data.user.name.charAt(0).toUpperCase()}
-											</AvatarFallback>
-										</Avatar>
-										<div className="grid flex-1 text-left text-sm leading-tight">
-											<span className="truncate font-semibold">
-												{session.data.user.name}
-											</span>
-											<span className="truncate text-xs">
-												{session.data.user.email}
-											</span>
-										</div>
-										<ChevronsUpDownIcon className="ml-auto size-4" />
-									</SidebarMenuButton>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent
-									className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-									side={isMobile ? "top" : "right"}
-									align="end"
-									sideOffset={4}
-								>
-									<DropdownMenuLabel className="p-0 font-normal">
-										<Link
-											href="/profile"
-											className="flex items-center gap-2 rounded-md px-1 py-1.5 text-left text-sm hover:bg-muted"
-											onClick={() => {
-												if (isMobile) toggleSidebar();
-											}}
+								<DropdownMenuTrigger
+									render={
+										<SidebarMenuButton
+											size="lg"
+											className="border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 										>
 											<Avatar className="size-8 rounded-lg">
 												<AvatarImage
 													src={session.data.user.image ?? undefined}
-													alt={session.data.user.name}
+													alt={session.data.user.name ?? ""}
 												/>
 												<AvatarFallback className="rounded-lg">
 													{session.data.user.name.charAt(0).toUpperCase()}
@@ -259,108 +232,137 @@ export function AppSidebar() {
 													{session.data.user.email}
 												</span>
 											</div>
-										</Link>
-									</DropdownMenuLabel>
-									<DropdownMenuSeparator />
-									<DropdownMenuSub>
-										<DropdownMenuSubTrigger>
-											<ThemeIcon theme={theme} />
-											{t("theme.label")}
-										</DropdownMenuSubTrigger>
-										<DropdownMenuPortal>
-											<DropdownMenuSubContent>
-												<DropdownMenuRadioGroup
-													value={theme}
-													onValueChange={(value) => setTheme(value)}
-												>
-													<DropdownMenuRadioItem
-														value="light"
-														className="flex items-center gap-2"
+											<ChevronsUpDownIcon className="ml-auto size-4" />
+										</SidebarMenuButton>
+									}
+								/>
+								<DropdownMenuContent
+									className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+									side={isMobile ? "top" : "right"}
+									align="end"
+									sideOffset={4}
+								>
+									<DropdownMenuGroup>
+										<DropdownMenuLabel className="p-0 font-normal">
+											<Link
+												href="/profile"
+												className="flex items-center gap-2 rounded-md px-1 py-1.5 text-left text-sm hover:bg-muted"
+												onClick={() => {
+													if (isMobile) toggleSidebar();
+												}}
+											>
+												<Avatar className="size-8 rounded-lg">
+													<AvatarImage
+														src={session.data.user.image ?? undefined}
+														alt={session.data.user.name}
+													/>
+													<AvatarFallback className="rounded-lg">
+														{session.data.user.name.charAt(0).toUpperCase()}
+													</AvatarFallback>
+												</Avatar>
+												<div className="grid flex-1 text-left text-sm leading-tight">
+													<span className="truncate font-semibold">
+														{session.data.user.name}
+													</span>
+													<span className="truncate text-xs">
+														{session.data.user.email}
+													</span>
+												</div>
+											</Link>
+										</DropdownMenuLabel>
+										<DropdownMenuSeparator />
+										<DropdownMenuSub>
+											<DropdownMenuSubTrigger>
+												<ThemeIcon theme={theme} />
+												{t("theme.label")}
+											</DropdownMenuSubTrigger>
+											<DropdownMenuPortal>
+												<DropdownMenuSubContent>
+													<DropdownMenuRadioGroup
+														value={theme}
+														onValueChange={(value) => setTheme(value)}
 													>
-														<ThemeIcon theme="light" />
-														{t("theme.light")}
-													</DropdownMenuRadioItem>
-													<DropdownMenuRadioItem
-														value="dark"
-														className="flex items-center gap-2"
+														{THEMES.map((t) => (
+															<DropdownMenuRadioItem
+																key={t}
+																value={t}
+																className="flex items-center gap-2"
+															>
+																<ThemeIcon theme={t} />
+																{t(`theme.${t}`)}
+															</DropdownMenuRadioItem>
+														))}
+													</DropdownMenuRadioGroup>
+												</DropdownMenuSubContent>
+											</DropdownMenuPortal>
+										</DropdownMenuSub>
+										{/* Currency submenu */}
+										<DropdownMenuSub>
+											<DropdownMenuSubTrigger>
+												<span className="mr-2">
+													{currencyToSymbol(session.data.user.baseCurrency)}
+												</span>
+												{t("currency")}
+											</DropdownMenuSubTrigger>
+											<DropdownMenuPortal>
+												<DropdownMenuSubContent className="max-h-64 overflow-auto">
+													<DropdownMenuRadioGroup
+														value={
+															(session.data.user.baseCurrency as string) ??
+															"USD"
+														}
+														onValueChange={(value) =>
+															updateBaseCurrencyMutation.mutate(
+																value as Currency,
+															)
+														}
 													>
-														<ThemeIcon theme="dark" />
-														{t("theme.dark")}
-													</DropdownMenuRadioItem>
-													<DropdownMenuRadioItem
-														value="system"
-														className="flex items-center gap-2"
+														{Currencies.map((currency) => (
+															<DropdownMenuRadioItem
+																key={currency}
+																value={currency}
+																className="flex items-center gap-2 capitalize"
+															>
+																{currencyToSymbol(currency)} {currency}
+															</DropdownMenuRadioItem>
+														))}
+													</DropdownMenuRadioGroup>
+												</DropdownMenuSubContent>
+											</DropdownMenuPortal>
+										</DropdownMenuSub>
+										{/* Language submenu */}
+										<DropdownMenuSub>
+											<DropdownMenuSubTrigger>
+												<LanguagesIcon className="size-4" />
+												{t("language.label")}
+											</DropdownMenuSubTrigger>
+											<DropdownMenuPortal>
+												<DropdownMenuSubContent>
+													<DropdownMenuRadioGroup
+														value={locale}
+														onValueChange={handleLocaleChange}
 													>
-														<ThemeIcon theme="system" />
-														{t("theme.system")}
-													</DropdownMenuRadioItem>
-												</DropdownMenuRadioGroup>
-											</DropdownMenuSubContent>
-										</DropdownMenuPortal>
-									</DropdownMenuSub>
-									{/* Currency submenu */}
-									<DropdownMenuSub>
-										<DropdownMenuSubTrigger>
-											<span className="mr-2">
-												{currencyToSymbol(session.data.user.baseCurrency)}
-											</span>
-											{t("currency")}
-										</DropdownMenuSubTrigger>
-										<DropdownMenuPortal>
-											<DropdownMenuSubContent className="max-h-64 overflow-auto">
-												<DropdownMenuRadioGroup
-													value={
-														(session.data.user.baseCurrency as string) ?? "USD"
-													}
-													onValueChange={(value) =>
-														updateBaseCurrencyMutation.mutate(value as Currency)
-													}
-												>
-													{Currencies.map((currency) => (
 														<DropdownMenuRadioItem
-															key={currency}
-															value={currency}
-															className="flex items-center gap-2 capitalize"
+															value="en"
+															className="flex items-center gap-2"
 														>
-															{currencyToSymbol(currency)} {currency}
+															{t("language.english")}
 														</DropdownMenuRadioItem>
-													))}
-												</DropdownMenuRadioGroup>
-											</DropdownMenuSubContent>
-										</DropdownMenuPortal>
-									</DropdownMenuSub>
-									{/* Language submenu */}
-									<DropdownMenuSub>
-										<DropdownMenuSubTrigger>
-											<LanguagesIcon className="size-4" />
-											{t("language.label")}
-										</DropdownMenuSubTrigger>
-										<DropdownMenuPortal>
-											<DropdownMenuSubContent>
-												<DropdownMenuRadioGroup
-													value={locale}
-													onValueChange={handleLocaleChange}
-												>
-													<DropdownMenuRadioItem
-														value="en"
-														className="flex items-center gap-2"
-													>
-														{t("language.english")}
-													</DropdownMenuRadioItem>
-													<DropdownMenuRadioItem
-														value="fr"
-														className="flex items-center gap-2"
-													>
-														{t("language.french")}
-													</DropdownMenuRadioItem>
-												</DropdownMenuRadioGroup>
-											</DropdownMenuSubContent>
-										</DropdownMenuPortal>
-									</DropdownMenuSub>
-									<DropdownMenuItem onClick={() => authClient.signOut()}>
-										<LogOutIcon />
-										{t("logOut")}
-									</DropdownMenuItem>
+														<DropdownMenuRadioItem
+															value="fr"
+															className="flex items-center gap-2"
+														>
+															{t("language.french")}
+														</DropdownMenuRadioItem>
+													</DropdownMenuRadioGroup>
+												</DropdownMenuSubContent>
+											</DropdownMenuPortal>
+										</DropdownMenuSub>
+										<DropdownMenuItem onClick={() => authClient.signOut()}>
+											<LogOutIcon />
+											{t("logOut")}
+										</DropdownMenuItem>
+									</DropdownMenuGroup>
 								</DropdownMenuContent>
 							</DropdownMenu>
 						</SidebarMenuItem>
@@ -382,22 +384,22 @@ const NavbarItem = ({
 }) => (
 	<Button
 		key={item.titleKey}
-		asChild
 		variant="link"
 		className={cn(pathname === item.url ? "text-primary" : "text-foreground")}
-	>
-		<Link
-			href={{
-				pathname: item.url,
-				query: item.keepParams
-					? { ...Object.fromEntries([...searchParams]) }
-					: null,
-			}}
-			className="flex h-full items-center justify-center gap-2 font-bold text-xl"
-		>
-			<item.icon size={26} />
-		</Link>
-	</Button>
+		render={
+			<Link
+				href={{
+					pathname: item.url,
+					query: item.keepParams
+						? { ...Object.fromEntries([...searchParams]) }
+						: null,
+				}}
+				className="flex h-full items-center justify-center gap-2 font-bold text-xl"
+			>
+				<item.icon size={26} />
+			</Link>
+		}
+	/>
 );
 
 export const Navbar = () => {

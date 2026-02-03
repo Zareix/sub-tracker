@@ -15,18 +15,16 @@ export default async function ProfilePage() {
 	}
 
 	return (
-		<div className="grid w-full max-w-[100vw] items-start gap-4 lg:grid-cols-2 lg:gap-x-8">
-			<header className="flex flex-wrap items-center justify-between lg:col-span-2">
+		<div className="grid w-full max-w-lg items-start gap-6">
+			<header className="flex flex-wrap items-center justify-between">
 				<h1 className="font-bold text-3xl">
 					{t("welcome", { name: session.user.name })}
 				</h1>
 			</header>
 
-			<div className="grid gap-4">
-				<UserInfoForm user={session.user} />
-				<CurrencySettings />
-				<AppearanceSettings />
-			</div>
+			<UserInfoForm user={session.user} />
+			<CurrencySettings />
+			<AppearanceSettings />
 			<Separator className="my-4 lg:hidden" />
 			<CredentialsForm userId={session.user.id} />
 		</div>

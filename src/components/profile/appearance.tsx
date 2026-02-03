@@ -9,7 +9,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
-import { ThemeIcon } from "~/components/ui/theme-provider";
+import { THEMES, ThemeIcon } from "~/components/ui/theme-provider";
 
 export const AppearanceSettings = () => {
 	const t = useTranslations("ProfilePage");
@@ -21,31 +21,24 @@ export const AppearanceSettings = () => {
 			<div>
 				<Select
 					value={theme}
-					onValueChange={(value) => setTheme(value)}
-					defaultValue={theme}
+					onValueChange={(value) => setTheme(value ?? "system")}
+					items={THEMES.map((theme) => ({
+						value: theme,
+						label: tNav(`theme.${theme}`),
+					}))}
 				>
-					<SelectTrigger className="min-w-[170px] capitalize">
+					<SelectTrigger className="min-w-42.5 capitalize">
 						<SelectValue placeholder={tNav("theme.label")} />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem value="light">
-							<div className="flex items-center gap-2">
-								<ThemeIcon theme="light" />
-								{tNav("theme.light")}
-							</div>
-						</SelectItem>
-						<SelectItem value="dark">
-							<div className="flex items-center gap-2">
-								<ThemeIcon theme="dark" />
-								{tNav("theme.dark")}
-							</div>
-						</SelectItem>
-						<SelectItem value="system">
-							<div className="flex items-center gap-2">
-								<ThemeIcon theme="system" />
-								{tNav("theme.system")}
-							</div>
-						</SelectItem>
+						{THEMES.map((t) => (
+							<SelectItem key={t} value={t}>
+								<div className="flex items-center gap-2">
+									<ThemeIcon theme={t} />
+									{tNav(`theme.${t}`)}
+								</div>
+							</SelectItem>
+						))}
 					</SelectContent>
 				</Select>
 			</div>

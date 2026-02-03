@@ -21,7 +21,6 @@ import {
 	FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { MultiSelect } from "~/components/ui/multi-select";
 import {
 	Popover,
 	PopoverContent,
@@ -278,7 +277,13 @@ export const EditCreateForm = ({
 										<FormControl>
 											<Select
 												onValueChange={field.onChange}
-												defaultValue={field.value?.toString()}
+												value={field.value?.toString()}
+												items={
+													categoriesQuery.data?.map((p) => ({
+														value: p.id.toString(),
+														label: p.name,
+													})) ?? []
+												}
 											>
 												<FormControl>
 													<SelectTrigger className="min-w-42.5">
@@ -345,60 +350,58 @@ export const EditCreateForm = ({
 								</FormItem>
 							)}
 						/>
-						<div className="flex">
-							<FormField
-								control={form.control}
-								name="price"
-								render={({ field }) => (
-									<FormItem className="grow">
-										<FormLabel>{t("fields.price")}</FormLabel>
-										<FormControl>
-											<Input
-												placeholder={t("fields.pricePlaceholder")}
-												type="number"
-												className="rounded-r-none"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="currency"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>{t("fields.currency")}</FormLabel>
-										<FormControl>
-											<Select
-												onValueChange={field.onChange}
-												defaultValue={field.value}
-											>
-												<FormControl>
-													<SelectTrigger className="rounded-l-none border-l-0">
-														<SelectValue
-															placeholder={t("fields.currencyPlaceholder")}
-														/>
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{Currencies.map((s) => (
-														<SelectItem value={s} key={s}>
-															{s}
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Separator
-								orientation="vertical"
-								className="mx-2 my-auto flex h-12"
-							/>
+						<div className="grid grid-cols-2 gap-3">
+							<div className="flex">
+								<FormField
+									control={form.control}
+									name="price"
+									render={({ field }) => (
+										<FormItem className="grow">
+											<FormLabel>{t("fields.price")}</FormLabel>
+											<FormControl>
+												<Input
+													placeholder={t("fields.pricePlaceholder")}
+													type="number"
+													className="rounded-r-none"
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="currency"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>{t("fields.currency")}</FormLabel>
+											<FormControl>
+												<Select
+													onValueChange={field.onChange}
+													value={field.value}
+												>
+													<FormControl>
+														<SelectTrigger className="rounded-l-none border-l-0">
+															<SelectValue
+																placeholder={t("fields.currencyPlaceholder")}
+															/>
+														</SelectTrigger>
+													</FormControl>
+													<SelectContent>
+														{Currencies.map((s) => (
+															<SelectItem value={s} key={s}>
+																{s}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
 							<FormField
 								control={form.control}
 								name="paymentMethod"
@@ -409,9 +412,15 @@ export const EditCreateForm = ({
 											<Select
 												onValueChange={field.onChange}
 												defaultValue={field.value?.toString()}
+												items={
+													paymentMethodsQuery.data?.map((p) => ({
+														value: p.id.toString(),
+														label: p.name,
+													})) ?? []
+												}
 											>
 												<FormControl>
-													<SelectTrigger className="min-w-42.5">
+													<SelectTrigger className="w-full">
 														<SelectValue
 															placeholder={t("fields.paymentMethodPlaceholder")}
 														/>
@@ -449,19 +458,34 @@ export const EditCreateForm = ({
 								<FormItem className="grow">
 									<FormLabel>{t("fields.payedBy")}</FormLabel>
 									<FormControl>
-										<MultiSelect
-											options={
-												usersQuery.data?.map((user) => ({
-													label: user.name,
-													value: user.id.toString(),
-													unselectable: user.id === session.data?.user.id,
+										<Select
+											onValueChange={field.onChange}
+											value={field.value}
+											multiple
+											items={
+												usersQuery.data?.map((p) => ({
+													value: p.id,
+													label: p.name,
 												})) ?? []
 											}
-											searchable={false}
-											onValueChange={field.onChange}
-											defaultValue={field.value}
-											placeholder={t("fields.payedByPlaceholder")}
-										/>
+										>
+											<FormControl>
+												<SelectTrigger className="w-full">
+													<SelectValue
+														placeholder={t("fields.payedByPlaceholder")}
+													/>
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												{usersQuery.data?.map((p) => (
+													<SelectItem value={p.id.toString()} key={p.id}>
+														<div className="flex items-center gap-1">
+															{p.name}
+														</div>
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -477,10 +501,14 @@ export const EditCreateForm = ({
 										<FormControl>
 											<Select
 												onValueChange={field.onChange}
-												defaultValue={field.value}
+												value={field.value}
+												items={SCHEDULES.map((s) => ({
+													label: tCommon(`schedule.${s}`),
+													value: s,
+												}))}
 											>
 												<FormControl>
-													<SelectTrigger>
+													<SelectTrigger className="w-full">
 														<SelectValue
 															placeholder={t("fields.schedulePlaceholder")}
 														/>
@@ -507,23 +535,25 @@ export const EditCreateForm = ({
 										<FormLabel>{t("fields.firstPaymentDate")}</FormLabel>
 										<FormControl>
 											<Popover modal>
-												<PopoverTrigger asChild>
-													<Button
-														data-testid="firstPaymentDatePicker"
-														variant="outline-t"
-														className={cn(
-															"h-10 w-full justify-start text-left font-normal",
-															!field.value && "text-muted-foreground",
-														)}
-													>
-														<CalendarIcon className="mr-2 size-4" />
-														{field.value ? (
-															format(field.value, "dd/MM/yyyy")
-														) : (
-															<span>{t("fields.pickDate")}</span>
-														)}
-													</Button>
-												</PopoverTrigger>
+												<PopoverTrigger
+													render={
+														<Button
+															data-testid="firstPaymentDatePicker"
+															variant="outline"
+															className={cn(
+																"h-9 w-full justify-start text-left font-normal",
+																!field.value && "text-muted-foreground",
+															)}
+														>
+															<CalendarIcon className="mr-2 size-4" />
+															{field.value ? (
+																format(field.value, "dd/MM/yyyy")
+															) : (
+																<span>{t("fields.pickDate")}</span>
+															)}
+														</Button>
+													}
+												/>
 												<PopoverContent className="pointer-events-auto w-auto p-0">
 													<Calendar
 														mode="single"

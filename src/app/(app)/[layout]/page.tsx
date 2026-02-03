@@ -35,7 +35,7 @@ export default function HomePage() {
 			</header>
 			<div className="mt-2 grid">
 				{subscriptionsQuery.isLoading ? (
-					<Card className="mt-3 border-none shadow-none">
+					<Card className="mt-3 border-none from-card opacity-50 shadow-none ring-transparent">
 						<CardContent>
 							<div className="flex items-center gap-2">
 								<Skeleton className="h-10 w-14" />
