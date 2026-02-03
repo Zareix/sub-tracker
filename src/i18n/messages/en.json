@@ -65,6 +65,7 @@
 		"showPreviousPayments": "Show previous payments",
 		"hidePreviousPayments": "Hide previous payments",
 		"edit": "Edit",
+		"duplicate": "Duplicate",
 		"delete": "Delete"
 	},
 	"Filters": {
@@ -216,6 +217,9 @@
 		"create": {
 			"title": "Create Subscription",
 			"success": "Subscription created!"
+		},
+		"duplicate": {
+			"title": "Duplicate Subscription: {name}"
 		},
 		"edit": {
 			"title": "Edit Subscription: {name}",

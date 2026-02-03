@@ -32,7 +32,7 @@ export default function CalendarPage() {
 						mode="single"
 						startMonth={subMonths(new Date(), 1)}
 						endMonth={addMonths(new Date(), 1)}
-						className="w-full rounded-lg border [--cell-size:--spacing(11)] sm:max-w-md md:[--cell-size:--spacing(12)]"
+						className="w-full rounded-lg border sm:max-w-md"
 						buttonVariant="ghost"
 						components={{
 							DayButton: ({ className, day, modifiers, ...props }) => {

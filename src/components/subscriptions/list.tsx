@@ -1,6 +1,7 @@
 import { compareAsc, isBefore, isThisMonth } from "date-fns";
 import {
 	Calendar1Icon,
+	CopyPlusIcon,
 	EditIcon,
 	EllipsisVertical,
 	ExternalLinkIcon,
@@ -16,6 +17,7 @@ import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
 import { DeleteDialog } from "~/components/subscriptions/delete";
+import { DuplicateSubscriptionDialog } from "~/components/subscriptions/duplicate";
 import { EditSubscriptionDialog } from "~/components/subscriptions/edit";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
@@ -81,31 +83,31 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 
 	return (
 		<>
-			{arePreviousPaymentsShown ? (
-				previousSubOfThisMonths.map((subscription) => (
-					<React.Fragment key={subscription.id}>
-						<SubscriptionListItem
-							key={subscription.id}
-							subscription={subscription}
-							userBaseCurrency={userBaseCurrency}
-							isPrevious
-							tSchedule={tSchedule}
-						/>
-						<Separator className="w-full" />
-					</React.Fragment>
-				))
-			) : (
-				<div className="mx-auto flex max-w-[90vw] items-center justify-center overflow-x-hidden">
-					<Separator className="w-32" />
-					<Button
-						variant="outline-t"
-						onClick={() => setArePreviousPaymentsShown(true)}
-					>
-						{t("showPreviousPayments")}
-					</Button>
-					<Separator className="w-32" />
-				</div>
-			)}
+			{arePreviousPaymentsShown
+				? previousSubOfThisMonths.map((subscription) => (
+						<React.Fragment key={subscription.id}>
+							<SubscriptionListItem
+								key={subscription.id}
+								subscription={subscription}
+								userBaseCurrency={userBaseCurrency}
+								isPrevious
+								tSchedule={tSchedule}
+							/>
+							<Separator className="w-full" />
+						</React.Fragment>
+					))
+				: previousSubOfThisMonths.length > 0 && (
+						<div className="mx-auto flex max-w-[90vw] items-center justify-center overflow-x-hidden">
+							<Separator className="w-32" />
+							<Button
+								variant="outline-t"
+								onClick={() => setArePreviousPaymentsShown(true)}
+							>
+								{t("showPreviousPayments")}
+							</Button>
+							<Separator className="w-32" />
+						</div>
+					)}
 			{subs.map((subscription) => (
 				<React.Fragment key={subscription.id}>
 					<SubscriptionListItem
@@ -137,6 +139,7 @@ const SubscriptionListItem = ({
 	const [isOpen, setIsOpen] = useState({
 		delete: false,
 		edit: false,
+		duplicate: false,
 	});
 
 	if (subscription.id === -1) {
@@ -219,6 +222,12 @@ const SubscriptionListItem = ({
 							>
 								<EditIcon />
 								<span>{t("edit")}</span>
+							</DropdownMenuItem>
+							<DropdownMenuItem
+								onClick={() => setIsOpen({ ...isOpen, duplicate: true })}
+							>
+								<CopyPlusIcon />
+								<span>{t("duplicate")}</span>
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								className="text-destructive"
@@ -345,6 +354,11 @@ const SubscriptionListItem = ({
 					subscription={subscription}
 					isOpen={isOpen.edit}
 					setIsOpen={() => setIsOpen({ ...isOpen, edit: false })}
+				/>
+				<DuplicateSubscriptionDialog
+					subscription={subscription}
+					isOpen={isOpen.duplicate}
+					setIsOpen={() => setIsOpen({ ...isOpen, duplicate: false })}
 				/>
 			</CardContent>
 		</Card>

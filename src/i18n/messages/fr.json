@@ -72,6 +72,7 @@
 		"showPreviousPayments": "Afficher les paiements précédents",
 		"hidePreviousPayments": "Masquer les paiements précédents",
 		"edit": "Modifier",
+		"duplicate": "Dupliquer",
 		"delete": "Supprimer"
 	},
 	"Filters": {
@@ -216,6 +217,9 @@
 		"create": {
 			"title": "Créer un abonnement",
 			"success": "Abonnement créé !"
+		},
+		"duplicate": {
+			"title": "Dupliquer l'abonnement : {name}"
 		},
 		"edit": {
 			"title": "Modifier l'abonnement : {name}",

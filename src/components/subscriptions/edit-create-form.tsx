@@ -69,7 +69,9 @@ export const EditCreateForm = ({
 	subscription,
 	onFinished,
 }: {
-	subscription?: RouterOutputs["subscription"]["getAll"][number];
+	subscription?: Omit<RouterOutputs["subscription"]["getAll"][number], "id"> & {
+		id?: number;
+	};
 	onFinished?: () => void;
 }) => {
 	const t = useTranslations("SubscriptionForm");
@@ -214,7 +216,7 @@ export const EditCreateForm = ({
 	});
 
 	function onSubmit(values: z.infer<typeof subscriptionCreateSchema>) {
-		if (subscription) {
+		if (subscription?.id) {
 			editSubscriptionMutation.mutate({
 				...values,
 				id: subscription.id,
@@ -279,7 +281,7 @@ export const EditCreateForm = ({
 												defaultValue={field.value?.toString()}
 											>
 												<FormControl>
-													<SelectTrigger className="min-w-[170px]">
+													<SelectTrigger className="min-w-42.5">
 														<SelectValue
 															placeholder={t("fields.categoryPlaceholder")}
 														/>
@@ -409,7 +411,7 @@ export const EditCreateForm = ({
 												defaultValue={field.value?.toString()}
 											>
 												<FormControl>
-													<SelectTrigger className="min-w-[170px]">
+													<SelectTrigger className="min-w-42.5">
 														<SelectValue
 															placeholder={t("fields.paymentMethodPlaceholder")}
 														/>

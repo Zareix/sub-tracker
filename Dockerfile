@@ -1,6 +1,6 @@
 ##### DEPENDENCIES
 
-FROM oven/bun:1.3.5-alpine AS deps
+FROM oven/bun:1.3.8-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN bun install --frozen-lockfile
 
 ##### BUILDER
 
-FROM oven/bun:1.3.5-alpine AS builder
+FROM oven/bun:1.3.8-alpine AS builder
 
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -20,14 +20,14 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_LINT=true
-ENV DEBUG=1 
-ENV SKIP_ENV_VALIDATION=1 
+ENV DEBUG=1
+ENV SKIP_ENV_VALIDATION=1
 
 RUN bun run build;
 
 ##### RUNNER
 
-FROM oven/bun:1.3.5-alpine AS runner
+FROM oven/bun:1.3.8-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
