@@ -2,12 +2,12 @@ import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { Layout } from "~/components/layout";
 import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/components/ui/theme-provider";
 import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/styles/globals.css";
+import { Layout } from "~/components/layout";
 
 const geist = Geist({
 	subsets: ["latin"],

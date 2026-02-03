@@ -237,7 +237,7 @@ export function AppSidebar() {
 									}
 								/>
 								<DropdownMenuContent
-									className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+									className="min-w-56 rounded-lg"
 									side={isMobile ? "top" : "right"}
 									align="end"
 									sideOffset={4}
@@ -282,14 +282,14 @@ export function AppSidebar() {
 														value={theme}
 														onValueChange={(value) => setTheme(value)}
 													>
-														{THEMES.map((t) => (
+														{THEMES.map((theme) => (
 															<DropdownMenuRadioItem
-																key={t}
-																value={t}
+																key={theme}
+																value={theme}
 																className="flex items-center gap-2"
 															>
-																<ThemeIcon theme={t} />
-																{t(`theme.${t}`)}
+																<ThemeIcon theme={theme} />
+																{t(`theme.${theme}`)}
 															</DropdownMenuRadioItem>
 														))}
 													</DropdownMenuRadioGroup>

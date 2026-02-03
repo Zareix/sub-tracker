@@ -3,25 +3,22 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CopyIcon, LoaderCircleIcon, TrashIcon, XIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "~/components/ui/form";
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { authClient } from "~/lib/auth-client";
 
 const createApiKeySchema = z.object({
 	name: z.string().check(z.minLength(1, "API key name is required")),
-	expiresIn: z.optional(z.number()),
 });
 
 type Props = {
@@ -43,7 +40,6 @@ export const ApiKeys = ({ userId }: Props) => {
 		mutationFn: async (data: z.infer<typeof createApiKeySchema>) => {
 			return authClient.apiKey.create({
 				name: data.name,
-				expiresIn: data.expiresIn,
 			});
 		},
 		onSuccess: (data) => {
@@ -90,7 +86,7 @@ export const ApiKeys = ({ userId }: Props) => {
 		},
 	});
 
-	const apiKeyForm = useForm({
+	const apiKeyForm = useForm<z.infer<typeof createApiKeySchema>>({
 		resolver: zodResolver(createApiKeySchema),
 		defaultValues: {
 			name: "",
@@ -205,22 +201,26 @@ export const ApiKeys = ({ userId }: Props) => {
 				</div>
 			)}
 
-			<Form {...apiKeyForm}>
-				<form
-					onSubmit={apiKeyForm.handleSubmit(onApiKeySubmit)}
-					className="mt-6 space-y-4"
-				>
-					<FormField
+			<form onSubmit={apiKeyForm.handleSubmit(onApiKeySubmit)} className="mt-6">
+				<FieldGroup>
+					<Controller
 						control={apiKeyForm.control}
 						name="name"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>{t("apiKeys.name")}</FormLabel>
-								<FormControl>
-									<Input placeholder={t("apiKeys.placeholder")} {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
+						render={({ field, fieldState }) => (
+							<Field data-invalid={fieldState.invalid}>
+								<FieldLabel htmlFor="api-key-name">
+									{t("apiKeys.name")}
+								</FieldLabel>
+								<Input
+									{...field}
+									id="api-key-name"
+									aria-invalid={fieldState.invalid}
+									placeholder={t("apiKeys.placeholder")}
+								/>
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
 						)}
 					/>
 
@@ -240,8 +240,8 @@ export const ApiKeys = ({ userId }: Props) => {
 							)}
 						</Button>
 					</div>
-				</form>
-			</Form>
+				</FieldGroup>
+			</form>
 		</section>
 	);
 };

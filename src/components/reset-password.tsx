@@ -3,19 +3,17 @@ import { useMutation } from "@tanstack/react-query";
 import { CalendarSyncIcon } from "lucide-react";
 import Link from "next/link";
 import { useQueryState } from "nuqs";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "~/components/ui/form";
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { authClient } from "~/lib/auth-client";
 
@@ -42,7 +40,7 @@ const ResetPassword = ({ token }: { token: string }) => {
 			toast.error("Could not login, please try again.");
 		},
 	});
-	const form = useForm({
+	const form = useForm<z.infer<typeof loginSchema>>({
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
 			newPassword: "",
@@ -70,35 +68,32 @@ const ResetPassword = ({ token }: { token: string }) => {
 				<CardTitle className="text-2xl">Reset password</CardTitle>
 			</CardHeader>
 			<CardContent className="mt-4">
-				<Form {...form}>
-					<form
-						onSubmit={form.handleSubmit(onSubmit)}
-						className="flex flex-col gap-6"
-					>
-						<div className="flex flex-col gap-6">
-							<FormField
-								control={form.control}
-								name="newPassword"
-								render={({ field }) => (
-									<FormItem className="grid gap-2">
-										<FormLabel>Password</FormLabel>
-										<FormControl>
-											<Input
-												type="password"
-												placeholder="********"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button type="submit" className="w-full">
-								Login
-							</Button>
-						</div>
-					</form>
-				</Form>
+				<form onSubmit={form.handleSubmit(onSubmit)}>
+					<FieldGroup>
+						<Controller
+							control={form.control}
+							name="newPassword"
+							render={({ field, fieldState }) => (
+								<Field data-invalid={fieldState.invalid}>
+									<FieldLabel htmlFor="reset-password">Password</FieldLabel>
+									<Input
+										{...field}
+										id="reset-password"
+										type="password"
+										aria-invalid={fieldState.invalid}
+										placeholder="********"
+									/>
+									{fieldState.invalid && (
+										<FieldError errors={[fieldState.error]} />
+									)}
+								</Field>
+							)}
+						/>
+						<Button type="submit" className="w-full">
+							Login
+						</Button>
+					</FieldGroup>
+				</form>
 			</CardContent>
 		</Card>
 	);

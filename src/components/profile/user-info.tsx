@@ -4,19 +4,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import type { UserWithRole } from "better-auth/plugins/admin";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
 import { ImageFileUploader } from "~/components/image-uploader";
 import { Button } from "~/components/ui/button";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "~/components/ui/form";
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import {
 	Select,
@@ -30,7 +28,7 @@ import { api } from "~/trpc/react";
 
 const editUserInfoSchema = z.object({
 	id: z.string(),
-	name: z.string(),
+	name: z.string().check(z.minLength(1, "Name is required")),
 	email: z.email(),
 	image: z.nullish(z.string()),
 });
@@ -63,7 +61,7 @@ export const UserInfoForm = ({ user }: Props) => {
 			toast.error(error.message || "Failed to update profile");
 		},
 	});
-	const form = useForm({
+	const form = useForm<z.infer<typeof editUserInfoSchema>>({
 		resolver: zodResolver(editUserInfoSchema),
 		defaultValues: user,
 	});
@@ -80,63 +78,71 @@ export const UserInfoForm = ({ user }: Props) => {
 	return (
 		<section>
 			<h2 className="mb-4 font-bold text-2xl">{t("info.title")}</h2>
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+			<form onSubmit={form.handleSubmit(onSubmit)}>
+				<FieldGroup>
 					<div className="grid grid-cols-12 gap-2">
 						<ImageFileUploader
 							setFileUrl={(v) => form.setValue("image", v)}
 							fileUrl={form.watch("image")}
 						/>
-						<FormField
+						<Controller
 							control={form.control}
 							name="name"
-							render={({ field }) => (
-								<FormItem className="col-span-10">
-									<FormLabel>{tCommon("form.name")}</FormLabel>
-									<FormControl>
-										<Input placeholder="Your name" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
+							render={({ field, fieldState }) => (
+								<Field
+									data-invalid={fieldState.invalid}
+									className="col-span-10"
+								>
+									<FieldLabel htmlFor="user-name">
+										{tCommon("form.name")}
+									</FieldLabel>
+									<Input
+										{...field}
+										id="user-name"
+										aria-invalid={fieldState.invalid}
+										placeholder="Your name"
+									/>
+									{fieldState.invalid && (
+										<FieldError errors={[fieldState.error]} />
+									)}
+								</Field>
 							)}
 						/>
 					</div>
-					<FormField
+					<Controller
 						control={form.control}
 						name="email"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>{tCommon("form.email")}</FormLabel>
-								<FormControl>
-									<Input
-										type="email"
-										placeholder="your.email@example.com"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
+						render={({ field, fieldState }) => (
+							<Field data-invalid={fieldState.invalid}>
+								<FieldLabel htmlFor="user-email">
+									{tCommon("form.email")}
+								</FieldLabel>
+								<Input
+									{...field}
+									id="user-email"
+									type="email"
+									aria-invalid={fieldState.invalid}
+									placeholder="your.email@example.com"
+								/>
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
 						)}
 					/>
-					<FormItem>
-						<FormLabel>{tCommon("form.role")}</FormLabel>
-						<FormControl>
-							<Select value={user.role ?? "user"} disabled>
-								<SelectTrigger className="capitalize">
-									<SelectValue placeholder={tCommon("form.role")} />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem
-										value={user.role ?? "user"}
-										className="capitalize"
-									>
-										{user.role}
-									</SelectItem>
-								</SelectContent>
-							</Select>
-						</FormControl>
-						<FormMessage />
-					</FormItem>
+					<Field>
+						<FieldLabel htmlFor="user-role">{tCommon("form.role")}</FieldLabel>
+						<Select value={user.role ?? "user"} disabled>
+							<SelectTrigger id="user-role" className="capitalize">
+								<SelectValue placeholder={tCommon("form.role")} />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value={user.role ?? "user"} className="capitalize">
+									{user.role}
+								</SelectItem>
+							</SelectContent>
+						</Select>
+					</Field>
 
 					<div className="flex justify-end">
 						<Button
@@ -149,8 +155,8 @@ export const UserInfoForm = ({ user }: Props) => {
 								: t("info.update")}
 						</Button>
 					</div>
-				</form>
-			</Form>
+				</FieldGroup>
+			</form>
 		</section>
 	);
 };

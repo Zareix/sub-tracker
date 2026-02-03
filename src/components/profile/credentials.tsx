@@ -4,19 +4,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LoaderCircleIcon, TrashIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
 import { ApiKeys } from "~/components/profile/api-keys";
 import { Button } from "~/components/ui/button";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "~/components/ui/form";
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
 import { authClient } from "~/lib/auth-client";
@@ -106,7 +104,7 @@ export const CredentialsForm = ({ userId }: Props) => {
 			return data.data;
 		},
 	});
-	const passwordForm = useForm({
+	const passwordForm = useForm<z.infer<typeof changePasswordSchema>>({
 		resolver: zodResolver(changePasswordSchema),
 		defaultValues: {
 			currentPassword: "",
@@ -114,8 +112,11 @@ export const CredentialsForm = ({ userId }: Props) => {
 			confirmPassword: "",
 		},
 	});
-	const passkeyForm = useForm({
+	const passkeyForm = useForm<z.infer<typeof passKeySchema>>({
 		resolver: zodResolver(passKeySchema),
+		defaultValues: {
+			name: "",
+		},
 	});
 
 	function onPasswordSubmit(values: z.infer<typeof changePasswordSchema>) {
@@ -169,91 +170,107 @@ export const CredentialsForm = ({ userId }: Props) => {
 						))}
 					</ul>
 				)}
-				<Form {...passkeyForm}>
-					<form
-						onSubmit={passkeyForm.handleSubmit(onPasskeySubmit)}
-						className="mt-4 space-y-4"
-					>
-						<FormField
+				<form
+					onSubmit={passkeyForm.handleSubmit(onPasskeySubmit)}
+					className="mt-4"
+				>
+					<FieldGroup>
+						<Controller
 							control={passkeyForm.control}
 							name="name"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>{t("passkey.name")}</FormLabel>
-									<FormControl className="w-full">
-										<Input placeholder={t("passkey.placeholder")} {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
+							render={({ field, fieldState }) => (
+								<Field data-invalid={fieldState.invalid}>
+									<FieldLabel htmlFor="passkey-name">
+										{t("passkey.name")}
+									</FieldLabel>
+									<Input
+										{...field}
+										id="passkey-name"
+										aria-invalid={fieldState.invalid}
+										placeholder={t("passkey.placeholder")}
+									/>
+									{fieldState.invalid && (
+										<FieldError errors={[fieldState.error]} />
+									)}
+								</Field>
 							)}
 						/>
 						<div className="flex justify-end">
 							<Button type="submit">{t("passkey.register")}</Button>
 						</div>
-					</form>
-				</Form>
+					</FieldGroup>
+				</form>
 			</div>
 			<Separator className="my-8" />
 			<ApiKeys userId={userId} />
 			<Separator className="my-8" />
 			<h3 className="font-semibold text-lg">{t("password.change")}</h3>
-			<Form {...passwordForm}>
-				<form
-					onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}
-					className="grid gap-4"
-				>
-					<FormField
+			<form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
+				<FieldGroup>
+					<Controller
 						control={passwordForm.control}
 						name="currentPassword"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>{t("password.current")}</FormLabel>
-								<FormControl>
-									<Input
-										type="password"
-										placeholder={t("password.currentPlaceholder")}
-										autoComplete="current-password"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
+						render={({ field, fieldState }) => (
+							<Field data-invalid={fieldState.invalid}>
+								<FieldLabel htmlFor="password-current">
+									{t("password.current")}
+								</FieldLabel>
+								<Input
+									{...field}
+									id="password-current"
+									type="password"
+									aria-invalid={fieldState.invalid}
+									placeholder={t("password.currentPlaceholder")}
+									autoComplete="current-password"
+								/>
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
 						)}
 					/>
-					<FormField
+					<Controller
 						control={passwordForm.control}
 						name="newPassword"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>{t("password.new")}</FormLabel>
-								<FormControl>
-									<Input
-										type="password"
-										placeholder={t("password.newPlaceholder")}
-										autoComplete="new-password"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
+						render={({ field, fieldState }) => (
+							<Field data-invalid={fieldState.invalid}>
+								<FieldLabel htmlFor="password-new">
+									{t("password.new")}
+								</FieldLabel>
+								<Input
+									{...field}
+									id="password-new"
+									type="password"
+									aria-invalid={fieldState.invalid}
+									placeholder={t("password.newPlaceholder")}
+									autoComplete="new-password"
+								/>
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
 						)}
 					/>
-					<FormField
+					<Controller
 						control={passwordForm.control}
 						name="confirmPassword"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>{t("password.confirm")}</FormLabel>
-								<FormControl>
-									<Input
-										type="password"
-										placeholder={t("password.confirmPlaceholder")}
-										autoComplete="new-password"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
+						render={({ field, fieldState }) => (
+							<Field data-invalid={fieldState.invalid}>
+								<FieldLabel htmlFor="password-confirm">
+									{t("password.confirm")}
+								</FieldLabel>
+								<Input
+									{...field}
+									id="password-confirm"
+									type="password"
+									aria-invalid={fieldState.invalid}
+									placeholder={t("password.confirmPlaceholder")}
+									autoComplete="new-password"
+								/>
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
 						)}
 					/>
 					<div className="flex justify-end">
@@ -267,8 +284,8 @@ export const CredentialsForm = ({ userId }: Props) => {
 								: t("password.change")}
 						</Button>
 					</div>
-				</form>
-			</Form>
+				</FieldGroup>
+			</form>
 		</section>
 	);
 };

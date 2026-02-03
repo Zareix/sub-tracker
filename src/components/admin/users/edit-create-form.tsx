@@ -1,20 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
 import { ImageFileUploader } from "~/components/image-uploader";
 import { Button } from "~/components/ui/button";
 import { DialogFooter } from "~/components/ui/dialog";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "~/components/ui/form";
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import {
 	Select,
@@ -29,8 +27,8 @@ import { api } from "~/trpc/react";
 
 const userCreateSchema = z.object({
 	image: z.nullish(z.string()),
-	name: z.string(),
-	email: z.string(),
+	name: z.string().check(z.minLength(1, "Name is required")),
+	email: z.email(),
 	password: z.optional(z.string()),
 	role: z.enum(UserRoles),
 });
@@ -109,7 +107,7 @@ export const EditCreateForm = ({
 		},
 	});
 
-	const form = useForm({
+	const form = useForm<z.infer<typeof userCreateSchema>>({
 		resolver: zodResolver(userCreateSchema),
 		defaultValues: {
 			name: user?.name ?? "",
@@ -133,94 +131,108 @@ export const EditCreateForm = ({
 	const isCurrentUser = session.data?.user.id === user?.id;
 
 	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+		<form onSubmit={form.handleSubmit(onSubmit)}>
+			<FieldGroup>
 				<div className="grid grid-cols-12 gap-2">
 					<ImageFileUploader
 						setFileUrl={(v) => form.setValue("image", v)}
 						fileUrl={form.watch("image")}
 					/>
-					<FormField
+					<Controller
 						control={form.control}
 						name="name"
-						render={({ field }) => (
-							<FormItem className="col-span-10">
-								<FormLabel>{tCommon("form.name")}</FormLabel>
-								<FormControl>
-									<Input placeholder="Raphael" {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
+						render={({ field, fieldState }) => (
+							<Field data-invalid={fieldState.invalid} className="col-span-10">
+								<FieldLabel htmlFor="user-name">
+									{tCommon("form.name")}
+								</FieldLabel>
+								<Input
+									{...field}
+									id="user-name"
+									aria-invalid={fieldState.invalid}
+									placeholder="Raphael"
+								/>
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
 						)}
 					/>
 				</div>
-				<FormField
+				<Controller
 					control={form.control}
 					name="email"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>{tCommon("form.email")}</FormLabel>
-							<FormControl>
-								<Input placeholder="raphael" {...field} />
-							</FormControl>
-
-							<FormMessage />
-						</FormItem>
+					render={({ field, fieldState }) => (
+						<Field data-invalid={fieldState.invalid}>
+							<FieldLabel htmlFor="user-email">
+								{tCommon("form.email")}
+							</FieldLabel>
+							<Input
+								{...field}
+								id="user-email"
+								aria-invalid={fieldState.invalid}
+								placeholder="raphael"
+							/>
+							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+						</Field>
 					)}
 				/>
-				<FormField
+				<Controller
 					control={form.control}
 					name="password"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>{tCommon("form.password")}</FormLabel>
-							<FormControl>
-								<Input placeholder="***" type="password" {...field} />
-							</FormControl>
-
-							<FormMessage />
-						</FormItem>
+					render={({ field, fieldState }) => (
+						<Field data-invalid={fieldState.invalid}>
+							<FieldLabel htmlFor="user-password">
+								{tCommon("form.password")}
+							</FieldLabel>
+							<Input
+								{...field}
+								id="user-password"
+								type="password"
+								aria-invalid={fieldState.invalid}
+								placeholder="***"
+							/>
+							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+						</Field>
 					)}
 				/>
-				<FormField
+				<Controller
 					control={form.control}
 					name="role"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>{tCommon("form.role")}</FormLabel>
-							<FormControl>
-								<Select
-									onValueChange={field.onChange}
-									value={field.value}
-									disabled={isCurrentUser}
+					render={({ field, fieldState }) => (
+						<Field data-invalid={fieldState.invalid}>
+							<FieldLabel htmlFor="user-role">
+								{tCommon("form.role")}
+							</FieldLabel>
+							<Select
+								name={field.name}
+								value={field.value}
+								onValueChange={field.onChange}
+								disabled={isCurrentUser}
+							>
+								<SelectTrigger
+									id="user-role"
+									aria-invalid={fieldState.invalid}
+									className="min-w-42.5 capitalize"
 								>
-									<FormControl>
-										<SelectTrigger className="min-w-42.5 capitalize">
-											<SelectValue placeholder={tCommon("form.selectRole")} />
-										</SelectTrigger>
-									</FormControl>
-									<SelectContent>
-										{UserRoles.map((role) => (
-											<SelectItem
-												value={role}
-												key={role}
-												className="capitalize"
-											>
-												{role}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</FormControl>
-
-							<FormMessage />
-						</FormItem>
+									<SelectValue placeholder={tCommon("form.selectRole")} />
+								</SelectTrigger>
+								<SelectContent>
+									{UserRoles.map((role) => (
+										<SelectItem value={role} key={role} className="capitalize">
+											{role}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+						</Field>
 					)}
 				/>
 				<DialogFooter>
 					<Button type="submit">{tCommon("actions.submit")}</Button>
 				</DialogFooter>
-			</form>
-		</Form>
+			</FieldGroup>
+		</form>
 	);
 };

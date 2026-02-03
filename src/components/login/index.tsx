@@ -4,21 +4,19 @@ import { CalendarSyncIcon, KeySquareIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Fragment } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
 import { AuthProvidersIcon } from "~/components/login/auth-providers-icon";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { FieldSeparator } from "~/components/ui/field";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "~/components/ui/form";
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+	FieldSeparator,
+} from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { type AuthProvider, authClient } from "~/lib/auth-client";
 import { api } from "~/trpc/react";
@@ -78,7 +76,7 @@ export const LoginForm = () => {
 		},
 	});
 
-	const form = useForm({
+	const form = useForm<z.infer<typeof loginSchema>>({
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
 			email: "",
@@ -139,63 +137,67 @@ export const LoginForm = () => {
 					<Fragment key={provider}>
 						{provider === "password" && (
 							<>
-								<Form {...form}>
-									<form
-										onSubmit={form.handleSubmit(onSubmit)}
-										className="flex flex-col gap-6"
-									>
-										<div className="flex flex-col gap-6">
-											<FormField
-												control={form.control}
-												name="email"
-												render={({ field }) => (
-													<FormItem className="grid gap-2">
-														<FormLabel>Email</FormLabel>
-														<FormControl>
-															<Input
-																placeholder="raphael@example.com"
-																autoComplete="email webauthn"
-																{...field}
-															/>
-														</FormControl>
-														<FormMessage />
-													</FormItem>
-												)}
-											/>
-											<FormField
-												control={form.control}
-												name="password"
-												render={({ field }) => (
-													<FormItem className="grid gap-2">
-														<div className="flex items-end">
-															<FormLabel>Password</FormLabel>
-															<Button
-																variant="link"
-																className="m-0 ml-auto h-4 p-0"
-																onClick={resetPassword}
-																type="button"
-															>
-																Forgot password?
-															</Button>
-														</div>
-														<FormControl>
-															<Input
-																type="password"
-																placeholder="********"
-																autoComplete="current-password webauthn"
-																{...field}
-															/>
-														</FormControl>
-														<FormMessage />
-													</FormItem>
-												)}
-											/>
-											<Button type="submit" className="w-full">
-												Login
-											</Button>
-										</div>
-									</form>
-								</Form>
+								<form
+									onSubmit={form.handleSubmit(onSubmit)}
+									className="flex flex-col gap-6"
+								>
+									<FieldGroup>
+										<Controller
+											control={form.control}
+											name="email"
+											render={({ field, fieldState }) => (
+												<Field data-invalid={fieldState.invalid}>
+													<FieldLabel htmlFor="login-email">Email</FieldLabel>
+													<Input
+														{...field}
+														id="login-email"
+														aria-invalid={fieldState.invalid}
+														placeholder="raphael@example.com"
+														autoComplete="email webauthn"
+													/>
+													{fieldState.invalid && (
+														<FieldError errors={[fieldState.error]} />
+													)}
+												</Field>
+											)}
+										/>
+										<Controller
+											control={form.control}
+											name="password"
+											render={({ field, fieldState }) => (
+												<Field data-invalid={fieldState.invalid}>
+													<div className="flex items-end">
+														<FieldLabel htmlFor="login-password">
+															Password
+														</FieldLabel>
+														<Button
+															variant="link"
+															className="m-0 ml-auto h-4 p-0"
+															onClick={resetPassword}
+															type="button"
+														>
+															Forgot password?
+														</Button>
+													</div>
+													<Input
+														{...field}
+														id="login-password"
+														type="password"
+														aria-invalid={fieldState.invalid}
+														placeholder="********"
+														autoComplete="current-password webauthn"
+													/>
+													{fieldState.invalid && (
+														<FieldError errors={[fieldState.error]} />
+													)}
+												</Field>
+											)}
+										/>
+										<Button type="submit" className="w-full">
+											Login
+										</Button>
+									</FieldGroup>
+								</form>
 								<FieldSeparator className="my-2">
 									Or continue with
 								</FieldSeparator>

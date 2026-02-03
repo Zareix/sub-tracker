@@ -3,7 +3,7 @@ import { addYears, format, subYears } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
 import { ImageFileUploader } from "~/components/image-uploader";
@@ -13,13 +13,11 @@ import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
 import { DialogFooter } from "~/components/ui/dialog";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "~/components/ui/form";
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import {
 	Popover,
@@ -83,11 +81,15 @@ export const EditCreateForm = ({
 			.string()
 			.check(z.minLength(1, { error: t("validation.nameRequired") })),
 		description: z.string(),
-		category: z.coerce.number<number>().check(
-			z.positive({
+		category: z.coerce
+			.number<number>({
 				error: t("validation.categoryRequired"),
-			}),
-		),
+			})
+			.check(
+				z.positive({
+					error: t("validation.categoryRequired"),
+				}),
+			),
 		image: z.optional(z.string()),
 		price: z.coerce.number<number>().check(
 			z.positive({
@@ -95,12 +97,18 @@ export const EditCreateForm = ({
 			}),
 		),
 		currency: z.enum(Currencies),
-		paymentMethod: z.coerce.number<number>().check(
-			z.positive({
+		paymentMethod: z.coerce
+			.number<number>({
 				error: t("validation.paymentMethodRequired"),
-			}),
-		),
-		firstPaymentDate: z.date(),
+			})
+			.check(
+				z.positive({
+					error: t("validation.paymentMethodRequired"),
+				}),
+			),
+		firstPaymentDate: z.date({
+			error: t("validation.firstPaymentDateRequired"),
+		}),
 		schedule: z.enum(SCHEDULES),
 		payedBy: z.array(z.string()).check(
 			z.minLength(1, {
@@ -194,7 +202,7 @@ export const EditCreateForm = ({
 	const usersQuery = api.user.getAll.useQuery();
 	const paymentMethodsQuery = api.paymentMethod.getAll.useQuery();
 	const categoriesQuery = api.category.getAll.useQuery();
-	const form = useForm({
+	const form = useForm<z.infer<typeof subscriptionCreateSchema>>({
 		resolver: zodResolver(subscriptionCreateSchema),
 		defaultValues: {
 			name: subscription?.name ?? "",
@@ -239,23 +247,30 @@ export const EditCreateForm = ({
 					{usersQuery.error?.message ?? paymentMethodsQuery.error?.message}
 				</div>
 			) : (
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+				<form onSubmit={form.handleSubmit(onSubmit)}>
+					<FieldGroup>
 						<div className="grid grid-cols-12 items-center gap-2">
-							<FormField
+							<Controller
 								control={form.control}
 								name="name"
-								render={({ field }) => (
-									<FormItem className="col-span-8">
-										<FormLabel>{t("fields.name")}</FormLabel>
-										<FormControl>
-											<Input
-												placeholder={t("fields.namePlaceholder")}
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
+								render={({ field, fieldState }) => (
+									<Field
+										data-invalid={fieldState.invalid}
+										className="col-span-8"
+									>
+										<FieldLabel htmlFor="subscription-name">
+											{t("fields.name")}
+										</FieldLabel>
+										<Input
+											{...field}
+											id="subscription-name"
+											aria-invalid={fieldState.invalid}
+											placeholder={t("fields.namePlaceholder")}
+										/>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
 								)}
 							/>
 							<ImageFileUploader
@@ -268,307 +283,371 @@ export const EditCreateForm = ({
 							/>
 						</div>
 						<div className="flex">
-							<FormField
+							<Controller
 								control={form.control}
 								name="category"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>{t("fields.category")}</FormLabel>
-										<FormControl>
-											<Select
-												onValueChange={field.onChange}
-												value={field.value?.toString()}
-												items={
-													categoriesQuery.data?.map((p) => ({
-														value: p.id.toString(),
-														label: p.name,
-													})) ?? []
-												}
-											>
-												<FormControl>
-													<SelectTrigger className="min-w-42.5">
-														<SelectValue
-															placeholder={t("fields.categoryPlaceholder")}
-														/>
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{categoriesQuery.data?.map((p) => (
-														<SelectItem value={p.id.toString()} key={p.id}>
-															<div className="flex items-center gap-1">
-																{p.icon && (
-																	<CategoryIcon
-																		icon={p.icon}
-																		className="max-h-5 max-w-5 object-contain"
-																	/>
-																)}
-																{p.name}
-															</div>
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Separator
-								orientation="vertical"
-								className="mx-2 my-auto flex h-12"
-							/>
-							<FormField
-								control={form.control}
-								name="url"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>{t("fields.url")}</FormLabel>
-										<FormControl>
-											<Input
-												placeholder={t("fields.urlPlaceholder")}
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
-						<FormField
-							control={form.control}
-							name="description"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>{t("fields.description")}</FormLabel>
-									<FormControl>
-										<Input
-											placeholder={t("fields.descriptionPlaceholder")}
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<div className="grid grid-cols-2 gap-3">
-							<div className="flex">
-								<FormField
-									control={form.control}
-									name="price"
-									render={({ field }) => (
-										<FormItem className="grow">
-											<FormLabel>{t("fields.price")}</FormLabel>
-											<FormControl>
-												<Input
-													placeholder={t("fields.pricePlaceholder")}
-													type="number"
-													className="rounded-r-none"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="currency"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>{t("fields.currency")}</FormLabel>
-											<FormControl>
-												<Select
-													onValueChange={field.onChange}
-													value={field.value}
-												>
-													<FormControl>
-														<SelectTrigger className="rounded-l-none border-l-0">
-															<SelectValue
-																placeholder={t("fields.currencyPlaceholder")}
-															/>
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{Currencies.map((s) => (
-															<SelectItem value={s} key={s}>
-																{s}
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-							<FormField
-								control={form.control}
-								name="paymentMethod"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>{t("fields.paymentMethod")}</FormLabel>
-										<FormControl>
-											<Select
-												onValueChange={field.onChange}
-												defaultValue={field.value?.toString()}
-												items={
-													paymentMethodsQuery.data?.map((p) => ({
-														value: p.id.toString(),
-														label: p.name,
-													})) ?? []
-												}
-											>
-												<FormControl>
-													<SelectTrigger className="w-full">
-														<SelectValue
-															placeholder={t("fields.paymentMethodPlaceholder")}
-														/>
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{paymentMethodsQuery.data?.map((p) => (
-														<SelectItem value={p.id.toString()} key={p.id}>
-															<div className="flex items-center gap-1">
-																{p.image && (
-																	<Image
-																		src={p.image}
-																		alt={p.name}
-																		width={64}
-																		height={40}
-																		className="max-h-5 max-w-5 object-contain"
-																	/>
-																)}
-																{p.name}
-															</div>
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
-						<FormField
-							control={form.control}
-							name="payedBy"
-							render={({ field }) => (
-								<FormItem className="grow">
-									<FormLabel>{t("fields.payedBy")}</FormLabel>
-									<FormControl>
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel htmlFor="subscription-category">
+											{t("fields.category")}
+										</FieldLabel>
 										<Select
+											name={field.name}
+											value={field.value?.toString()}
 											onValueChange={field.onChange}
-											value={field.value}
-											multiple
 											items={
-												usersQuery.data?.map((p) => ({
-													value: p.id,
-													label: p.name,
+												categoriesQuery.data?.map((p) => ({
+													value: p.id.toString(),
+													label: (
+														<>
+															{p.icon && (
+																<CategoryIcon
+																	icon={p.icon}
+																	className="max-h-5 max-w-5 object-contain"
+																/>
+															)}
+															{p.name}
+														</>
+													),
 												})) ?? []
 											}
 										>
-											<FormControl>
-												<SelectTrigger className="w-full">
-													<SelectValue
-														placeholder={t("fields.payedByPlaceholder")}
-													/>
-												</SelectTrigger>
-											</FormControl>
+											<SelectTrigger
+												id="subscription-category"
+												aria-invalid={fieldState.invalid}
+												className="min-w-42.5"
+											>
+												<SelectValue
+													placeholder={t("fields.categoryPlaceholder")}
+												/>
+											</SelectTrigger>
 											<SelectContent>
-												{usersQuery.data?.map((p) => (
+												{categoriesQuery.data?.map((p) => (
 													<SelectItem value={p.id.toString()} key={p.id}>
 														<div className="flex items-center gap-1">
+															{p.icon && (
+																<CategoryIcon
+																	icon={p.icon}
+																	className="max-h-5 max-w-5 object-contain"
+																/>
+															)}
 															{p.name}
 														</div>
 													</SelectItem>
 												))}
 											</SelectContent>
 										</Select>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
+								)}
+							/>
+							<Separator
+								orientation="vertical"
+								className="mx-2 my-auto flex h-12"
+							/>
+							<Controller
+								control={form.control}
+								name="url"
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel htmlFor="subscription-url">
+											{t("fields.url")}
+										</FieldLabel>
+										<Input
+											{...field}
+											id="subscription-url"
+											aria-invalid={fieldState.invalid}
+											placeholder={t("fields.urlPlaceholder")}
+										/>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
+								)}
+							/>
+						</div>
+						<Controller
+							control={form.control}
+							name="description"
+							render={({ field, fieldState }) => (
+								<Field data-invalid={fieldState.invalid}>
+									<FieldLabel htmlFor="subscription-description">
+										{t("fields.description")}
+									</FieldLabel>
+									<Input
+										{...field}
+										id="subscription-description"
+										aria-invalid={fieldState.invalid}
+										placeholder={t("fields.descriptionPlaceholder")}
+									/>
+									{fieldState.invalid && (
+										<FieldError errors={[fieldState.error]} />
+									)}
+								</Field>
 							)}
 						/>
-						<div className="flex gap-2">
-							<FormField
-								control={form.control}
-								name="schedule"
-								render={({ field }) => (
-									<FormItem className="min-w-40">
-										<FormLabel>{t("fields.schedule")}</FormLabel>
-										<FormControl>
+						<div className="grid grid-cols-2 gap-3">
+							<div className="flex">
+								<Controller
+									control={form.control}
+									name="price"
+									render={({ field, fieldState }) => (
+										<Field data-invalid={fieldState.invalid} className="grow">
+											<FieldLabel htmlFor="subscription-price">
+												{t("fields.price")}
+											</FieldLabel>
+											<Input
+												{...field}
+												id="subscription-price"
+												type="number"
+												aria-invalid={fieldState.invalid}
+												placeholder={t("fields.pricePlaceholder")}
+												className="rounded-r-none"
+											/>
+											{fieldState.invalid && (
+												<FieldError errors={[fieldState.error]} />
+											)}
+										</Field>
+									)}
+								/>
+								<Controller
+									control={form.control}
+									name="currency"
+									render={({ field, fieldState }) => (
+										<Field data-invalid={fieldState.invalid}>
+											<FieldLabel htmlFor="subscription-currency">
+												{t("fields.currency")}
+											</FieldLabel>
 											<Select
-												onValueChange={field.onChange}
+												name={field.name}
 												value={field.value}
-												items={SCHEDULES.map((s) => ({
-													label: tCommon(`schedule.${s}`),
-													value: s,
-												}))}
+												onValueChange={field.onChange}
 											>
-												<FormControl>
-													<SelectTrigger className="w-full">
-														<SelectValue
-															placeholder={t("fields.schedulePlaceholder")}
-														/>
-													</SelectTrigger>
-												</FormControl>
+												<SelectTrigger
+													id="subscription-currency"
+													aria-invalid={fieldState.invalid}
+													className="rounded-l-none border-l-0"
+												>
+													<SelectValue
+														placeholder={t("fields.currencyPlaceholder")}
+													/>
+												</SelectTrigger>
 												<SelectContent>
-													{SCHEDULES.map((s) => (
+													{Currencies.map((s) => (
 														<SelectItem value={s} key={s}>
-															{tCommon(`schedule.${s}`)}
+															{s}
 														</SelectItem>
 													))}
 												</SelectContent>
 											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
+											{fieldState.invalid && (
+												<FieldError errors={[fieldState.error]} />
+											)}
+										</Field>
+									)}
+								/>
+							</div>
+							<Controller
+								control={form.control}
+								name="paymentMethod"
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel htmlFor="subscription-payment-method">
+											{t("fields.paymentMethod")}
+										</FieldLabel>
+										<Select
+											name={field.name}
+											defaultValue={field.value?.toString()}
+											onValueChange={field.onChange}
+											items={
+												paymentMethodsQuery.data?.map((p) => ({
+													value: p.id.toString(),
+													label: (
+														<>
+															{p.image && (
+																<Image
+																	src={p.image}
+																	alt={p.name}
+																	width={64}
+																	height={40}
+																	className="max-h-5 max-w-5 object-contain"
+																/>
+															)}
+															{p.name}
+														</>
+													),
+												})) ?? []
+											}
+										>
+											<SelectTrigger
+												id="subscription-payment-method"
+												aria-invalid={fieldState.invalid}
+												className="w-full"
+											>
+												<SelectValue
+													placeholder={t("fields.paymentMethodPlaceholder")}
+												/>
+											</SelectTrigger>
+											<SelectContent>
+												{paymentMethodsQuery.data?.map((p) => (
+													<SelectItem value={p.id.toString()} key={p.id}>
+														<div className="flex items-center gap-1">
+															{p.image && (
+																<Image
+																	src={p.image}
+																	alt={p.name}
+																	width={64}
+																	height={40}
+																	className="max-h-5 max-w-5 object-contain"
+																/>
+															)}
+															{p.name}
+														</div>
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
 								)}
 							/>
-							<FormField
+						</div>
+						<Controller
+							control={form.control}
+							name="payedBy"
+							render={({ field, fieldState }) => (
+								<Field data-invalid={fieldState.invalid} className="grow">
+									<FieldLabel htmlFor="subscription-payed-by">
+										{t("fields.payedBy")}
+									</FieldLabel>
+									<Select
+										name={field.name}
+										value={field.value}
+										onValueChange={field.onChange}
+										multiple
+										items={
+											usersQuery.data?.map((p) => ({
+												value: p.id,
+												label: p.name,
+											})) ?? []
+										}
+									>
+										<SelectTrigger
+											id="subscription-payed-by"
+											aria-invalid={fieldState.invalid}
+											className="w-full"
+										>
+											<SelectValue
+												placeholder={t("fields.payedByPlaceholder")}
+											/>
+										</SelectTrigger>
+										<SelectContent>
+											{usersQuery.data?.map((p) => (
+												<SelectItem value={p.id.toString()} key={p.id}>
+													<div className="flex items-center gap-1">
+														{p.name}
+													</div>
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									{fieldState.invalid && (
+										<FieldError errors={[fieldState.error]} />
+									)}
+								</Field>
+							)}
+						/>
+						<div className="flex gap-2">
+							<Controller
+								control={form.control}
+								name="schedule"
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid} className="min-w-40">
+										<FieldLabel htmlFor="subscription-schedule">
+											{t("fields.schedule")}
+										</FieldLabel>
+										<Select
+											name={field.name}
+											value={field.value}
+											onValueChange={field.onChange}
+											items={SCHEDULES.map((s) => ({
+												label: tCommon(`schedule.${s}`),
+												value: s,
+											}))}
+										>
+											<SelectTrigger
+												id="subscription-schedule"
+												aria-invalid={fieldState.invalid}
+												className="w-full"
+											>
+												<SelectValue
+													placeholder={t("fields.schedulePlaceholder")}
+												/>
+											</SelectTrigger>
+											<SelectContent>
+												{SCHEDULES.map((s) => (
+													<SelectItem value={s} key={s}>
+														{tCommon(`schedule.${s}`)}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
+								)}
+							/>
+							<Controller
 								control={form.control}
 								name="firstPaymentDate"
-								render={({ field }) => (
-									<FormItem className="grow">
-										<FormLabel>{t("fields.firstPaymentDate")}</FormLabel>
-										<FormControl>
-											<Popover modal>
-												<PopoverTrigger
-													render={
-														<Button
-															data-testid="firstPaymentDatePicker"
-															variant="outline"
-															className={cn(
-																"h-9 w-full justify-start text-left font-normal",
-																!field.value && "text-muted-foreground",
-															)}
-														>
-															<CalendarIcon className="mr-2 size-4" />
-															{field.value ? (
-																format(field.value, "dd/MM/yyyy")
-															) : (
-																<span>{t("fields.pickDate")}</span>
-															)}
-														</Button>
-													}
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid} className="grow">
+										<FieldLabel htmlFor="subscription-first-payment-date">
+											{t("fields.firstPaymentDate")}
+										</FieldLabel>
+										<Popover modal>
+											<PopoverTrigger
+												render={
+													<Button
+														id="subscription-first-payment-date"
+														data-testid="firstPaymentDatePicker"
+														variant="outline"
+														aria-invalid={fieldState.invalid}
+														className={cn(
+															"h-9 w-full justify-start text-left font-normal",
+															!field.value && "text-muted-foreground",
+														)}
+													>
+														<CalendarIcon className="mr-2 size-4" />
+														{field.value ? (
+															format(field.value, "dd/MM/yyyy")
+														) : (
+															<span>{t("fields.pickDate")}</span>
+														)}
+													</Button>
+												}
+											/>
+											<PopoverContent className="pointer-events-auto w-auto p-0">
+												<Calendar
+													mode="single"
+													selected={field.value}
+													onSelect={field.onChange}
+													autoFocus
+													captionLayout="dropdown"
+													startMonth={subYears(new Date(), 10)}
+													endMonth={addYears(new Date(), 10)}
 												/>
-												<PopoverContent className="pointer-events-auto w-auto p-0">
-													<Calendar
-														mode="single"
-														selected={field.value}
-														onSelect={field.onChange}
-														autoFocus
-														captionLayout="dropdown"
-														startMonth={subYears(new Date(), 10)}
-														endMonth={addYears(new Date(), 10)}
-													/>
-												</PopoverContent>
-											</Popover>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
+											</PopoverContent>
+										</Popover>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
 								)}
 							/>
 						</div>
@@ -583,8 +662,8 @@ export const EditCreateForm = ({
 								{tCommon("actions.submit")}
 							</Button>
 						</DialogFooter>
-					</form>
-				</Form>
+					</FieldGroup>
+				</form>
 			)}
 		</>
 	);

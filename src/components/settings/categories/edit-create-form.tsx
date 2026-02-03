@@ -4,7 +4,7 @@ import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { iconNames } from "lucide-react/dynamic";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
 import { CategoryIcon } from "~/components/subscriptions/categories/icon";
@@ -19,14 +19,12 @@ import {
 } from "~/components/ui/command";
 import { DialogFooter } from "~/components/ui/dialog";
 import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "~/components/ui/form";
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import {
 	Popover,
@@ -97,7 +95,7 @@ export const EditCreateForm = ({
 		[search],
 	);
 
-	const form = useForm({
+	const form = useForm<z.infer<typeof categoryCreateSchema>>({
 		resolver: zodResolver(categoryCreateSchema),
 		defaultValues: {
 			name: category?.name ?? "",
@@ -117,46 +115,53 @@ export const EditCreateForm = ({
 	}
 
 	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-				<FormField
+		<form onSubmit={form.handleSubmit(onSubmit)}>
+			<FieldGroup>
+				<Controller
 					control={form.control}
 					name="name"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>{tCommon("form.name")}</FormLabel>
-							<FormControl>
-								<Input placeholder="Raphael" {...field} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
+					render={({ field, fieldState }) => (
+						<Field data-invalid={fieldState.invalid}>
+							<FieldLabel htmlFor="category-name">
+								{tCommon("form.name")}
+							</FieldLabel>
+							<Input
+								{...field}
+								id="category-name"
+								aria-invalid={fieldState.invalid}
+								placeholder={t("categories.namePlaceholder")}
+							/>
+							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+						</Field>
 					)}
 				/>
-				<FormField
+				<Controller
 					control={form.control}
 					name="icon"
-					render={({ field }) => (
-						<FormItem className="flex flex-col">
-							<FormLabel>{tCommon("icon.label")}</FormLabel>
+					render={({ field, fieldState }) => (
+						<Field data-invalid={fieldState.invalid} className="flex flex-col">
+							<FieldLabel htmlFor="category-icon">
+								{tCommon("icon.label")}
+							</FieldLabel>
 							<div className="flex items-center gap-2">
 								{field.value && <CategoryIcon icon={field.value} />}
 								<Popover modal>
 									<PopoverTrigger
 										render={
-											<FormControl>
-												<Button
-													variant="outline"
-													className={cn(
-														"h-10 grow justify-between",
-														!field.value && "text-muted-foreground",
-													)}
-												>
-													{field.value
-														? iconNames.find((name) => name === field.value)
-														: tCommon("icon.select")}
-													<ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
-												</Button>
-											</FormControl>
+											<Button
+												id="category-icon"
+												variant="outline"
+												aria-invalid={fieldState.invalid}
+												className={cn(
+													"h-10 grow justify-between",
+													!field.value && "text-muted-foreground",
+												)}
+											>
+												{field.value
+													? iconNames.find((name) => name === field.value)
+													: tCommon("icon.select")}
+												<ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
+											</Button>
 										}
 									/>
 									<PopoverContent className="w-50 p-0">
@@ -198,7 +203,7 @@ export const EditCreateForm = ({
 									</PopoverContent>
 								</Popover>
 							</div>
-							<FormDescription>
+							<FieldDescription>
 								{tCommon("icon.findOn")}{" "}
 								<a
 									href="https://lucide.dev/icons/?focus"
@@ -208,15 +213,15 @@ export const EditCreateForm = ({
 								>
 									lucide.dev
 								</a>
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
+							</FieldDescription>
+							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+						</Field>
 					)}
 				/>
 				<DialogFooter>
 					<Button type="submit">{tCommon("actions.submit")}</Button>
 				</DialogFooter>
-			</form>
-		</Form>
+			</FieldGroup>
+		</form>
 	);
 };

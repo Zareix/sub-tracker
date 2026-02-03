@@ -30,18 +30,6 @@ process.env.FIXER_API_KEY = "API_KEY_FOR_TESTS";
 const { db } = await import("~/server/db");
 
 beforeAll(async () => {
-	await Promise.all([
-		Bun.file(DATABASE_PATH)
-			.delete()
-			.catch(() => {}),
-		Bun.file(`${DATABASE_PATH}-shm`)
-			.delete()
-			.catch(() => {}),
-		Bun.file(`${DATABASE_PATH}-wal`)
-			.delete()
-			.catch(() => {}),
-		rmdir(UPLOADS_FOLDER).catch(() => {}),
-	]);
 	setSystemTime(_mock.now);
 
 	await import("~/server/db/migrate");

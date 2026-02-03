@@ -156,6 +156,7 @@
 			"edit": "Edit Category",
 			"delete": "Delete category",
 			"deleteConfirm": "Are you sure you want to delete this category?",
+			"namePlaceholder": "ex: Streaming, Cloud, Music",
 			"createdSuccess": "Category created!",
 			"editedSuccess": "Category edited!",
 			"deletedSuccess": "Category deleted!"
@@ -264,6 +265,7 @@
 			"categoryRequired": "Category is required",
 			"pricePositive": "Price must be greater than 0",
 			"paymentMethodRequired": "Payment method is required",
+			"firstPaymentDateRequired": "First payment date is required",
 			"userRequired": "At least one user must be selected"
 		}
 	}

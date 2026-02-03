@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
 import { ImageFileUploader } from "~/components/image-uploader";
@@ -8,18 +8,20 @@ import { ImageSearch } from "~/components/subscriptions/image-search";
 import { Button } from "~/components/ui/button";
 import { DialogFooter } from "~/components/ui/dialog";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "~/components/ui/form";
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { api, type RouterOutputs } from "~/trpc/react";
 
 const paymentMethodCreateSchema = z.object({
-	name: z.string(),
+	name: z.string().check(
+		z.minLength(1, {
+			error: "Name is required",
+		}),
+	),
 	image: z.optional(z.string()),
 });
 
@@ -60,7 +62,7 @@ export const EditCreateForm = ({
 		},
 	});
 
-	const form = useForm({
+	const form = useForm<z.infer<typeof paymentMethodCreateSchema>>({
 		resolver: zodResolver(paymentMethodCreateSchema),
 		defaultValues: {
 			name: paymentMethod?.name ?? "",
@@ -80,20 +82,27 @@ export const EditCreateForm = ({
 	}
 
 	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8">
+		<form onSubmit={form.handleSubmit(onSubmit)}>
+			<FieldGroup>
 				<div className="grid grid-cols-12 items-center gap-2">
-					<FormField
+					<Controller
 						control={form.control}
 						name="name"
-						render={({ field }) => (
-							<FormItem className="col-span-8">
-								<FormLabel>{tCommon("form.name")}</FormLabel>
-								<FormControl>
-									<Input placeholder="PayPal" {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
+						render={({ field, fieldState }) => (
+							<Field data-invalid={fieldState.invalid} className="col-span-8">
+								<FieldLabel htmlFor="payment-method-name">
+									{tCommon("form.name")}
+								</FieldLabel>
+								<Input
+									{...field}
+									id="payment-method-name"
+									aria-invalid={fieldState.invalid}
+									placeholder="PayPal"
+								/>
+								{fieldState.invalid && (
+									<FieldError errors={[fieldState.error]} />
+								)}
+							</Field>
 						)}
 					/>
 					<ImageFileUploader
@@ -108,7 +117,7 @@ export const EditCreateForm = ({
 				<DialogFooter>
 					<Button type="submit">{tCommon("actions.submit")}</Button>
 				</DialogFooter>
-			</form>
-		</Form>
+			</FieldGroup>
+		</form>
 	);
 };

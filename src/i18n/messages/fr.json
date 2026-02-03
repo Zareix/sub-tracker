@@ -158,6 +158,7 @@
 			"deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette catégorie ?",
 			"createdSuccess": "Catégorie créée !",
 			"editedSuccess": "Catégorie modifiée !",
+			"namePlaceholder": "ex: Streaming, Cloud, Musique",
 			"deletedSuccess": "Catégorie supprimée !"
 		}
 	},
@@ -264,6 +265,7 @@
 			"categoryRequired": "La catégorie est requise",
 			"pricePositive": "Le prix doit être supérieur à 0",
 			"paymentMethodRequired": "Le moyen de paiement est requis",
+			"firstPaymentDateRequired": "La date du premier paiement est requise",
 			"userRequired": "Au moins un utilisateur doit être sélectionné"
 		}
 	}
