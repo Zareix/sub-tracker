@@ -83,11 +83,7 @@ export const PushNotificationHandler = () => {
 		};
 
 		subscribeToPush();
-	}, [
-		isServiceWorkerReady,
-		subscribeUserMutation.mutateAsync,
-		publicVapidKeyQuery.data,
-	]);
+	}, [isServiceWorkerReady, subscribeUserMutation, publicVapidKeyQuery.data]);
 
 	if (permission !== "default") {
 		return null;
