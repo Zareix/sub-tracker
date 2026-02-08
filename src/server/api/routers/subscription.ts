@@ -80,6 +80,28 @@ const calculateNextPaymentDate = (
 			}
 			return addMonths(res, 1);
 		}
+		case "Quarterly": {
+			const res = new Date(
+				currentDateInfo.year,
+				currentDateInfo.month,
+				firstPaymentDateDetails.day,
+			);
+			if (res > currentDateInfo.base) {
+				return res;
+			}
+			return addMonths(res, 3);
+		}
+		case "Semiannual": {
+			const res = new Date(
+				currentDateInfo.year,
+				currentDateInfo.month,
+				firstPaymentDateDetails.day,
+			);
+			if (res > currentDateInfo.base) {
+				return res;
+			}
+			return addMonths(res, 6);
+		}
 		case "Yearly": {
 			const res = new Date(
 				currentDateInfo.year,
@@ -105,6 +127,10 @@ const calculateSecondNextPaymentDate = (
 	switch (schedule) {
 		case "Monthly":
 			return addMonths(nextPaymentDate, 1);
+		case "Quarterly":
+			return addMonths(nextPaymentDate, 3);
+		case "Semiannual":
+			return addMonths(nextPaymentDate, 6);
 		case "Yearly":
 			return addYears(nextPaymentDate, 1);
 	}
@@ -118,6 +144,20 @@ const calculatePreviousPaymentDate = (
 	switch (schedule) {
 		case "Yearly": {
 			const previousPayment = addYears(nextPaymentDate, -1);
+			if (isBefore(previousPayment, firstPaymentDate)) {
+				return firstPaymentDate;
+			}
+			return previousPayment;
+		}
+		case "Quarterly": {
+			const previousPayment = addMonths(nextPaymentDate, -3);
+			if (isBefore(previousPayment, firstPaymentDate)) {
+				return firstPaymentDate;
+			}
+			return previousPayment;
+		}
+		case "Semiannual": {
+			const previousPayment = addMonths(nextPaymentDate, -6);
 			if (isBefore(previousPayment, firstPaymentDate)) {
 				return firstPaymentDate;
 			}

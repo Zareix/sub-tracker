@@ -25,6 +25,30 @@ export const getStats = (
 			0,
 		);
 
+	const totalQuarterlySub = subscriptions
+		.filter((subscription) => subscription.schedule === "Quarterly")
+		.reduce(
+			(acc, subscription) =>
+				sum(
+					acc,
+					subscription.price,
+					filters.users ? subscription.users.length : undefined,
+				),
+			0,
+		);
+
+	const totalSemiannualSub = subscriptions
+		.filter((subscription) => subscription.schedule === "Semiannual")
+		.reduce(
+			(acc, subscription) =>
+				sum(
+					acc,
+					subscription.price,
+					filters.users ? subscription.users.length : undefined,
+				),
+			0,
+		);
+
 	const totalYearlySub = subscriptions
 		.filter((subscription) => subscription.schedule === "Yearly")
 		.reduce(
@@ -37,9 +61,17 @@ export const getStats = (
 			0,
 		);
 
-	const totalPerMonth = totalMonthlySub + totalYearlySub / 12;
+	const totalPerMonth =
+		totalMonthlySub +
+		totalQuarterlySub / 3 +
+		totalSemiannualSub / 6 +
+		totalYearlySub / 12;
 
-	const totalPerYear = totalMonthlySub * 12 + totalYearlySub;
+	const totalPerYear =
+		totalMonthlySub * 12 +
+		totalQuarterlySub * 4 +
+		totalSemiannualSub * 2 +
+		totalYearlySub;
 
 	const endOfMonthDate = endOfMonth(new Date());
 	const remainingThisMonth = subscriptions

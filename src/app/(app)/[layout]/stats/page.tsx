@@ -91,6 +91,22 @@ export default function StatsPage() {
 						userBaseCurrency={userBaseCurrency}
 					/>
 					<MonthlyStatsCard
+						title={t("quarterlySub")}
+						subscriptions={subscriptions.filter(
+							(subscription) => subscription.schedule === "Quarterly",
+						)}
+						isLoading={isLoading}
+						userBaseCurrency={userBaseCurrency}
+					/>
+					<MonthlyStatsCard
+						title={t("semiannualSub")}
+						subscriptions={subscriptions.filter(
+							(subscription) => subscription.schedule === "Semiannual",
+						)}
+						isLoading={isLoading}
+						userBaseCurrency={userBaseCurrency}
+					/>
+					<MonthlyStatsCard
 						title={t("yearlySub")}
 						subscriptions={subscriptions.filter(
 							(subscription) => subscription.schedule === "Yearly",
@@ -275,6 +291,10 @@ const MonthlyStatsCard = ({
 		);
 	}
 
+	if (chartData.length === 0) {
+		return null;
+	}
+
 	return (
 		<Card className="flex flex-col md:row-span-2">
 			<CardHeader className="items-center">
@@ -284,13 +304,13 @@ const MonthlyStatsCard = ({
 			</CardHeader>
 			<CardContent className="flex-1">
 				{chartData.length === 0 ? (
-					<div className="mx-auto flex aspect-square max-h-62.5 items-center justify-center">
+					<div className="mx-auto flex aspect-square max-h-60 items-center justify-center">
 						<div className="text-muted-foreground">{t("noData")}</div>
 					</div>
 				) : (
 					<ChartContainer
 						config={chartConfig}
-						className="mx-auto aspect-square max-h-62.5"
+						className="mx-auto aspect-square max-h-60"
 					>
 						<PieChart>
 							<ChartTooltip

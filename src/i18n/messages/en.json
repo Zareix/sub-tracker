@@ -2,6 +2,8 @@
 	"Common": {
 		"schedule": {
 			"Monthly": "Monthly",
+			"Quarterly": "Quarterly",
+			"Semiannual": "Semi-annual",
 			"Yearly": "Yearly"
 		},
 		"actions": {
@@ -91,14 +93,16 @@
 	"StatsPage": {
 		"title": "Stats",
 		"monthlySub": "Monthly sub",
+		"quarterlySub": "Quarterly sub",
+		"semiannualSub": "Semi-annual sub",
 		"yearlySub": "Yearly sub",
 		"smoothedMonth": {
 			"title": "Smoothed over a month",
-			"description": "Monthly + (yearly / 12)"
+			"description": "Monthly + (quarterly / 3) + (semi-annual / 6) + (yearly / 12)"
 		},
 		"smoothedYear": {
 			"title": "Smoothed over a year",
-			"description": "(Monthly * 12) + yearly"
+			"description": "(Monthly * 12) + (quarterly * 4) + (semi-annual * 2) + yearly"
 		},
 		"thisMonth": {
 			"title": "This month",

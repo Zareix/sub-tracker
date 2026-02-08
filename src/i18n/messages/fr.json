@@ -2,6 +2,8 @@
 	"Common": {
 		"schedule": {
 			"Monthly": "Mensuel",
+			"Quarterly": "Trimestriel",
+			"Semiannual": "Semestriel",
 			"Yearly": "Annuel"
 		},
 		"actions": {
@@ -91,14 +93,16 @@
 	"StatsPage": {
 		"title": "Statistiques",
 		"monthlySub": "Abonnements mensuels",
+		"quarterlySub": "Abonnements trimestriels",
+		"semiannualSub": "Abonnements semestriels",
 		"yearlySub": "Abonnements annuels",
 		"smoothedMonth": {
 			"title": "Lissé sur un mois",
-			"description": "Mensuel + (annuel / 12)"
+			"description": "Mensuel + (trimestriel / 3) + (semestriel / 6) + (annuel / 12)"
 		},
 		"smoothedYear": {
 			"title": "Lissé sur un an",
-			"description": "(Mensuel * 12) + annuel"
+			"description": "(Mensuel * 12) + (trimestriel * 4) + (semestriel * 2) + annuel"
 		},
 		"thisMonth": {
 			"title": "Ce mois-ci",
