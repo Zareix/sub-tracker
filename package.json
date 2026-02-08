@@ -15,7 +15,7 @@
 		"check": "biome check --write .",
 		"email:dev": "email dev -d src/server/email/templates -p 3001",
 		"auth:generate": "bunx --bun @better-auth/cli generate --config src/server/auth.ts",
-		"test": "bun run test:int && bun run test:e2e",
+		"test": "bun run --parallel test:int test:e2e",
 		"test:int": "bun test --preload ./src/tests/integrations/_setup.ts ./src/tests/integrations",
 		"test:e2e": "playwright test",
 		"test:e2e:ui": "playwright test --ui",

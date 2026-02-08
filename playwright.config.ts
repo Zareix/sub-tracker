@@ -3,7 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 // @ts-expect-error It's possible
 process.env.NODE_ENV = "test";
-process.env.DATABASE_PATH = "./db-test.sqlite";
+process.env.DATABASE_PATH = "./db-test-e2e.sqlite";
 process.env.BETTER_AUTH_URL = "http://localhost:3000";
 process.env.ADMIN_EMAIL = "admin@gmail.com";
 process.env.UPLOADS_FOLDER = "./uploads-test";
