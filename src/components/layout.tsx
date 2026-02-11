@@ -5,7 +5,6 @@ import { useQueryState } from "nuqs";
 import { LocaleHandler } from "~/components/locale";
 import { LoginForm } from "~/components/login";
 import { AppSidebar, Navbar } from "~/components/nav";
-import { PushNotificationHandler } from "~/components/push-notification";
 import ResetPassword from "~/components/reset-password";
 import { SidebarProvider } from "~/components/ui/sidebar";
 import { authClient } from "~/lib/auth-client";
@@ -63,7 +62,6 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 					{children}
 				</main>
 				<Navbar />
-				<PushNotificationHandler />
 				<LocaleHandler />
 			</SidebarProvider>
 		</>

@@ -38,8 +38,6 @@ services:
       - GOOGLE_SEARCH_KEY=${GOOGLE_SEARCH_KEY} # optional
       - EMAIL_SERVER=${EMAIL_SERVER} # optional
       - EMAIL_FROM=${EMAIL_FROM} # optional
-      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY} # optional, generate with `npx web-push generate-vapid-keys`
-      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY} # optional, generate with `npx web-push generate-vapid-keys`
     ports:
       - 3000:3000
     volumes:
@@ -66,12 +64,9 @@ services:
 | GOOGLE_SEARCH_KEY    | Google API key for Custom Search Engine                                    | -                 |
 | EMAIL_SERVER         | SMTP server address                                                        | -                 |
 | EMAIL_FROM           | From email address                                                         | -                 |
-| VAPID_PUBLIC_KEY     | VAPID public key for push notifications                                    | -                 |
-| VAPID_PRIVATE_KEY    | VAPID private key for push notifications                                   | -                 |
 
 > [!NOTE]  
 > Default admin password is `password`.
 
 > [!TIP]  
 > You can generate a random `BETTER_AUTH_SECRET` with `openssl rand -hex 32`.
-> You can generate `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` with `npx web-push generate-vapid-keys`.

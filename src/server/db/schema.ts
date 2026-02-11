@@ -9,7 +9,6 @@ import {
 	text,
 } from "drizzle-orm/sqlite-core";
 import type { Currency, Schedule, UserRole } from "~/lib/constant";
-import type { CustomPushSubscription } from "~/server/webpush";
 
 export const exchangeRates = sqliteTable(
 	"exchange_rate",
@@ -170,29 +169,6 @@ export type User = typeof users.$inferSelect;
 
 export const usersRelations = relations(users, ({ many }) => ({
 	usersToSubscriptions: many(usersToSubscriptions),
-	devices: many(devices),
-}));
-
-export const devices = sqliteTable("devices", {
-	id: text("id", { length: 255 })
-		.notNull()
-		.primaryKey()
-		.$defaultFn(() => Bun.randomUUIDv7()),
-	pushSubscription: text("push_subscription", { mode: "json" })
-		.$type<CustomPushSubscription>()
-		.notNull(),
-	userId: text("user_id", { length: 255 })
-		.references(() => users.id)
-		.notNull(),
-});
-
-export type Device = typeof devices.$inferSelect;
-
-export const deviceRelations = relations(devices, ({ one }) => ({
-	user: one(users, {
-		fields: [devices.userId],
-		references: [users.id],
-	}),
 }));
 
 // --- BETTER AUTH ---
