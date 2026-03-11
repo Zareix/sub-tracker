@@ -159,13 +159,13 @@ export const ApiKeys = ({ userId }: Props) => {
 					<LoaderCircleIcon className="animate-spin" size={16} />
 					<p>{t("apiKeys.loading")}</p>
 				</div>
-			) : !apiKeysQuery.data ||
+			) : !apiKeysQuery.data?.apiKeys ||
 				apiKeysQuery.isError ||
-				apiKeysQuery.data.length === 0 ? (
+				apiKeysQuery.data.apiKeys.length === 0 ? (
 				<p className="text-muted-foreground">{t("apiKeys.noCreated")}</p>
 			) : (
 				<div className="space-y-3">
-					{apiKeysQuery.data.map((apiKey) => {
+					{apiKeysQuery.data.apiKeys.map((apiKey) => {
 						return (
 							<div key={apiKey.id} className="rounded-lg border px-4 py-2">
 								<div className="flex items-center gap-2">

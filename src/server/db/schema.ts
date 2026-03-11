@@ -254,44 +254,39 @@ export const passkey = sqliteTable("passkey", {
 	aaguid: text("aaguid"),
 });
 
-export const apiKey = sqliteTable("api_key", {
-	id: text("id")
-		.primaryKey()
-		.$defaultFn(() => Bun.randomUUIDv7()),
-	name: text("name"),
-	start: text("start"),
-	prefix: text("prefix"),
-	key: text("key").notNull(),
-	userId: text("user_id")
-		.notNull()
-		.references(() => users.id, { onDelete: "cascade" }),
-	refillInterval: integer("refill_interval"),
-	refillAmount: integer("refill_amount"),
-	lastRefillAt: integer("last_refill_at", { mode: "timestamp" }),
-	enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
-	rateLimitEnabled: integer("rate_limit_enabled", { mode: "boolean" })
-		.notNull()
-		.default(false),
-	rateLimitTimeWindow: integer("rate_limit_time_window"),
-	rateLimitMax: integer("rate_limit_max"),
-	requestCount: integer("request_count").notNull().default(0),
-	remaining: integer("remaining"),
-	lastRequest: integer("last_request", { mode: "timestamp" }),
-	expiresAt: integer("expires_at", { mode: "timestamp" }),
-	createdAt: integer("created_at", { mode: "timestamp" })
-		.$defaultFn(() => new Date())
-		.notNull(),
-	updatedAt: integer("updated_at", { mode: "timestamp" })
-		.$defaultFn(() => new Date())
-		.$onUpdate(() => new Date())
-		.notNull(),
-	permissions: text("permissions"),
-	metadata: text("metadata", { mode: "json" }),
-});
-
-export const apiKeyRelations = relations(apiKey, ({ one }) => ({
-	user: one(users, {
-		fields: [apiKey.userId],
-		references: [users.id],
-	}),
-}));
+export const apiKey = sqliteTable(
+	"apikey",
+	{
+		id: text("id")
+			.primaryKey()
+			.$defaultFn(() => Bun.randomUUIDv7()),
+		configId: text("config_id").default("default").notNull(),
+		name: text("name"),
+		start: text("start"),
+		referenceId: text("reference_id").notNull(),
+		prefix: text("prefix"),
+		key: text("key").notNull(),
+		refillInterval: integer("refill_interval"),
+		refillAmount: integer("refill_amount"),
+		lastRefillAt: integer("last_refill_at", { mode: "timestamp_ms" }),
+		enabled: integer("enabled", { mode: "boolean" }).default(true),
+		rateLimitEnabled: integer("rate_limit_enabled", {
+			mode: "boolean",
+		}).default(true),
+		rateLimitTimeWindow: integer("rate_limit_time_window").default(1000),
+		rateLimitMax: integer("rate_limit_max").default(100),
+		requestCount: integer("request_count").default(0),
+		remaining: integer("remaining"),
+		lastRequest: integer("last_request", { mode: "timestamp_ms" }),
+		expiresAt: integer("expires_at", { mode: "timestamp_ms" }),
+		createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+		updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+		permissions: text("permissions"),
+		metadata: text("metadata"),
+	},
+	(table) => [
+		index("apikey_configId_idx").on(table.configId),
+		index("apikey_referenceId_idx").on(table.referenceId),
+		index("apikey_key_idx").on(table.key),
+	],
+);

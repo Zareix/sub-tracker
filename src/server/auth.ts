@@ -1,7 +1,8 @@
+import { apiKey } from "@better-auth/api-key";
 import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { apiKey, genericOAuth } from "better-auth/plugins";
+import { genericOAuth } from "better-auth/plugins";
 import { admin } from "better-auth/plugins/admin";
 import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
@@ -96,6 +97,7 @@ export const auth = betterAuth({
 			origin: env.BETTER_AUTH_URL,
 		}),
 		apiKey({
+			references: "user",
 			rateLimit: {
 				enabled: env.NODE_ENV === "production",
 				maxRequests: 100,
@@ -122,14 +124,14 @@ export const verifyApiKey = async (req: NextRequest) => {
 		throw new Error("No API key provided");
 	}
 
-	const { valid, key, error } = await auth.api.verifyApiKey({
+	const { valid, key } = await auth.api.verifyApiKey({
 		body: { key: apiKey },
 	});
 	if (!valid || !key) {
-		throw new Error(error?.message || "Invalid API key");
+		throw new Error("Invalid API key");
 	}
 
 	return await db.query.users.findFirst({
-		where: (users, { eq }) => eq(users.id, key.userId),
+		where: (users, { eq }) => eq(users.id, key.referenceId),
 	});
 };
