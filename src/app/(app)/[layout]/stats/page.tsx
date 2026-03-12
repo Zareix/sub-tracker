@@ -3,7 +3,6 @@
 import { InfoIcon } from "lucide-react";
 import Head from "next/head";
 import { useTranslations } from "next-intl";
-import { useMemo } from "react";
 import { Label, Pie, PieChart } from "recharts";
 import { FiltersButton } from "~/components/subscriptions/filters";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -20,11 +19,7 @@ import {
 } from "~/components/ui/popover";
 import { Skeleton } from "~/components/ui/skeleton";
 import { authClient } from "~/lib/auth-client";
-import {
-	CURRENCY_SYMBOLS,
-	type Currencies,
-	DEFAULT_BASE_CURRENCY,
-} from "~/lib/constant";
+import { CURRENCY_SYMBOLS, DEFAULT_BASE_CURRENCY } from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
 import { getStats } from "~/lib/stats";
 import {
@@ -34,15 +29,15 @@ import {
 } from "~/lib/utils";
 import { api, type RouterOutputs } from "~/trpc/react";
 
+type ChartFillColor = `var(--chart-${number})`;
+
 export default function StatsPage() {
 	const t = useTranslations("StatsPage");
 	const [filters] = useFilters();
 	const subscriptionsQuery = api.subscription.getAll.useQuery();
 	const { data: session } = authClient.useSession();
 
-	const userBaseCurrency =
-		(session?.user?.baseCurrency as (typeof Currencies)[number]) ??
-		DEFAULT_BASE_CURRENCY;
+	const userBaseCurrency = session?.user?.baseCurrency ?? DEFAULT_BASE_CURRENCY;
 	const isLoading = subscriptionsQuery.isLoading;
 
 	const subscriptions = getFilteredSubscriptions(
@@ -53,13 +48,35 @@ export default function StatsPage() {
 		},
 	);
 
+	const monthlySubscriptions = subscriptions.filter(
+		(s) => s.schedule === "Monthly",
+	);
+	const quarterlySubscriptions = subscriptions.filter(
+		(s) => s.schedule === "Quarterly",
+	);
+	const semiannualSubscriptions = subscriptions.filter(
+		(s) => s.schedule === "Semiannual",
+	);
+	const yearlySubscriptions = subscriptions.filter(
+		(s) => s.schedule === "Yearly",
+	);
+
 	const {
 		expectedNextMonth,
 		totalPerMonth,
 		totalPerYear,
 		remainingThisMonth,
 		totalThisMonth,
-	} = useMemo(() => getStats(subscriptions, filters), [subscriptions, filters]);
+	} = getStats(subscriptions, filters);
+	const categoriesFillColor = Array.from(
+		new Set(subscriptions.map((s) => s.category.name)),
+	).reduce(
+		(acc, category, index) => {
+			acc[category] = `var(--chart-${(index + 1) % 5})`;
+			return acc;
+		},
+		{} as Record<string, ChartFillColor>,
+	);
 
 	if (subscriptionsQuery.isError) {
 		return (
@@ -84,35 +101,31 @@ export default function StatsPage() {
 				<div className="mt-2 grid gap-2 md:auto-rows-auto md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 					<MonthlyStatsCard
 						title={t("monthlySub")}
-						subscriptions={subscriptions.filter(
-							(subscription) => subscription.schedule === "Monthly",
-						)}
+						subscriptions={monthlySubscriptions}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
+						categoriesFillColor={categoriesFillColor}
 					/>
 					<MonthlyStatsCard
 						title={t("quarterlySub")}
-						subscriptions={subscriptions.filter(
-							(subscription) => subscription.schedule === "Quarterly",
-						)}
+						subscriptions={quarterlySubscriptions}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
+						categoriesFillColor={categoriesFillColor}
 					/>
 					<MonthlyStatsCard
 						title={t("semiannualSub")}
-						subscriptions={subscriptions.filter(
-							(subscription) => subscription.schedule === "Semiannual",
-						)}
+						subscriptions={semiannualSubscriptions}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
+						categoriesFillColor={categoriesFillColor}
 					/>
 					<MonthlyStatsCard
 						title={t("yearlySub")}
-						subscriptions={subscriptions.filter(
-							(subscription) => subscription.schedule === "Yearly",
-						)}
+						subscriptions={yearlySubscriptions}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
+						categoriesFillColor={categoriesFillColor}
 					/>
 					<StatsCard
 						title={t("smoothedMonth.title")}
@@ -198,81 +211,69 @@ const MonthlyStatsCard = ({
 	subscriptions,
 	isLoading,
 	userBaseCurrency,
+	categoriesFillColor,
 }: {
 	title: string;
 	subscriptions: RouterOutputs["subscription"]["getAll"];
 	isLoading: boolean;
 	userBaseCurrency: string;
+	categoriesFillColor: Record<string, ChartFillColor>;
 }) => {
 	const t = useTranslations("StatsPage");
 	const [filters] = useFilters();
-	const totalMonthlySub = useMemo(
-		() =>
-			rounded(
-				subscriptions.reduce(
-					(acc, subscription) =>
-						filters.users
-							? acc + subscription.price / subscription.users.length
-							: acc + subscription.price,
-					0,
-				),
-			),
-		[filters.users, subscriptions],
+	const totalMonthlySub = rounded(
+		subscriptions.reduce(
+			(acc, subscription) =>
+				filters.users
+					? acc + subscription.price / subscription.users.length
+					: acc + subscription.price,
+			0,
+		),
 	);
-	const chartData = useMemo(
-		() =>
-			subscriptions
-				.map((subscription) => {
-					return {
-						price: subscription.price,
-						category: subscription.category.name,
-						usersLength: subscription.users.length,
-					};
-				})
-				.reduce(
-					(acc, subscription) => {
-						const cat = acc.find(
-							(cat) => cat.category === subscription.category,
-						);
-						const subPrice = filters.users
-							? subscription.price / subscription.usersLength
-							: subscription.price;
-						if (cat) {
-							cat.price += subPrice;
-						} else {
-							acc.push({
-								category: subscription.category,
-								price: subPrice,
-								fill: `var(--chart-${acc.length + 1})`,
-							});
-						}
-						return acc;
-					},
-					[] as Array<{
-						category: string;
-						price: number;
-						fill: `var(--chart-${number})`;
-					}>,
-				)
-				.map((x) => ({
-					...x,
-					price: rounded(x.price),
-				})),
-		[filters.users, subscriptions],
-	);
-	const chartConfig = useMemo(
-		() =>
-			Array.from(new Set(subscriptions.map((s) => s.category.name))).reduce(
-				(acc, category) => {
-					acc[category] = {
-						label: category,
-					};
-					return acc;
-				},
-				{} as ChartConfig,
-			),
-		[subscriptions],
-	);
+	const chartData = subscriptions
+		.map((subscription) => {
+			return {
+				price: subscription.price,
+				category: subscription.category.name,
+				usersLength: subscription.users.length,
+			};
+		})
+		.reduce(
+			(acc, subscription) => {
+				const cat = acc.find((cat) => cat.category === subscription.category);
+				const subPrice = filters.users
+					? subscription.price / subscription.usersLength
+					: subscription.price;
+				if (cat) {
+					cat.price += subPrice;
+				} else {
+					acc.push({
+						category: subscription.category,
+						price: subPrice,
+					});
+				}
+				return acc;
+			},
+			[] as Array<{
+				category: string;
+				price: number;
+				fill?: ChartFillColor;
+			}>,
+		)
+		.sort((a, b) => b.category.localeCompare(a.category))
+		.map((x, i) => ({
+			...x,
+			price: rounded(x.price),
+			fill: categoriesFillColor[x.category] ?? `var(--chart-${(i + 1) % 5})`,
+		}));
+	const chartConfig = Array.from(
+		new Set(subscriptions.map((s) => s.category.name)),
+	).reduce((acc, category) => {
+		acc[category] = {
+			label: category,
+		};
+		return acc;
+	}, {} as ChartConfig);
 
 	if (isLoading) {
 		return (

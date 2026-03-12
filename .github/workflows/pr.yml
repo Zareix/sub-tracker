@@ -12,7 +12,6 @@ jobs:
       id-token: write
     uses: zareix/gh-actions/.github/workflows/docker.yml@main
     with:
-      platforms: linux/amd64 #,linux/arm64
       push-image: false
 
   lint:
@@ -42,9 +41,11 @@ jobs:
 
       - name: Install Playwright Browsers
         run: bunx playwright install
+
       - name: Run E2E tests
         run: bun run test:e2e
-      - uses: actions/upload-artifact@v6
+
+      - uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report

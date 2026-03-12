@@ -1,9 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { defaultFilter } from "cmdk";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { iconNames } from "lucide-react/dynamic";
 import { useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
@@ -83,18 +82,6 @@ export const EditCreateForm = ({
 			toast.error(error.message);
 		},
 	});
-	const [search, setSearch] = useState("");
-	const filteredIconNames = useMemo(
-		() =>
-			iconNames
-				.filter((name) => {
-					if (!search || search === "") return false;
-					return defaultFilter(name, search);
-				})
-				.slice(0, 100),
-		[search],
-	);
-
 	const form = useForm<z.infer<typeof categoryCreateSchema>>({
 		resolver: zodResolver(categoryCreateSchema),
 		defaultValues: {
@@ -102,6 +89,14 @@ export const EditCreateForm = ({
 			icon: category?.icon ?? "",
 		},
 	});
+	const [search, setSearch] = useState("");
+	const filteredIconNames = iconNames
+		.filter((name) => {
+			if (!search || search === "") return false;
+			return name.toLowerCase().includes(search.toLowerCase());
+		})
+		.toSorted((a, b) => a.localeCompare(b))
+		.slice(0, 30);
 
 	function onSubmit(values: z.infer<typeof categoryCreateSchema>) {
 		if (category) {
@@ -219,7 +214,14 @@ export const EditCreateForm = ({
 					)}
 				/>
 				<DialogFooter>
-					<Button type="submit">{tCommon("actions.submit")}</Button>
+					<Button
+						type="submit"
+						disabled={
+							createCategoryMutation.isPending || editCategoryMutation.isPending
+						}
+					>
+						{tCommon("actions.submit")}
+					</Button>
 				</DialogFooter>
 			</FieldGroup>
 		</form>
