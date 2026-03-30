@@ -1,4 +1,4 @@
-import { compareAsc, isBefore, isThisMonth } from "date-fns";
+import { compareAsc, endOfToday, isBefore, isThisMonth } from "date-fns";
 import {
 	Calendar1Icon,
 	CopyPlusIcon,
@@ -71,11 +71,12 @@ export const SubscriptionList = ({ subscriptions }: Props) => {
 		);
 	}
 
+	const now = endOfToday();
 	const previousSubOfThisMonths = subs
 		.filter(
 			(s) =>
 				isThisMonth(s.previousPaymentDate) &&
-				isBefore(s.previousPaymentDate, new Date()),
+				isBefore(s.previousPaymentDate, now),
 		)
 		.toSorted((a, b) =>
 			compareAsc(a.previousPaymentDate, b.previousPaymentDate),

@@ -51,7 +51,10 @@ export const LoginForm = () => {
 		},
 		onSuccess: (res) => {
 			if (res?.error) {
-				toast.error(res?.error.message ?? "Could not login, please try again.");
+				toast.error(
+					res?.error.message?.toString() ??
+						"Could not login, please try again.",
+				);
 			} else {
 				router.refresh();
 			}

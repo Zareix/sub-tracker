@@ -30,7 +30,6 @@ const config = {
 		],
 	},
 	transpilePackages: [
-		"geist",
 		// This should be temporary
 		"@better-auth",
 		"better-auth",
