@@ -1,3 +1,5 @@
+"use client";
+
 import { useMutation } from "@tanstack/react-query";
 import {
 	Calendar1Icon,
@@ -130,6 +132,19 @@ export function AppSidebar() {
 		const currentPath = pathname;
 		router.replace(currentPath, { locale: newLocale as "en" | "fr" });
 		router.refresh();
+	};
+
+	const signOut = () => {
+		authClient
+			.signOut()
+			.then(() => {
+				router.push("/login");
+			})
+			.catch((error) => {
+				toast.error(
+					error instanceof Error ? error.message : "Failed to sign out",
+				);
+			});
 	};
 
 	const query = {
@@ -358,7 +373,7 @@ export function AppSidebar() {
 												</DropdownMenuSubContent>
 											</DropdownMenuPortal>
 										</DropdownMenuSub>
-										<DropdownMenuItem onClick={() => authClient.signOut()}>
+										<DropdownMenuItem onClick={signOut}>
 											<LogOutIcon />
 											{t("logOut")}
 										</DropdownMenuItem>

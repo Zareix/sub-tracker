@@ -42,6 +42,8 @@ const config = {
 	typescript: {
 		ignoreBuildErrors: !!process.env.SKIP_LINT,
 	},
+
+	allowedDevOrigins: ["192.168.31.5"],
 };
 
 const withNextIntl = createNextIntlPlugin({

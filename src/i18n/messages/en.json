@@ -71,6 +71,7 @@
 		"delete": "Delete"
 	},
 	"Filters": {
+		"label": "Filters",
 		"users": "Users",
 		"schedule": "Schedule",
 		"paymentMethods": "Payment Methods",
@@ -216,6 +217,41 @@
 			"expires": "Expires",
 			"copied": "API key copied to clipboard!",
 			"deletedSuccess": "API key deleted successfully!"
+		}
+	},
+	"LoginPage": {
+		"title": "Login",
+		"forgotPassword": "Forgot password?",
+		"loginButton": "Login",
+		"lastUsed": "Last used",
+		"orContinueWith": "Or continue with",
+		"loginWithPasskey": "Login with passkey",
+		"loginWithOAuth": "Login with {provider}",
+		"errors": {
+			"loginFailed": "Could not login, please try again.",
+			"enterEmailFirst": "Please enter your email first.",
+			"requestResetFailed": "Could not request password reset, please try again.",
+			"loadProvidersFailed": "An error occured loading auth providers. Please retry"
+		},
+		"success": {
+			"resetEmailSent": "If that email exists, a reset link has been sent."
+		}
+	},
+	"ResetPasswordPage": {
+		"title": "Reset password",
+		"fields": {
+			"newPassword": "Password",
+			"newPasswordPlaceholder": "********"
+		},
+		"actions": {
+			"submit": "Reset password"
+		},
+		"errors": {
+			"passwordMinLength": "Password must be at least 8 characters long",
+			"resetFailed": "Could not reset password, please try again."
+		},
+		"success": {
+			"passwordReset": "Password reset successfully"
 		}
 	},
 	"SubscriptionForm": {

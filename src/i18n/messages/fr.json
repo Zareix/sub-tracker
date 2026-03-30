@@ -78,6 +78,7 @@
 		"delete": "Supprimer"
 	},
 	"Filters": {
+		"label": "Filtres",
 		"users": "Utilisateurs",
 		"schedule": "Périodicité",
 		"paymentMethods": "Moyens de paiement",
@@ -216,6 +217,38 @@
 			"expires": "Expire",
 			"copied": "Clé API copiée dans le presse-papiers !",
 			"deletedSuccess": "Clé API supprimée avec succès !"
+		}
+	},
+	"LoginPage": {
+		"title": "Connexion",
+		"forgotPassword": "Mot de passe oublié ?",
+		"loginButton": "Se connecter",
+		"lastUsed": "Dernier utilisé",
+		"orContinueWith": "Ou continuer avec",
+		"loginWithPasskey": "Se connecter avec une clé d'accès",
+		"loginWithOAuth": "Se connecter avec {provider}",
+		"errors": {
+			"loginFailed": "Échec de la connexion, veuillez réessayer.",
+			"enterEmailFirst": "Veuillez d'abord saisir votre email.",
+			"requestResetFailed": "Échec de la demande de réinitialisation du mot de passe, veuillez réessayer.",
+			"loadProvidersFailed": "Une erreur est survenue lors du chargement des fournisseurs d'authentification. Veuillez réessayer."
+		},
+		"success": {
+			"resetEmailSent": "Si cet email existe, un lien de réinitialisation a été envoyé."
+		}
+	},
+	"ResetPasswordPage": {
+		"title": "Réinitialiser le mot de passe",
+		"passwordLabel": "Mot de passe",
+		"submitButton": "Se connecter",
+		"success": {
+			"passwordReset": "Mot de passe réinitialisé avec succès"
+		},
+		"errors": {
+			"resetFailed": "Échec de la connexion, veuillez réessayer."
+		},
+		"validation": {
+			"passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères"
 		}
 	},
 	"SubscriptionForm": {

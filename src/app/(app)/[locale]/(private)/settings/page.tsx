@@ -46,7 +46,7 @@ export default function SettingsPage() {
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[70px]">
+								<TableHead className="w-17.5">
 									{tCommon("form.image")}
 								</TableHead>
 								<TableHead>{tCommon("form.name")}</TableHead>

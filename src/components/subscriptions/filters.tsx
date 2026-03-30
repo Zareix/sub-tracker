@@ -1,10 +1,12 @@
-import { FilterIcon, TrashIcon } from "lucide-react";
+import { FilterIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import {
 	Popover,
 	PopoverContent,
+	PopoverHeader,
+	PopoverTitle,
 	PopoverTrigger,
 } from "~/components/ui/popover";
 import {
@@ -14,6 +16,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
+import { Separator } from "~/components/ui/separator";
 import { SCHEDULES, type Schedule } from "~/lib/constant";
 import { type Filters, useFilters } from "~/lib/hooks/use-filters";
 import { cn } from "~/lib/utils";
@@ -73,16 +76,25 @@ export const FiltersButton = ({
 						</Button>
 					}
 				/>
-				<PopoverContent className="mr-3 flex w-fit flex-col gap-2 p-4">
-					{filtersDisplayed.includes("users") && (
-						<>
-							<Label className="mt-2">{t("users")}</Label>
-							<div className="flex items-center gap-2">
+				<PopoverContent className="mr-3 w-fit min-w-50 gap-0 p-1">
+					<PopoverHeader className="gap-0">
+						<PopoverTitle className="px-2 py-1.5 font-medium text-muted-foreground text-xs">
+							{t("label")}
+						</PopoverTitle>
+						<Separator className="my-1 -ml-1 w-[calc(100%+0.5rem)]" />
+					</PopoverHeader>
+					<div className="flex flex-col gap-2 p-2 pt-0">
+						{filtersDisplayed.includes("users") && (
+							<>
+								<Label htmlFor="filters-users" className="mt-2">
+									{t("users")}
+								</Label>
 								<Select
+									id="filters-users"
 									onValueChange={(value) =>
 										setFilters({
 											...filters,
-											users: value,
+											users: filters.users === value ? null : value,
 										})
 									}
 									value={filters.users ?? ""}
@@ -91,12 +103,7 @@ export const FiltersButton = ({
 										value: u.id,
 									}))}
 								>
-									<SelectTrigger
-										className={cn(
-											"capitalize",
-											filters.users ? "w-40" : "w-50",
-										)}
-									>
+									<SelectTrigger className="w-full capitalize">
 										<SelectValue placeholder={t("select")} />
 									</SelectTrigger>
 									<SelectContent>
@@ -107,37 +114,26 @@ export const FiltersButton = ({
 										))}
 									</SelectContent>
 								</Select>
-								{filters.users && (
-									<Button
-										variant="destructive"
-										size="icon"
-										onClick={() => setFilters({ ...filters, users: null })}
-									>
-										<TrashIcon className="size-5" />
-									</Button>
-								)}
-							</div>
-						</>
-					)}
-					{filtersDisplayed.includes("schedule") && (
-						<>
-							<Label className="mt-2">{t("schedule")}</Label>
-							<div className="flex items-center gap-2">
+							</>
+						)}
+						{filtersDisplayed.includes("schedule") && (
+							<>
+								<Label htmlFor="filters-schedule" className="mt-2">
+									{t("schedule")}
+								</Label>
 								<Select
+									id="filters-schedule"
 									onValueChange={(value) =>
 										setFilters({
 											...filters,
-											schedule: value as Schedule,
+											schedule:
+												filters.schedule === value ? null : (value as Schedule),
 										})
 									}
 									value={filters.schedule ?? ""}
+									itemToStringLabel={(v) => tSchedule(v as Schedule)}
 								>
-									<SelectTrigger
-										className={cn(
-											"capitalize",
-											filters.schedule ? "w-40" : "w-50",
-										)}
-									>
+									<SelectTrigger className="w-full capitalize">
 										<SelectValue placeholder={t("select")} />
 									</SelectTrigger>
 									<SelectContent>
@@ -148,83 +144,79 @@ export const FiltersButton = ({
 										))}
 									</SelectContent>
 								</Select>
-								{filters.schedule && (
-									<Button
-										variant="destructive"
-										size="icon"
-										onClick={() => setFilters({ ...filters, schedule: null })}
-									>
-										<TrashIcon className="size-5" />
-									</Button>
-								)}
-							</div>
-						</>
-					)}
-
-					{filtersDisplayed.includes("paymentMethods") && (
-						<>
-							<Label className="mt-2">{t("paymentMethods")}</Label>
-							<Select
-								onValueChange={(value) =>
-									setFilters({
-										...filters,
-										paymentMethods: value.map((v) => Number.parseInt(v, 10)),
-									})
-								}
-								value={filters.paymentMethods.map((pm) => pm.toString())}
-								multiple
-								items={
-									paymentMethods.map((pm) => ({
-										label: pm.name,
-										value: pm.id.toString(),
-									})) ?? []
-								}
-							>
-								<SelectTrigger className="w-full capitalize">
-									<SelectValue placeholder={t("select")} />
-								</SelectTrigger>
-								<SelectContent>
-									{paymentMethods.map((pm) => (
-										<SelectItem value={pm.id.toString()} key={pm.id}>
-											{pm.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</>
-					)}
-					{filtersDisplayed.includes("categories") && (
-						<>
-							<Label className="mt-2">{t("categories")}</Label>
-							<Select
-								onValueChange={(value) =>
-									setFilters({
-										...filters,
-										categories: value.map((v) => Number.parseInt(v, 10)),
-									})
-								}
-								value={filters.categories.map((pm) => pm.toString())}
-								items={
-									categories.map((pm) => ({
-										label: pm.name,
-										value: pm.id.toString(),
-									})) ?? []
-								}
-								multiple
-							>
-								<SelectTrigger className="w-full capitalize">
-									<SelectValue placeholder={t("select")} />
-								</SelectTrigger>
-								<SelectContent>
-									{categories.map((pm) => (
-										<SelectItem value={pm.id.toString()} key={pm.id}>
-											{pm.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</>
-					)}
+							</>
+						)}
+						{filtersDisplayed.includes("paymentMethods") && (
+							<>
+								<Label htmlFor="filters-paymentMethods" className="mt-2">
+									{t("paymentMethods")}
+								</Label>
+								<Select
+									id="filters-paymentMethods"
+									onValueChange={(value) =>
+										setFilters({
+											...filters,
+											paymentMethods: value.map((v) => Number.parseInt(v, 10)),
+										})
+									}
+									value={filters.paymentMethods.map((pm) => pm.toString())}
+									multiple
+									items={
+										paymentMethods.map((pm) => ({
+											label: pm.name,
+											value: pm.id.toString(),
+										})) ?? []
+									}
+								>
+									<SelectTrigger className="w-full capitalize">
+										<SelectValue placeholder={t("select")} />
+									</SelectTrigger>
+									<SelectContent>
+										{paymentMethods.map((pm) => (
+											<SelectItem value={pm.id.toString()} key={pm.id}>
+												{pm.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</>
+						)}
+						{filtersDisplayed.includes("categories") && (
+							<>
+								<Label htmlFor="filters-categories" className="mt-2">
+									{t("categories")}
+								</Label>
+								<Select
+									id="filters-categories"
+									onValueChange={(value) =>
+										setFilters({
+											...filters,
+											categories: value.map((v) => Number.parseInt(v, 10)),
+										})
+									}
+									value={filters.categories.map((pm) => pm.toString())}
+									items={
+										categories.map((pm) => ({
+											label: pm.name,
+											value: pm.id.toString(),
+										})) ?? []
+									}
+									multiple
+								>
+									<SelectTrigger className="w-full capitalize">
+										<SelectValue placeholder={t("select")} />
+									</SelectTrigger>
+									<SelectContent>
+										{categories.map((pm) => (
+											<SelectItem value={pm.id.toString()} key={pm.id}>
+												{pm.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</>
+						)}
+					</div>
 				</PopoverContent>
 			</Popover>
 		</div>

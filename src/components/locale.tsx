@@ -1,3 +1,5 @@
+"use client";
+
 import { setDefaultOptions } from "date-fns";
 import { useEffect } from "react";
 

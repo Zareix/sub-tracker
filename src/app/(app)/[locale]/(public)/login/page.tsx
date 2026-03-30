@@ -1,13 +1,17 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { CalendarSyncIcon, KeySquareIcon } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useQueryState } from "nuqs";
 import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4-mini";
-import { AuthProvidersIcon } from "~/components/login/auth-providers-icon";
+import { AuthProvidersIcon } from "~/components/auth/auth-providers-icon";
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
@@ -18,6 +22,7 @@ import {
 	FieldSeparator,
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
+import { useRouter } from "~/i18n/navigation";
 import { type AuthProvider, authClient } from "~/lib/auth-client";
 import { api } from "~/trpc/react";
 
@@ -26,9 +31,12 @@ const loginSchema = z.object({
 	password: z.string(),
 });
 
-export const LoginForm = () => {
+const LoginPage = () => {
+	const t = useTranslations("LoginPage");
+	const tc = useTranslations("Common");
 	const router = useRouter();
 	const availableProvidersQuery = api.user.authProviders.useQuery();
+	const [redirect] = useQueryState("redirect", { defaultValue: "/" });
 	const signInMutation = useMutation({
 		mutationFn: async (values: z.infer<typeof loginSchema>) => {
 			return authClient.signIn.email({
@@ -38,11 +46,13 @@ export const LoginForm = () => {
 		},
 		onSuccess: (res) => {
 			if (res.error) {
-				toast.error(res.error.message ?? "Could not login, please try again.");
+				toast.error(res.error.message ?? t("errors.loginFailed"));
+			} else {
+				router.push(redirect);
 			}
 		},
 		onError: () => {
-			toast.error("Could not login, please try again.");
+			toast.error(t("errors.loginFailed"));
 		},
 	});
 	const signInPassKeyMutation = useMutation({
@@ -51,16 +61,13 @@ export const LoginForm = () => {
 		},
 		onSuccess: (res) => {
 			if (res?.error) {
-				toast.error(
-					res?.error.message?.toString() ??
-						"Could not login, please try again.",
-				);
+				toast.error(res?.error.message?.toString() ?? t("errors.loginFailed"));
 			} else {
-				router.refresh();
+				router.push(redirect);
 			}
 		},
 		onError: () => {
-			toast.error("Could not login, please try again.");
+			toast.error(t("errors.loginFailed"));
 		},
 	});
 	const signInOAuthMutation = useMutation({
@@ -71,13 +78,16 @@ export const LoginForm = () => {
 		},
 		onSuccess: (res) => {
 			if (res?.error) {
-				toast.error(res?.error.message ?? "Could not login, please try again.");
+				toast.error(res?.error.message ?? t("errors.loginFailed"));
+			} else {
+				router.push(redirect);
 			}
 		},
 		onError: () => {
-			toast.error("Could not login, please try again.");
+			toast.error(t("errors.loginFailed"));
 		},
 	});
+	const lastMethod = authClient.getLastUsedLoginMethod();
 
 	const form = useForm<z.infer<typeof loginSchema>>({
 		resolver: zodResolver(loginSchema),
@@ -94,22 +104,22 @@ export const LoginForm = () => {
 	function resetPassword() {
 		const email = form.getValues("email");
 		if (!email) {
-			toast.error("Please enter your email first.");
+			toast.error(t("errors.enterEmailFirst"));
 			return;
 		}
 		authClient
 			.requestPasswordReset({
 				email: email.trim(),
-				redirectTo: "/",
+				redirectTo: "/reset-password",
 			})
 			.then((res) => {
 				if (res.error) {
 					throw new Error(res.error.message);
 				}
-				toast.success("If that email exists, a reset link has been sent.");
+				toast.success(t("success.resetEmailSent"));
 			})
 			.catch(() => {
-				toast.error("Could not request password reset, please try again.");
+				toast.error(t("errors.requestResetFailed"));
 			});
 	}
 
@@ -118,11 +128,11 @@ export const LoginForm = () => {
 	}
 
 	if (availableProvidersQuery.isError || !availableProvidersQuery.data) {
-		return <div>An error occured loading auth providers. Please retry</div>;
+		return <div>{t("errors.loadProvidersFailed")}</div>;
 	}
 
 	return (
-		<Card className="from-card">
+		<Card className="w-full max-w-sm from-card">
 			<CardHeader>
 				<Link
 					href="#"
@@ -133,7 +143,7 @@ export const LoginForm = () => {
 					</div>
 					Subtracker
 				</Link>
-				<CardTitle className="text-2xl">Login</CardTitle>
+				<CardTitle className="text-2xl">{t("title")}</CardTitle>
 			</CardHeader>
 			<CardContent className="mt-4 grid gap-3">
 				{availableProvidersQuery.data.map((provider) => (
@@ -150,7 +160,9 @@ export const LoginForm = () => {
 											name="email"
 											render={({ field, fieldState }) => (
 												<Field data-invalid={fieldState.invalid}>
-													<FieldLabel htmlFor="login-email">Email</FieldLabel>
+													<FieldLabel htmlFor="login-email">
+														{tc("form.email")}
+													</FieldLabel>
 													<Input
 														{...field}
 														id="login-email"
@@ -171,7 +183,7 @@ export const LoginForm = () => {
 												<Field data-invalid={fieldState.invalid}>
 													<div className="flex items-end">
 														<FieldLabel htmlFor="login-password">
-															Password
+															{tc("form.password")}
 														</FieldLabel>
 														<Button
 															variant="link"
@@ -179,7 +191,7 @@ export const LoginForm = () => {
 															onClick={resetPassword}
 															type="button"
 														>
-															Forgot password?
+															{t("forgotPassword")}
 														</Button>
 													</div>
 													<Input
@@ -196,26 +208,42 @@ export const LoginForm = () => {
 												</Field>
 											)}
 										/>
-										<Button type="submit" className="w-full">
-											Login
+										<Button type="submit" className="relative w-full">
+											{t("loginButton")}
+											{lastMethod === "email" && (
+												<Badge
+													className="absolute -top-2.5 -right-2.5 h-5 min-w-5"
+													variant="secondary"
+												>
+													{t("lastUsed")}
+												</Badge>
+											)}
 										</Button>
 									</FieldGroup>
 								</form>
 								<FieldSeparator className="my-2">
-									Or continue with
+									{t("orContinueWith")}
 								</FieldSeparator>
 							</>
 						)}
-						{provider === "password" && (
+						{provider === "passkey" && (
 							<Button
 								onClick={() => {
 									signInPassKeyMutation.mutate();
 								}}
 								variant="outline"
-								className="w-full"
+								className="relative w-full"
 							>
 								<KeySquareIcon size={16} />
-								Login with passkey
+								{t("loginWithPasskey")}
+								{lastMethod === provider && (
+									<Badge
+										className="absolute -top-2.5 -right-2.5 h-5 min-w-5"
+										variant="secondary"
+									>
+										{t("lastUsed")}
+									</Badge>
+								)}
 							</Button>
 						)}
 						{provider.startsWith("oauth-") && (
@@ -224,10 +252,20 @@ export const LoginForm = () => {
 									signInOAuthMutation.mutate(provider);
 								}}
 								variant="outline"
-								className="w-full"
+								className="relative w-full"
 							>
 								<AuthProvidersIcon providerId={provider} />
-								Login with {provider.replace("oauth-", "")}
+								{t("loginWithOAuth", {
+									provider: provider.replace("oauth-", ""),
+								})}
+								{lastMethod === provider.replace("oauth-", "") && (
+									<Badge
+										className="absolute -top-2.5 -right-2.5 h-5 min-w-5"
+										variant="secondary"
+									>
+										{t("lastUsed")}
+									</Badge>
+								)}
 							</Button>
 						)}
 					</Fragment>
@@ -236,3 +274,5 @@ export const LoginForm = () => {
 		</Card>
 	);
 };
+
+export default LoginPage;

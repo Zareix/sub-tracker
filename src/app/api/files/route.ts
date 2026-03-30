@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 			console.log("imageUrl", imageUrl);
 			console.log("contentType", contentType);
 
-			if (!contentType || !contentType.startsWith("image/")) {
+			if (!contentType?.startsWith("image/")) {
 				return NextResponse.json(
 					{ error: "Invalid image URL" },
 					{ status: 400 },

@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
-import { NextIntlClientProvider } from "next-intl";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/components/ui/theme-provider";
 import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/styles/globals.css";
-import { Layout } from "~/components/layout";
+import { notFound } from "next/navigation";
+import { routing } from "~/i18n/routing";
 
 const geist = Geist({
 	subsets: ["latin"],
@@ -32,24 +33,25 @@ export const viewport: Viewport = {
 	],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
+	params,
 }: {
 	children: React.ReactNode;
+	params: Promise<{ locale: string }>;
 }) {
+	const { locale } = await params;
+	if (!hasLocale(routing.locales, locale)) {
+		notFound();
+	}
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body className={geist.className}>
 				<TRPCReactProvider>
 					<NuqsAdapter>
-						<ThemeProvider
-							attribute="class"
-							defaultTheme="system"
-							enableSystem
-							disableTransitionOnChange
-						>
+						<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
 							<NextIntlClientProvider>
-								<Layout>{children}</Layout>
+								{children}
 								<Toaster
 									toastOptions={{
 										className:

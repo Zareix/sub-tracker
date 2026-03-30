@@ -99,12 +99,10 @@ export default function AdminPage() {
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[70px]">
+								<TableHead className="w-17.5">
 									{tCommon("form.image")}
 								</TableHead>
-								<TableHead className="w-[100px]">
-									{tCommon("form.name")}
-								</TableHead>
+								<TableHead className="w-25">{tCommon("form.name")}</TableHead>
 								<TableHead>{tCommon("form.email")}</TableHead>
 								<TableHead>{tCommon("form.role")}</TableHead>
 								<TableHead className="text-end">

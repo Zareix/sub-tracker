@@ -1,8 +1,10 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { CalendarSyncIcon } from "lucide-react";
 import Link from "next/link";
-import { useQueryState } from "nuqs";
+import { useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -15,36 +17,38 @@ import {
 	FieldLabel,
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
+import { useRouter } from "~/i18n/navigation";
 import { authClient } from "~/lib/auth-client";
 
 const loginSchema = z.object({
-	newPassword: z.string().min(8, "Password must be at least 8 characters long"),
+	newPassword: z.string().min(8),
 	token: z.string(),
 });
 
-const ResetPassword = ({ token }: { token: string }) => {
-	const [, setToken] = useQueryState("token");
+export const ResetPasswordForm = ({ token }: { token: string }) => {
+	const router = useRouter();
+	const t = useTranslations("ResetPasswordPage");
 	const resetPasswordMutation = useMutation({
 		mutationFn: async (values: z.infer<typeof loginSchema>) => {
 			return authClient.resetPassword(values);
 		},
 		onSuccess: (res) => {
 			if (res.error) {
-				toast.error(res.error.message ?? "Could not login, please try again.");
+				toast.error(res.error.message ?? t("errors.resetFailed"));
 			} else {
-				toast.success("Password reset successfully");
-				setToken(null, { clearOnDefault: true });
+				toast.success(t("success.passwordReset"));
+				router.push("/login");
 			}
 		},
 		onError: () => {
-			toast.error("Could not login, please try again.");
+			toast.error(t("errors.resetFailed"));
 		},
 	});
 	const form = useForm<z.infer<typeof loginSchema>>({
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
 			newPassword: "",
-			token,
+			token: token ?? "",
 		},
 		disabled: resetPasswordMutation.isPending,
 	});
@@ -54,7 +58,7 @@ const ResetPassword = ({ token }: { token: string }) => {
 	};
 
 	return (
-		<Card>
+		<Card className="w-full max-w-sm">
 			<CardHeader>
 				<Link
 					href="#"
@@ -65,7 +69,7 @@ const ResetPassword = ({ token }: { token: string }) => {
 					</div>
 					Subtracker
 				</Link>
-				<CardTitle className="text-2xl">Reset password</CardTitle>
+				<CardTitle className="text-2xl">{t("title")}</CardTitle>
 			</CardHeader>
 			<CardContent className="mt-4">
 				<form onSubmit={form.handleSubmit(onSubmit)}>
@@ -75,22 +79,31 @@ const ResetPassword = ({ token }: { token: string }) => {
 							name="newPassword"
 							render={({ field, fieldState }) => (
 								<Field data-invalid={fieldState.invalid}>
-									<FieldLabel htmlFor="reset-password">Password</FieldLabel>
+									<FieldLabel htmlFor="reset-password">
+										{t("fields.newPassword")}
+									</FieldLabel>
 									<Input
 										{...field}
 										id="reset-password"
 										type="password"
 										aria-invalid={fieldState.invalid}
-										placeholder="********"
+										placeholder={t("fields.newPasswordPlaceholder")}
 									/>
-									{fieldState.invalid && (
-										<FieldError errors={[fieldState.error]} />
+									{fieldState.error && (
+										<FieldError
+											errors={[
+												{
+													...fieldState.error,
+													message: t("errors.passwordMinLength"),
+												},
+											]}
+										/>
 									)}
 								</Field>
 							)}
 						/>
 						<Button type="submit" className="w-full">
-							Login
+							{t("actions.submit")}
 						</Button>
 					</FieldGroup>
 				</form>
@@ -98,5 +111,3 @@ const ResetPassword = ({ token }: { token: string }) => {
 		</Card>
 	);
 };
-
-export default ResetPassword;

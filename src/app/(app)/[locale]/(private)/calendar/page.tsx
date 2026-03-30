@@ -4,6 +4,7 @@ import { addMonths, isBefore, isSameDay, subMonths } from "date-fns";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { Loading } from "~/components/loading";
 import { Calendar, CalendarDayButton } from "~/components/ui/calendar";
 import {
 	Popover,
@@ -24,7 +25,7 @@ export default function CalendarPage() {
 			</header>
 			<div className="mt-2">
 				{subscriptionsQuery.isLoading ? (
-					<p>{t("loading")}</p>
+					<Loading size="lg" />
 				) : subscriptionsQuery.isError || !subscriptionsQuery.data ? (
 					<p>{t("error")}</p>
 				) : (

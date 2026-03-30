@@ -2,7 +2,7 @@ import { apiKey } from "@better-auth/api-key";
 import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { genericOAuth } from "better-auth/plugins";
+import { genericOAuth, lastLoginMethod } from "better-auth/plugins";
 import { admin } from "better-auth/plugins/admin";
 import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
@@ -104,6 +104,7 @@ export const auth = betterAuth({
 				timeWindow: 1000,
 			},
 		}),
+		lastLoginMethod(),
 		admin(),
 	].filter(Boolean),
 });

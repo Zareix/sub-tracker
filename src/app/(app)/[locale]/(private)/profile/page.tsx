@@ -1,17 +1,17 @@
-import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { AppearanceSettings } from "~/components/profile/appearance";
 import { CredentialsForm } from "~/components/profile/credentials";
 import { CurrencySettings } from "~/components/profile/currency-settings";
 import { UserInfoForm } from "~/components/profile/user-info";
 import { Separator } from "~/components/ui/separator";
+import { redirect } from "~/i18n/navigation";
 import { getAuthSession } from "~/server/auth";
 
 export default async function ProfilePage() {
-	const session = await getAuthSession();
 	const t = await getTranslations("ProfilePage");
+	const session = await getAuthSession();
 	if (!session) {
-		redirect("/");
+		return redirect({ href: "/", locale: await getLocale() });
 	}
 
 	return (
