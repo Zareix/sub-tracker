@@ -14,7 +14,6 @@ import {
 	UserCircle2Icon,
 	WrenchIcon,
 } from "lucide-react";
-import Link from "next/link";
 import { type ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
@@ -51,7 +50,7 @@ import {
 	useSidebar,
 } from "~/components/ui/sidebar";
 import { THEMES, ThemeIcon } from "~/components/ui/theme-provider";
-import { usePathname, useRouter } from "~/i18n/navigation";
+import { Link, usePathname, useRouter } from "~/i18n/navigation";
 import { authClient } from "~/lib/auth-client";
 import { Currencies, type Currency } from "~/lib/constant";
 import { useIsMobile } from "~/lib/hooks/use-mobile";

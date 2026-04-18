@@ -4,10 +4,8 @@ export async function register() {
 
 		await (await import("./server/db/seed")).seed();
 
-		if (process.env.NODE_ENV !== "development") {
-			// await (
-			//   await import("./server/services/exchange-rates")
-			// ).updateExchangeRates();
-		}
+		await (
+			await import("./server/services/exchange-rates")
+		).updateExchangeRates();
 	}
 }

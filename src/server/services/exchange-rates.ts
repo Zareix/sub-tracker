@@ -7,60 +7,73 @@ import {
 import { db, runTransaction } from "~/server/db";
 import { exchangeRates } from "~/server/db/schema";
 
+type FrankfurterRateResponse = Array<{
+	date: string;
+	base: string;
+	quote: Currency;
+	rate: number;
+}>;
+
 export const updateExchangeRates = async () => {
 	console.log("Updating exchange rates...");
-	if (!env.FIXER_API_KEY) {
-		console.log("FIXER_API_KEY not set, skipping exchange rates update");
-		return;
-	}
 
 	const nonBaseSymbols = Currencies.filter((c) => c !== DEFAULT_BASE_CURRENCY);
+
 	const params = new URLSearchParams({
-		symbols: nonBaseSymbols.join(","),
 		base: DEFAULT_BASE_CURRENCY,
-		access_key: env.FIXER_API_KEY,
+		quotes: nonBaseSymbols.join(","),
 	}).toString();
-	const response = await fetch(`http://data.fixer.io/api/latest?${params}`, {
-		method: "GET",
-	});
-	const data = (await response.json()) as {
-		success: boolean;
-		timestamp: number;
-		base: typeof DEFAULT_BASE_CURRENCY;
-		date: string;
-		rates: Partial<Record<Currency, number>>;
-	};
+
+	const response = await fetch(
+		`${env.FRANKFURTER_API_URL}/v2/rates?${params}`,
+		{
+			method: "GET",
+		},
+	);
+
+	if (!response.ok) {
+		const errorText = await response.text();
+		throw new Error(
+			`Failed to fetch exchange rates from Frankfurter (${response.status}): ${errorText}`,
+		);
+	}
+
+	const data = (await response.json()) as FrankfurterRateResponse;
+
+	// Build a complete rates map relative to DEFAULT_BASE_CURRENCY
+	const ratesMap: Record<Currency, number> = Object.create(null);
+	ratesMap[DEFAULT_BASE_CURRENCY] = 1;
+
+	for (const currency of nonBaseSymbols) {
+		const row = data.find(
+			(item) => item.base === DEFAULT_BASE_CURRENCY && item.quote === currency,
+		);
+		const rate = row?.rate;
+
+		if (!rate || !Number.isFinite(rate)) {
+			throw new Error(
+				`Missing or invalid rate for ${currency}. Received: ${String(rate)}`,
+			);
+		}
+
+		ratesMap[currency] = rate;
+	}
+
+	// Prepare all pair conversions by passing through base:
+	// rate(A -> B) = rate(BASE -> B) / rate(BASE -> A)
+	const values: Array<typeof exchangeRates.$inferInsert> = [];
+	for (const from of Currencies) {
+		for (const to of Currencies) {
+			const rateFrom = ratesMap[from];
+			const rateTo = ratesMap[to];
+			const rate = Math.round((rateTo / rateFrom) * 1e6) / 1e6;
+			values.push({ baseCurrency: from, targetCurrency: to, rate });
+		}
+	}
 
 	await runTransaction(db, async () => {
 		// eslint-disable-next-line drizzle/enforce-delete-with-where
 		await db.delete(exchangeRates);
-
-		// Build a complete rates map relative to DEFAULT_BASE_CURRENCY
-		const ratesMap: Record<Currency, number> = Object.create(null);
-		ratesMap[DEFAULT_BASE_CURRENCY] = 1;
-
-		for (const currency of nonBaseSymbols) {
-			const rate = data.rates?.[currency];
-			if (!rate || !Number.isFinite(rate)) {
-				throw new Error(
-					`Missing or invalid rate for ${currency}. Received: ${String(rate)}`,
-				);
-			}
-			ratesMap[currency] = rate;
-		}
-
-		// Prepare all pair conversions by passing through base:
-		// rate(A -> B) = rate(BASE -> B) / rate(BASE -> A)
-		const values: Array<typeof exchangeRates.$inferInsert> = [];
-		for (const from of Currencies) {
-			for (const to of Currencies) {
-				const rateFrom = ratesMap[from];
-				const rateTo = ratesMap[to];
-				const rate = Math.round((rateTo / rateFrom) * 1e6) / 1e6;
-				values.push({ baseCurrency: from, targetCurrency: to, rate });
-			}
-		}
-
 		await db.insert(exchangeRates).values(values);
 	});
 

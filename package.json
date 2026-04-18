@@ -1,6 +1,6 @@
 {
 	"name": "sub-tracker",
-	"version": "1.22.0",
+	"version": "1.22.1",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -10,7 +10,7 @@
 		"db:push": "drizzle-kit push",
 		"db:studio": "drizzle-kit studio",
 		"dev": "bun run --bun next dev --turbo",
-		"start": "next start",
+		"preview": "bun run --bun next start",
 		"lint": "tsc --noEmit",
 		"check": "biome check --write .",
 		"email:dev": "email dev -d src/server/email/templates -p 3001",

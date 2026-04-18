@@ -20,7 +20,7 @@ export const env = createEnv({
 		DATABASE_PATH: z._default(z.string(), "./db.sqlite"),
 		UPLOADS_FOLDER: z._default(z.string(), "./temp/uploads"),
 
-		FIXER_API_KEY: z.optional(z.string()),
+		FRANKFURTER_API_URL: z._default(z.string(), "https://api.frankfurter.dev"),
 
 		S3_ENABLED: z._default(
 			z.boolean(),
@@ -60,13 +60,7 @@ export const env = createEnv({
 	 * isn't built with invalid env vars. To expose them to the client, prefix them with
 	 * `NEXT_PUBLIC_`.
 	 */
-	client: {
-		NEXT_PUBLIC_ENV: z._default(
-			z.enum(["development", "test", "production"]),
-			"development",
-		),
-		// NEXT_PUBLIC_AUTH_URL: z.string().url(),
-	},
+	client: {},
 
 	/**
 	 * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
@@ -78,8 +72,7 @@ export const env = createEnv({
 		ADMIN_EMAIL: process.env.ADMIN_EMAIL,
 		DATABASE_PATH: process.env.DATABASE_PATH,
 		NODE_ENV: process.env.NODE_ENV,
-		NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV,
-		FIXER_API_KEY: process.env.FIXER_API_KEY,
+		FRANKFURTER_API_URL: process.env.FRANKFURTER_API_URL,
 		UPLOADS_FOLDER: process.env.UPLOADS_FOLDER,
 		S3_ENABLED: process.env.S3_ENABLED,
 		S3_BUCKET: process.env.S3_BUCKET,
