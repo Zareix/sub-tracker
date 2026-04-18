@@ -1,5 +1,5 @@
-import { render } from "@react-email/components";
 import nodemailer from "nodemailer";
+import { render } from "react-email";
 import { env } from "~/env";
 import ResetPasswordEmail from "~/server/email/templates/reset-password";
 
