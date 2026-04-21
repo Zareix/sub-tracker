@@ -125,10 +125,12 @@
 		"misc": {
 			"title": "Misc",
 			"cleanUpFiles": "Clean up unused files",
+			"migrateImagesToS3": "Migrate images to S3",
 			"updateExchangeRates": "Update exchange rates",
 			"exportData": "Export data",
 			"importData": "Import data",
 			"cleanedUpSuccess": "Cleaned up unused files",
+			"migrateImagesToS3Success": "Migrated {subscriptions} subscriptions and {paymentMethods} payment methods to S3",
 			"exchangeRatesSuccess": "Updated exchange rates",
 			"exportSuccess": "Successfully exported data",
 			"importSuccess": "Successfully imported data"

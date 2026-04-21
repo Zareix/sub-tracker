@@ -2,6 +2,7 @@
 
 import { InfoIcon } from "lucide-react";
 import Head from "next/head";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Label, Pie, PieChart } from "recharts";
 import { FiltersButton } from "~/components/subscriptions/filters";
@@ -21,7 +22,7 @@ import { Skeleton } from "~/components/ui/skeleton";
 import { authClient } from "~/lib/auth-client";
 import { CURRENCY_SYMBOLS, DEFAULT_BASE_CURRENCY } from "~/lib/constant";
 import { useFilters } from "~/lib/hooks/use-filters";
-import { getStats } from "~/lib/stats";
+import { type BreakdownItem, getStats } from "~/lib/stats";
 import {
 	currencyToSymbol,
 	getFilteredSubscriptions,
@@ -61,13 +62,7 @@ export default function StatsPage() {
 		(s) => s.schedule === "Yearly",
 	);
 
-	const {
-		expectedNextMonth,
-		totalPerMonth,
-		totalPerYear,
-		remainingThisMonth,
-		totalThisMonth,
-	} = getStats(subscriptions, filters);
+	const stats = getStats(subscriptions, filters);
 	const categoriesFillColor = Array.from(
 		new Set(subscriptions.map((s) => s.category.name)),
 	).reduce(
@@ -130,37 +125,42 @@ export default function StatsPage() {
 					<StatsCard
 						title={t("smoothedMonth.title")}
 						description={t("smoothedMonth.description")}
-						value={totalPerMonth}
+						value={stats.totalPerMonth.value}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
+						breakdown={stats.totalPerMonth.breakdown}
 					/>
 					<StatsCard
 						title={t("smoothedYear.title")}
 						description={t("smoothedYear.description")}
-						value={totalPerYear}
+						value={stats.totalPerYear.value}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
+						breakdown={stats.totalPerYear.breakdown}
 					/>
 					<StatsCard
 						title={t("thisMonth.title")}
 						description={t("thisMonth.description")}
-						value={totalThisMonth}
+						value={stats.totalThisMonth.value}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
+						breakdown={stats.totalThisMonth.breakdown}
 					/>
 					<StatsCard
 						title={t("remainingMonth.title")}
 						description={t("remainingMonth.description")}
-						value={remainingThisMonth}
+						value={stats.remainingThisMonth.value}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
+						breakdown={stats.remainingThisMonth.breakdown}
 					/>
 					<StatsCard
 						title={t("expectedNextMonth.title")}
 						description={t("expectedNextMonth.description")}
-						value={expectedNextMonth}
+						value={stats.expectedNextMonth.value}
 						isLoading={isLoading}
 						userBaseCurrency={userBaseCurrency}
+						breakdown={stats.expectedNextMonth.breakdown}
 					/>
 				</div>
 			</div>
@@ -174,13 +174,16 @@ const StatsCard = ({
 	value,
 	isLoading,
 	userBaseCurrency,
+	breakdown,
 }: {
 	title: string;
 	description?: string;
 	value: number;
 	isLoading: boolean;
 	userBaseCurrency: string;
+	breakdown?: BreakdownItem[];
 }) => {
+	const currencySymbol = currencyToSymbol(userBaseCurrency);
 	return (
 		<Card className="py-5">
 			<CardHeader className="flex flex-row items-center justify-between space-y-0">
@@ -192,8 +195,35 @@ const StatsCard = ({
 						<PopoverTrigger className="mb-auto">
 							<InfoIcon size={20} className="text-muted-foreground" />
 						</PopoverTrigger>
-						<PopoverContent className="w-max max-w-75 px-2 py-2" side="top">
-							<p>{description}</p>
+						<PopoverContent
+							className="w-max max-w-80 gap-0 px-3 py-3"
+							side="top"
+						>
+							<p className="text-sm">{description}</p>
+							{breakdown && breakdown.length > 0 && (
+								<ul className="mt-2 flex flex-col gap-1 border-t pt-2">
+									{breakdown.map((item) => (
+										<li key={item.id} className="flex items-center gap-2">
+											{item.image ? (
+												<Image
+													src={item.image}
+													alt={item.name}
+													width={28}
+													height={20}
+													className="max-h-5 w-auto max-w-7 object-contain"
+												/>
+											) : (
+												<div className="h-5 w-7 shrink-0" />
+											)}
+											<span className="grow text-sm">{item.name}</span>
+											<span className="font-medium text-sm tabular-nums">
+												{item.retainPrice.toLocaleString()}
+												{currencySymbol}
+											</span>
+										</li>
+									))}
+								</ul>
+							)}
 						</PopoverContent>
 					</Popover>
 				)}

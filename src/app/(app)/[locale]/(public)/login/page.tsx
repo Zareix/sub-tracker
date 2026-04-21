@@ -167,7 +167,7 @@ const LoginPage = () => {
 														{...field}
 														id="login-email"
 														aria-invalid={fieldState.invalid}
-														placeholder="raphael@example.com"
+														placeholder="user@example.com"
 														autoComplete="email webauthn"
 													/>
 													{fieldState.invalid && (

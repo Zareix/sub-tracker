@@ -48,7 +48,13 @@ export async function GET(request: NextRequest) {
 	);
 	const stats = getStats(subscriptions, filters);
 	return Response.json({
-		stats,
+		stats: {
+			totalPerMonth: stats.totalPerMonth.value,
+			totalPerYear: stats.totalPerYear.value,
+			totalThisMonth: stats.totalThisMonth.value,
+			remainingThisMonth: stats.remainingThisMonth.value,
+			expectedNextMonth: stats.expectedNextMonth.value,
+		},
 		currency: {
 			code: user.baseCurrency,
 			symbol: currencyToSymbol(user.baseCurrency),

@@ -38,3 +38,14 @@ export const cleanUpFiles = async (filesInUse: (string | null)[]) => {
 
 	await local.cleanUpFiles(filesInUse);
 };
+
+export const migrateImageToS3 = async (localImage: string): Promise<string> => {
+	const filename = localImage.replace("/api/files?filename=", "");
+	const localFile = await local.readFile(filename);
+	const newFilename = await s3.saveFile(localFile);
+	if (!newFilename) {
+		throw new Error(`Failed to migrate file ${filename} to S3`);
+	}
+	await localFile.delete();
+	return newFilename;
+};

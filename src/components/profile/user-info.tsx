@@ -43,23 +43,32 @@ export const UserInfoForm = ({ user }: Props) => {
 	const apiUtils = api.useUtils();
 	const editUserMutation = useMutation({
 		mutationFn: async (data: z.infer<typeof editUserInfoSchema>) => {
-			if (data.email !== user.email) {
-				await authClient.changeEmail({
-					newEmail: data.email,
-				});
-			}
-			return await authClient.updateUser({
-				name: data.name,
-				image: data.image,
-			});
+			return [
+				data.email !== user.email
+					? await authClient.changeEmail({
+							newEmail: data.email,
+						})
+					: null,
+				await authClient.updateUser({
+					name: data.name,
+					image: data.image,
+				}),
+			];
 		},
-		onSuccess: () => {
+		onSuccess: (res) => {
+			if (res[0]?.error) {
+				toast.error(res[0].error.message ?? "Failed to change email");
+				return;
+			}
+			if (res[1]?.error) {
+				toast.error(res[1].error.message ?? "Failed to update profile");
+				return;
+			}
 			toast.success(t("info.updatedSuccess"));
 			apiUtils.user.getAll.invalidate().catch(console.error);
 		},
-		onError: (error) => {
-			toast.error(error.message || "Failed to update profile");
-		},
+		onError: (error) =>
+			toast.error(error.message ?? "Failed to update profile"),
 	});
 	const form = useForm<z.infer<typeof editUserInfoSchema>>({
 		resolver: zodResolver(editUserInfoSchema),

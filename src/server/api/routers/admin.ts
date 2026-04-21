@@ -1,7 +1,8 @@
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
+import { env } from "~/env";
 import { Currencies, SCHEDULES, UserRoles } from "~/lib/constant";
 import { preprocessStringToDate } from "~/lib/utils";
-
 import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
 import { runTransaction } from "~/server/db";
 import {
@@ -12,7 +13,7 @@ import {
 	usersToSubscriptions,
 } from "~/server/db/schema";
 import { updateExchangeRates } from "~/server/services/exchange-rates";
-import { cleanUpFiles } from "~/server/services/files";
+import { cleanUpFiles, migrateImageToS3 } from "~/server/services/files";
 
 export const adminRouter = createTRPCRouter({
 	cleanUpFiles: adminProcedure.mutation(async ({ ctx }) => {
@@ -41,6 +42,47 @@ export const adminRouter = createTRPCRouter({
 			.map((file) => file.replace("/api/files?filename=", ""));
 
 		await cleanUpFiles(filesInUse);
+	}),
+	migrateImagesToS3: adminProcedure.mutation(async ({ ctx }) => {
+		if (!env.S3_ENABLED) {
+			throw new Error("S3 is not configured");
+		}
+
+		const [localSubscriptions, localPaymentMethods] = await Promise.all([
+			ctx.db.query.subscriptions.findMany({
+				columns: { id: true, image: true },
+				where: (tb, { isNotNull, not, like }) =>
+					and(isNotNull(tb.image), not(like(tb.image, "%s3_%"))),
+			}),
+			ctx.db.query.paymentMethods.findMany({
+				columns: { id: true, image: true },
+				where: (tb, { isNotNull, not, like }) =>
+					and(isNotNull(tb.image), not(like(tb.image, "%s3_%"))),
+			}),
+		]);
+
+		for (const sub of localSubscriptions) {
+			if (!sub.image) continue;
+			const newImage = await migrateImageToS3(sub.image);
+			await ctx.db
+				.update(subscriptions)
+				.set({ image: newImage })
+				.where(eq(subscriptions.id, sub.id));
+		}
+
+		for (const pm of localPaymentMethods) {
+			if (!pm.image) continue;
+			const newImage = await migrateImageToS3(pm.image);
+			await ctx.db
+				.update(paymentMethods)
+				.set({ image: newImage })
+				.where(eq(paymentMethods.id, pm.id));
+		}
+
+		return {
+			migratedSubscriptions: localSubscriptions.length,
+			migratedPaymentMethods: localPaymentMethods.length,
+		};
 	}),
 	updateExchangeRates: adminProcedure.mutation(async () => {
 		await updateExchangeRates();
@@ -131,7 +173,9 @@ export const adminRouter = createTRPCRouter({
 					await db.insert(paymentMethods).values(input.paymentMethods);
 				}
 				if (input.categories && input.categories.length > 0) {
-					await db.insert(categories).values(input.categories);
+					await db
+						.insert(categories)
+						.values(input.categories.filter((c) => c.id !== 1));
 				}
 				if (input.subscriptions && input.subscriptions.length > 0) {
 					await db.insert(subscriptions).values(input.subscriptions);

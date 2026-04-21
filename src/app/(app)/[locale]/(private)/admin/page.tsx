@@ -35,6 +35,19 @@ export default function AdminPage() {
 			toast.error(error.message);
 		},
 	});
+	const migrateImagesToS3Mutation = api.admin.migrateImagesToS3.useMutation({
+		onSuccess: (data) => {
+			toast.success(
+				t("misc.migrateImagesToS3Success", {
+					subscriptions: String(data.migratedSubscriptions),
+					paymentMethods: String(data.migratedPaymentMethods),
+				}),
+			);
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
 	const updateExchangeRatesMutation = api.admin.updateExchangeRates.useMutation(
 		{
 			onSuccess: () => {
@@ -172,6 +185,14 @@ export default function AdminPage() {
 						disabled={cleanUpFilesMutation.isPending}
 					>
 						{t("misc.cleanUpFiles")}
+					</Button>
+					<Button
+						onClick={() => {
+							migrateImagesToS3Mutation.mutate();
+						}}
+						disabled={migrateImagesToS3Mutation.isPending}
+					>
+						{t("misc.migrateImagesToS3")}
 					</Button>
 					<Button
 						onClick={() => {

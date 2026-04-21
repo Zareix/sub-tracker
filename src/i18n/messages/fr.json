@@ -125,10 +125,12 @@
 		"misc": {
 			"title": "Divers",
 			"cleanUpFiles": "Nettoyer les fichiers inutilisés",
+			"migrateImagesToS3": "Migrer les images vers S3",
 			"updateExchangeRates": "Mettre à jour les taux de change",
 			"exportData": "Exporter les données",
 			"importData": "Importer les données",
 			"cleanedUpSuccess": "Fichiers inutilisés nettoyés",
+			"migrateImagesToS3Success": "{subscriptions} abonnements et {paymentMethods} moyens de paiement migrés vers S3",
 			"exchangeRatesSuccess": "Taux de change mis à jour",
 			"exportSuccess": "Données exportées avec succès",
 			"importSuccess": "Données importées avec succès"
@@ -239,16 +241,19 @@
 	},
 	"ResetPasswordPage": {
 		"title": "Réinitialiser le mot de passe",
-		"passwordLabel": "Mot de passe",
-		"submitButton": "Se connecter",
-		"success": {
-			"passwordReset": "Mot de passe réinitialisé avec succès"
+		"fields": {
+			"newPassword": "Nouveau mot de passe",
+			"newPasswordPlaceholder": "********"
+		},
+		"actions": {
+			"submit": "Réinitialiser le mot de passe"
 		},
 		"errors": {
-			"resetFailed": "Échec de la connexion, veuillez réessayer."
+			"passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
+			"resetFailed": "Échec de la réinitialisation du mot de passe, veuillez réessayer."
 		},
-		"validation": {
-			"passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères"
+		"success": {
+			"passwordReset": "Mot de passe réinitialisé avec succès"
 		}
 	},
 	"SubscriptionForm": {

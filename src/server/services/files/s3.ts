@@ -1,9 +1,10 @@
-export const saveFile = async (file: File) => {
+import type { BunFile } from "bun";
+
+export const saveFile = async (file: File | BunFile) => {
 	const fileName = `s3_${Bun.randomUUIDv7()}.png`;
 
 	try {
-		const s3UploadedFile = Bun.s3.file(fileName);
-		await s3UploadedFile.write(file);
+		await Bun.s3.file(fileName).write(file);
 
 		return `/api/files?filename=${fileName}`;
 	} catch (e) {

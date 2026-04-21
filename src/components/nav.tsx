@@ -274,7 +274,7 @@ export function AppSidebar() {
 														{session.data.user.name.charAt(0).toUpperCase()}
 													</AvatarFallback>
 												</Avatar>
-												<div className="grid flex-1 text-left text-sm leading-tight">
+												<div className="grid flex-1 text-left text-sidebar-accent-foreground text-sm leading-tight">
 													<span className="truncate font-semibold">
 														{session.data.user.name}
 													</span>
